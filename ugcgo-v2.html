@@ -351,12 +351,27 @@ footer{position:relative;z-index:10;text-align:center;padding:40px 24px;border-t
 <script>
 // Demo generation simulation
 const demoImages = [
-  'img/ugc/ugc-3.png',
-  'img/ugc/ugc-6.png',
-  'img/ugc/ugc-2.png',
-  'img/ugc/ugc-4.png',
+  'img/demo/premium_skincare.png',
+  'img/demo/fitness_ugc.png',
+  'img/demo/fashion_ugc.png',
+  'img/demo/food_ugc.png',
+  'img/demo/tech_ugc.png',
+  'img/demo/beauty_ugc.png',
 ];
 let demoIdx = 0;
+// Show first image immediately on load
+window.addEventListener('DOMContentLoaded', function() {
+  const img = document.getElementById('resultImg');
+  const ph = document.getElementById('resultPlaceholder');
+  const st = document.getElementById('genStatus');
+  if (img && ph) {
+    img.src = demoImages[0];
+    img.style.display = 'block';
+    ph.style.display = 'none';
+    if (st) st.textContent = '✓ AI-generated example';
+    demoIdx = 1;
+  }
+});
 
 function generateDemo() {
   const btn = document.getElementById('genBtnText');
