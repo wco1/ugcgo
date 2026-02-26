@@ -2580,5 +2580,87 @@ function toggleTheme() {
   }
 })();
 </script>
+
+<script>
+// Mobile overflow emergency fix — runs after DOM load
+(function mobileFix() {
+  if (window.innerWidth > 768) return;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const vw = window.innerWidth;
+    
+    // Fix all elements that overflow viewport
+    function fixOverflow() {
+      document.querySelectorAll('*').forEach(function(el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.right > vw + 2) {
+          const style = el.getAttribute('style') || '';
+          const computed = window.getComputedStyle(el);
+          
+          // Fix width:200px flex items (video strip cards)
+          if (style.includes('width:200px') || style.includes('width: 200px')) {
+            el.style.width = '150px';
+            el.style.minWidth = '150px';
+            el.style.maxWidth = '150px';
+          }
+          // Fix multi-column grids
+          if (style.includes('grid-template-columns') || computed.gridTemplateColumns.includes('repeat')) {
+            el.style.display = 'flex';
+            el.style.flexDirection = 'column';
+            el.style.width = '100%';
+          }
+          // Fix width:64px items in a grid row
+          if (style.includes('text-align:center;padding:20px') || style.includes('text-align: center; padding: 20px')) {
+            el.style.flex = '1 1 calc(50% - 8px)';
+            el.style.minWidth = '0';
+          }
+          // Fix absolute positioned elements overflowing
+          if (computed.position === 'absolute' && rect.right > vw + 10) {
+            el.style.maxWidth = '100%';
+            el.style.overflow = 'hidden';
+          }
+        }
+      });
+      
+      // Fix parent containers with multi-col grids (catches inline style variations)
+      document.querySelectorAll('div').forEach(function(el) {
+        const computed = window.getComputedStyle(el);
+        const cols = computed.gridTemplateColumns;
+        // If it has 2+ equal columns that make items overflow
+        if (cols && cols !== 'none' && !cols.includes('minmax') && 
+            el.getBoundingClientRect().width > vw + 2) {
+          el.style.display = 'flex';
+          el.style.flexDirection = 'column';
+          el.style.width = '100%';
+          el.style.maxWidth = '100%';
+        }
+      });
+    }
+    
+    fixOverflow();
+    // Run again after any layout shifts
+    setTimeout(fixOverflow, 500);
+  });
+  
+  // Also run immediately for synchronous rendering
+  if (document.readyState !== 'loading') {
+    setTimeout(function() {
+      document.querySelectorAll('div').forEach(function(el) {
+        const s = el.getAttribute('style') || '';
+        if ((s.includes('grid-template-columns') && s.includes('repeat(')) ) {
+          el.style.setProperty('display', 'flex', 'important');
+          el.style.setProperty('flex-direction', 'column', 'important');
+        }
+        if (s.includes('width:200px') || s.includes('width: 200px')) {
+          if (!s.includes('height:200px')) { // not square elements
+            el.style.setProperty('width', '150px', 'important');
+            el.style.setProperty('flex', '0 0 150px', 'important');
+          }
+        }
+      });
+    }, 100);
+  }
+})();
+</script>
 </body>
 </html>
