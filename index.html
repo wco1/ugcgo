@@ -1005,13 +1005,55 @@ footer {
   /* SVG deco — clip on mobile */
   .svg-deco-hero { max-width: 60vw !important; overflow: hidden !important; }
   
-  /* Case cards — 1 column on mobile */
-  .case-card { width: 100% !important; }
-  div[style*="grid-template-columns: repeat(2"] { 
+  /* ===== NUCLEAR MOBILE OVERFLOW FIX ===== */
+  /* Force ALL multi-column grids to single column */
+  div[style*="grid-template-columns: repeat(2"],
+  div[style*="grid-template-columns:repeat(2"],
+  div[style*="grid-template-columns: repeat(3"],
+  div[style*="grid-template-columns:repeat(3"],
+  div[style*="grid-template-columns: repeat(4"],
+  div[style*="grid-template-columns:repeat(4"] { 
     display: flex !important; 
     flex-direction: column !important;
-    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
+  
+  /* Case cards */
+  .case-card { 
+    width: 100% !important; 
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Video strip — clamp widths */
+  #videoStrip > div,
+  div[style*="flex-shrink:0;width:200px"],
+  div[style*="flex-shrink: 0; width: 200px"] {
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    max-width: 140px !important;
+  }
+  
+  /* Stats bar items */
+  div[style*="text-align:center;padding:20px"],
+  div[style*="text-align: center; padding: 20px"] {
+    min-width: 0 !important;
+    flex: 1 1 40% !important;
+  }
+  
+  /* Clamp all absolute glow/orb elements */
+  div[style*="width: 1000px"],
+  div[style*="width:1000px"],
+  div[style*="width: 800px"],
+  div[style*="width:800px"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  
+  /* Section containers overflow protection */
+  .section, section { overflow: hidden !important; }
+  .container { overflow: hidden !important; }
   
   .steps { grid-template-columns: 1fr; gap: 24px; }
   .step { padding: 32px 24px; }
