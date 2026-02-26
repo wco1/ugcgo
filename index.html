@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ugcgo.ai — The AI-First UGC Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { 
+  --bg: #000; 
+  --card: #141414; 
+  --card-elevated: #1c1c1c;
+  --accent: #e8ff59; 
+  --accent-dim: rgba(232,255,89,0.15);
+  --text: #fff; 
+  --text-secondary: rgba(255,255,255,0.65); 
+  --text-muted: rgba(255,255,255,0.45);
+  --border: rgba(255,255,255,0.1);
+  --border-hover: rgba(255,255,255,0.2);
+  --glow: rgba(232,255,89,0.4);
+  --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+/* Light Theme */
+[data-theme="light"] {
+  --bg: #f8f8f6;
+  --card: #ffffff;
+  --card-elevated: #f0f0ee;
+  --text: #0a0a0a;
+  --text-secondary: rgba(10,10,10,0.65);
+  --text-muted: rgba(10,10,10,0.45);
+  --border: rgba(0,0,0,0.1);
+  --border-hover: rgba(0,0,0,0.2);
+  --glow: rgba(180,200,0,0.4);
+  --nav-bg: rgba(248,248,246,0.92);
+}
+[data-theme="light"] .hero {
+  background: linear-gradient(135deg, #f0f0ee 0%, #e8e8e4 100%);
+}
+[data-theme="light"] .mosaic-card-thumb { filter: saturate(1.0) brightness(0.95); }
+[data-theme="light"] nav { background: rgba(248,248,246,0.92) !important; border-bottom: 1px solid rgba(0,0,0,0.08) !important; }
+[data-theme="light"] .hero-title { color: #0a0a0a; }
+[data-theme="light"] section { background: var(--bg) !important; }
+[data-theme="light"] .card { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
+[data-theme="light"] .ai-tool-card { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
+html { scroll-behavior: smooth; }
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+  line-height: 1.6; 
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* Navigation - Glassmorphism */
+nav { 
+  position: fixed;
+  will-change: background-color;
+  transform: translateZ(0); 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  z-index: 1000; 
+  background: rgba(0,0,0,0.7); 
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+nav.scrolled {
+  background: rgba(0,0,0,0.9);
+  border-bottom-color: var(--border-hover);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+.logo { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.logo span { color: var(--accent); font-weight: 800; }
+.nav-links { display: flex; align-items: center; gap: 40px; }
+.nav-link { 
+  font-size: 14px; 
+  font-weight: 500; 
+  color: var(--text-secondary); 
+  transition: all 0.2s ease;
+  position: relative;
+}
+.nav-link:hover { 
+  color: var(--text); 
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+.btn { 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 12px 24px; 
+  font-size: 14px; 
+  font-weight: 600; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+.btn:hover::before {
+  transform: translateX(100%);
+}
+.btn-accent { 
+  background: var(--accent); 
+  color: #000;
+  box-shadow: 0 0 0 0 rgba(232,255,89,0);
+}
+.btn-accent:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 30px rgba(232,255,89,0.3), 0 0 0 1px rgba(232,255,89,0.2);
+}
+.btn-outline { 
+  background: transparent; 
+  border: 1px solid var(--border); 
+  color: var(--text); 
+}
+.btn-outline:hover { 
+  background: var(--card-elevated); 
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+.nav-cta { padding: 10px 20px; font-size: 13px; }
+
+/* Hero - FIXED OVERLAP */
+.hero { 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+  padding-top: 72px; 
+  position: relative; 
+  overflow: hidden;
+}
+
+/* Mosaic Background - Fixed Layer */
+.mosaic-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  isolation: isolate;
+  contain: layout paint;
+}
+.mosaic-container { 
+  position: absolute;
+  top: -10%;
+  left: 0;
+  right: 0;
+  bottom: -10%;
+  display: flex; 
+  gap: 20px; 
+  padding: 0 5%; 
+  opacity: 0.72;
+}
+.mosaic-column { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+  animation: scrollUp 30s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.mosaic-column:nth-child(2) { animation-duration: 35s; animation-direction: reverse; }
+.mosaic-column:nth-child(3) { animation-duration: 28s; }
+@keyframes scrollUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+.mosaic-card { 
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-radius: 16px; 
+  overflow: hidden; 
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+.mosaic-card:hover {
+  transform: scale(1.02);
+  border-color: var(--border-hover);
+}
+.mosaic-card-thumb { 
+  width: 100%; 
+  aspect-ratio: 9/16; 
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%); 
+  position: relative;
+  overflow: hidden;
+}
+.mosaic-card-thumb::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  width: 60px;
+  height: 60px;
+  background: rgba(232,255,89,0.3);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.mosaic-card:hover .mosaic-card-thumb::before {
+  transform: translate(-50%,-50%) scale(1);
+}
+.mosaic-card-thumb::after { 
+  content: '▶'; 
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%,-50%); 
+  font-size: 14px; 
+  color: var(--accent);
+  transition: transform 0.3s ease;
+}
+.mosaic-card:hover .mosaic-card-thumb::after {
+  transform: translate(-50%,-50%) scale(1.2);
+}
+.mosaic-card-thumb img, .mosaic-card-thumb video {
+  filter: saturate(0.9) brightness(1.0);
+}
+.mosaic-card-meta { padding: 16px; }
+.mosaic-card-title { 
+  font-size: 13px; 
+  font-weight: 600;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+.mosaic-card-stats { 
+  font-size: 12px; 
+  color: var(--text-muted); 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+.mosaic-card-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
+
+/* Gradient overlays - FIXED LAYERING */
+.hero-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,0,0.2) 0%, transparent 70%),
+    linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.5) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-glow {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(232,255,89,0.08) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Hero Content - ABOVE OVERLAYS */
+.hero-content-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  padding: 60px 0;
+}
+.hero-content { 
+  text-align: center; 
+  max-width: 800px;
+}
+.hero-badge { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px; 
+  padding: 10px 20px; 
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 100px; 
+  font-size: 13px; 
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  backdrop-filter: blur(10px);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,255,89,0.1); }
+  50% { box-shadow: 0 0 20px 2px rgba(232,255,89,0.15); }
+}
+.hero-badge svg { 
+  width: 16px; 
+  height: 16px; 
+  color: var(--accent);
+}
+.hero h1 { 
+  font-size: clamp(56px, 10vw, 104px); 
+  font-weight: 800; 
+  letter-spacing: -3px; 
+  line-height: 1.0; 
+  margin-bottom: 24px;
+  background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 span { 
+  color: var(--accent);
+  -webkit-text-fill-color: var(--accent);
+  position: relative;
+}
+.hero h1 span::after {
+  content: '';
+  position: absolute;
+  bottom: 5%;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.2;
+  filter: blur(20px);
+}
+.hero p { 
+  font-size: 20px; 
+  color: rgba(255,255,255,0.85); 
+  max-width: 520px; 
+  margin: 0 auto 40px; 
+  line-height: 1.6;
+  font-weight: 400;
+}
+.hero-ctas { 
+  display: flex; 
+  gap: 16px; 
+  justify-content: center; 
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.hero-ctas .btn { 
+  padding: 16px 32px; 
+  font-size: 15px;
+  border-radius: 10px;
+}
+.hero-stats { 
+  display: flex; 
+  gap: 32px; 
+  justify-content: center; 
+  flex-wrap: wrap; 
+  font-size: 14px; 
+  color: var(--text-muted);
+}
+.hero-stats span { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  font-weight: 500;
+}
+.hero-stats-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--glow);
+}
+
+/* Stats Strip - FIXED: separate section */
+.stats-strip { 
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, var(--bg) 100%);
+  padding: 60px 0;
+  position: relative;
+  z-index: 3;
+  backdrop-filter: blur(10px);
+}
+.stats-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 40px;
+}
+.stat-item { 
+  text-align: center;
+  padding: 20px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+.stat-item:hover {
+  background: var(--card);
+  transform: translateY(-2px);
+}
+.stat-value { 
+  font-size: 36px; 
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent) 0%, #d4e85a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+.stat-label { 
+  font-size: 14px; 
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Section Headers */
+.section-header { 
+  text-align: center; 
+  margin-bottom: 80px;
+}
+.section-header h2 { 
+  font-size: clamp(36px, 5vw, 56px); 
+  font-weight: 800; 
+  letter-spacing: -1.5px; 
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+.section-header p { 
+  font-size: 18px; 
+  color: var(--text-secondary); 
+  max-width: 480px; 
+  margin: 0 auto;
+}
+
+/* How it Works */
+.section { padding: 140px 0; }
+.section.alt-bg { background: #0d0d0d; }
+.card h4 { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.card p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
+.card-icon { width: 48px; height: 48px; background: rgba(232,255,89,0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.card-icon svg { width: 22px; height: 22px; color: var(--accent); stroke: var(--accent); }
+.steps { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 48px;
+}
+.step { 
+  position: relative;
+  padding: 40px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  transition: all 0.3s ease;
+}
+.step:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+.step-number { 
+  width: 56px; 
+  height: 56px; 
+  border-radius: 16px; 
+  background: linear-gradient(135deg, var(--accent) 0%, #d4e85a 100%); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #000;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 30px rgba(232,255,89,0.3);
+}
+.step h3 { 
+  font-size: 22px; 
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.step p { 
+  font-size: 15px; 
+  color: var(--text-secondary); 
+  line-height: 1.7;
+}
+
+/* Cards Grid */
+.cards-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 24px;
+}
+.card { 
+  background: #181818; 
+  border: 1px solid rgba(255,255,255,0.12); 
+  border-top: 2px solid rgba(232,255,89,0.5);
+  border-radius: 20px; 
+  padding: 32px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  border-color: rgba(255,255,255,0.2);
+  border-top-color: rgba(232,255,89,0.9);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,255,89,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.card:hover { 
+  border-color: rgba(232,255,89,0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card-icon { 
+  width: 56px; 
+  height: 56px; 
+  border-radius: 16px; 
+  background: linear-gradient(135deg, rgba(232,255,89,0.15) 0%, rgba(232,255,89,0.05) 100%);
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-bottom: 24px;
+  position: relative;
+}
+.card-icon::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, var(--accent) 0%, transparent 50%);
+  opacity: 0.3;
+  z-index: -1;
+}
+.card-icon svg { 
+  width: 26px; 
+  height: 26px; 
+  color: var(--accent);
+}
+.card h4 { 
+  font-size: 17px; 
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+}
+.card p { 
+  font-size: 14px; 
+  color: var(--text-secondary); 
+  line-height: 1.6;
+}
+
+/* Earnings Calculator */
+.calculator { 
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-radius: 28px; 
+  padding: 56px; 
+  max-width: 640px; 
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.calculator::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(232,255,89,0.03) 0%, transparent 50%);
+}
+.calculator h3 { 
+  font-size: 28px; 
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center; 
+  margin-bottom: 8px;
+}
+.calculator > p { 
+  text-align: center; 
+  color: var(--text-muted); 
+  margin-bottom: 40px; 
+  font-size: 14px;
+}
+.range-container { margin-bottom: 40px; }
+.range-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 16px; 
+}
+.range-label { 
+  font-size: 14px; 
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.range-value { 
+  font-size: 20px; 
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] { 
+  width: 100%; 
+  height: 8px; 
+  background: var(--border); 
+  border-radius: 4px; 
+  outline: none; 
+  -webkit-appearance: none; 
+  cursor: pointer;
+  position: relative;
+}
+input[type="range"]::-webkit-slider-thumb { 
+  -webkit-appearance: none; 
+  width: 24px; 
+  height: 24px; 
+  background: var(--accent); 
+  border-radius: 50%; 
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(232,255,89,0.4);
+  transition: transform 0.1s ease;
+  border: 3px solid var(--bg);
+}
+input[type="range"]::-webkit-slider-thumb:hover { 
+  transform: scale(1.1);
+}
+input[type="range"]::-moz-range-thumb { 
+  width: 24px; 
+  height: 24px; 
+  background: var(--accent); 
+  border-radius: 50%; 
+  cursor: pointer; 
+  border: 3px solid var(--bg);
+  box-shadow: 0 4px 15px rgba(232,255,89,0.4);
+}
+.earnings-result { 
+  background: linear-gradient(135deg, rgba(232,255,89,0.08) 0%, rgba(232,255,89,0.02) 100%);
+  border: 1px solid rgba(232,255,89,0.15);
+  border-radius: 20px; 
+  padding: 32px; 
+  text-align: center;
+  position: relative;
+}
+.earnings-result::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.earnings-label { 
+  font-size: 13px; 
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.earnings-amount { 
+  font-size: 52px; 
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.earnings-period { 
+  font-size: 14px; 
+  color: var(--text-muted); 
+  margin-top: 4px;
+}
+.earnings-bonus { 
+  font-size: 13px; 
+  color: var(--accent); 
+  margin-top: 12px; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-weight: 500;
+}
+.earnings-bonus.visible { opacity: 1; }
+
+/* Waitlist Form */
+.waitlist-section { padding: 140px 0; }
+.waitlist-form { 
+  max-width: 480px; 
+  margin: 0 auto; 
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-radius: 28px; 
+  padding: 48px;
+  position: relative;
+}
+.waitlist-form::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 29px;
+  background: linear-gradient(135deg, rgba(232,255,89,0.2) 0%, transparent 50%);
+  z-index: -1;
+  opacity: 0.5;
+}
+.waitlist-form h3 { 
+  font-size: 28px; 
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center; 
+  margin-bottom: 8px;
+}
+.waitlist-form > p { 
+  text-align: center; 
+  color: var(--text-muted); 
+  font-size: 14px; 
+  margin-bottom: 32px;
+}
+.form-group { margin-bottom: 24px; }
+.form-label { 
+  display: block; 
+  font-size: 14px; 
+  font-weight: 500; 
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+.form-input { 
+  width: 100%; 
+  padding: 16px; 
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border); 
+  border-radius: 12px; 
+  color: var(--text); 
+  font-size: 15px; 
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+.form-input:focus { 
+  outline: none; 
+  border-color: rgba(232,255,89,0.3);
+  background: rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 3px rgba(232,255,89,0.05);
+}
+.form-input::placeholder { color: rgba(255,255,255,0.25); }
+.radio-group { display: flex; gap: 12px; }
+.radio-option { flex: 1; position: relative; }
+.radio-option input { position: absolute; opacity: 0; }
+.radio-label { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px; 
+  padding: 16px; 
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border); 
+  border-radius: 12px; 
+  cursor: pointer; 
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+.radio-option input:checked + .radio-label { 
+  border-color: var(--accent);
+  background: rgba(232,255,89,0.08);
+  color: var(--text);
+}
+.radio-option input:checked + .radio-label svg { 
+  color: var(--accent);
+}
+.radio-label svg { 
+  width: 18px; 
+  height: 18px; 
+}
+.form-submit { 
+  width: 100%; 
+  padding: 18px; 
+  font-size: 15px; 
+  margin-top: 8px;
+  border-radius: 12px;
+}
+.success-message { display: none; text-align: center; padding: 40px; }
+.success-message.visible { display: block; }
+.success-icon { 
+  width: 72px; 
+  height: 72px; 
+  background: linear-gradient(135deg, rgba(232,255,89,0.15) 0%, rgba(232,255,89,0.05) 100%);
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 30px rgba(232,255,89,0.2);
+}
+.success-icon svg { 
+  width: 32px; 
+  height: 32px; 
+  color: var(--accent);
+}
+.success-message h4 { 
+  font-size: 22px; 
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.success-message p { 
+  color: var(--text-muted); 
+  font-size: 14px;
+}
+
+/* Footer */
+footer { 
+  border-top: 1px solid var(--border); 
+  padding: 40px 0;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(10,10,10,1) 100%);
+}
+.footer-content { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  flex-wrap: wrap; 
+  gap: 16px;
+}
+.copyright { 
+  font-size: 14px; 
+  color: var(--text-muted);
+}
+.footer-links { display: flex; gap: 32px; }
+.footer-link { 
+  font-size: 14px; 
+  color: var(--text-muted); 
+  transition: all 0.2s ease;
+  position: relative;
+}
+.footer-link:hover { 
+  color: var(--text);
+}
+.footer-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+.footer-link:hover::after {
+  width: 100%;
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle { 
+  display: none; 
+  background: none; 
+  border: none; 
+  color: var(--text); 
+  cursor: pointer;
+  padding: 8px;
+}
+.menu-toggle svg { width: 24px; height: 24px; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .mosaic-container { padding: 0 2%; gap: 16px; }
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  /* Hero */
+  .hero { min-height: 100svh; padding: 80px 20px 60px; }
+  .hero h1 { font-size: clamp(36px, 10vw, 56px) !important; letter-spacing: -1.5px; }
+  .hero p { font-size: 15px; }
+  .hero-ctas { flex-direction: column; gap: 12px; }
+  .hero-ctas .btn { width: 100%; text-align: center; }
+  
+  /* Nav */
+  .nav-container { padding: 0 16px; }
+  .nav-links { 
+    display: none; 
+    position: absolute; 
+    top: 72px; 
+    left: 0; 
+    right: 0; 
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border); 
+    padding: 24px; 
+    flex-direction: column; 
+    gap: 16px; 
+  }
+  .nav-links.active { display: flex; }
+  .menu-toggle { display: block; }
+  
+  /* Stats bar */
+  .stats-bar { grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 32px 20px; }
+  
+  /* Cards grid — одна колонка */
+  .cards-grid { grid-template-columns: 1fr !important; gap: 16px; }
+  
+  /* Creator AI Studio grid */
+  .ai-tools-grid { grid-template-columns: 1fr !important; }
+  
+  /* Creator Showcase — одна колонка */
+  #creators-showcase .container > div[style*="grid-template-columns"] { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    gap: 16px !important; 
+  }
+  
+  /* Section padding */
+  .section { padding: 60px 0; }
+  .container { padding: 0 16px !important; }
+  
+  /* Earnings Calculator */
+  .calculator { padding: 24px 16px; }
+  
+  /* Video Strip — горизонтальный скролл на мобайле */
+  #videoStrip { 
+    padding: 0 16px 20px !important; 
+    gap: 12px !important; 
+  }
+  #videoStrip > div { 
+    width: 150px !important; 
+    height: 267px !important; 
+  }
+  
+  /* Section headers */
+  .section-header h2 { font-size: clamp(28px, 8vw, 40px) !important; }
+  
+  /* Mosaic — скрыть на мобайле для производительности */
+  .mosaic-container { display: none; }
+  /* Hero без мозаики — добавить красивый gradient вместо */
+  .hero { background: linear-gradient(135deg, #0a0a0a 0%, #111 50%, #0f0f0f 100%); }
+  
+  .steps { grid-template-columns: 1fr; gap: 24px; }
+  .step { padding: 32px 24px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 28px; }
+  .stat-item { padding: 16px; }
+  .calculator { padding: 40px 24px; border-radius: 24px; }
+  .earnings-amount { font-size: 40px; }
+  .waitlist-form { padding: 32px 24px; border-radius: 24px; }
+  .radio-group { flex-direction: column; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 32px !important; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 24px 16px; }
+  .hero-ctas { flex-direction: column; }
+  .earnings-amount { font-size: 36px; }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(232,255,89,0.3);
+  color: var(--text);
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="logo">ugcgo<span>.</span>ai</a>
+      <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="nav-links">
+        <a href="#brands" class="nav-link">For Brands</a>
+        <a href="#creators" class="nav-link">For Creators</a>
+        <a href="ugcgo-studio.html" class="nav-link">AI Studio ⚡</a>
+        <a href="ugcgo-auth.html" class="nav-link">Sign In</a>
+        <button id="themeToggle" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--text);font-size:13px;transition:all 0.2s;display:flex;align-items:center;gap:6px;" title="Toggle theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+        <a href="ugcgo-auth.html" class="btn btn-accent nav-cta">Join Waitlist</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <!-- Mosaic Background Wrapper -->
+  <div class="mosaic-wrapper">
+    <div class="mosaic-container">
+      <div class="mosaic-column">
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-4.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Nike Product Review</div><div class="mosaic-card-stats">1.2M views<span class="mosaic-card-dot"></span>$4,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-5.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Skincare Routine 2025</div><div class="mosaic-card-stats">856K views<span class="mosaic-card-dot"></span>$3,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-6.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Gaming Setup Tour</div><div class="mosaic-card-stats">2.1M views<span class="mosaic-card-dot"></span>$8,500</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-7.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fitness Challenge</div><div class="mosaic-card-stats">3.4M views<span class="mosaic-card-dot"></span>$12,000</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-8.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Tech Unboxing</div><div class="mosaic-card-stats">678K views<span class="mosaic-card-dot"></span>$2,400</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-9.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Nike Product Review</div><div class="mosaic-card-stats">1.2M views<span class="mosaic-card-dot"></span>$4,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-28.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Skincare Routine 2025</div><div class="mosaic-card-stats">856K views<span class="mosaic-card-dot"></span>$3,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-11.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Gaming Setup Tour</div><div class="mosaic-card-stats">2.1M views<span class="mosaic-card-dot"></span>$8,500</div></div></div>
+      </div>
+      <div class="mosaic-column">
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-12.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fashion Haul Summer</div><div class="mosaic-card-stats">1.8M views<span class="mosaic-card-dot"></span>$6,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-10.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">ASMR Product Test</div><div class="mosaic-card-stats">945K views<span class="mosaic-card-dot"></span>$3,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-11.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Travel Vlog Paris</div><div class="mosaic-card-stats">2.7M views<span class="mosaic-card-dot"></span>$9,500</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-12.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Phone Drop Test</div><div class="mosaic-card-stats">4.2M views<span class="mosaic-card-dot"></span>$15,000</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-1.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Dance Tutorial</div><div class="mosaic-card-stats">1.3M views<span class="mosaic-card-dot"></span>$4,500</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-22.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fashion Haul Summer</div><div class="mosaic-card-stats">1.8M views<span class="mosaic-card-dot"></span>$6,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-3.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">ASMR Product Test</div><div class="mosaic-card-stats">945K views<span class="mosaic-card-dot"></span>$3,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-1.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Travel Vlog Paris</div><div class="mosaic-card-stats">2.7M views<span class="mosaic-card-dot"></span>$9,500</div></div></div>
+      </div>
+      <div class="mosaic-column">
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-2.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Healthy Snack Ideas</div><div class="mosaic-card-stats">2.4M views<span class="mosaic-card-dot"></span>$8,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-3.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Makeup Tutorial Glow</div><div class="mosaic-card-stats">1.1M views<span class="mosaic-card-dot"></span>$4,100</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-4.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Car Detailing Tips</div><div class="mosaic-card-stats">756K views<span class="mosaic-card-dot"></span>$2,700</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-5.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Desk Setup Office</div><div class="mosaic-card-stats">1.9M views<span class="mosaic-card-dot"></span>$6,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-19.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Pet Product Review</div><div class="mosaic-card-stats">2.8M views<span class="mosaic-card-dot"></span>$10,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-7.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Healthy Snack Ideas</div><div class="mosaic-card-stats">2.4M views<span class="mosaic-card-dot"></span>$8,800</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-8.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Makeup Tutorial Glow</div><div class="mosaic-card-stats">1.1M views<span class="mosaic-card-dot"></span>$4,100</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-9.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Car Detailing Tips</div><div class="mosaic-card-stats">756K views<span class="mosaic-card-dot"></span>$2,700</div></div></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="hero-vignette"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-content-wrapper">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Now accepting beta creators
+        </div>
+        <h1>The <span>AI-First</span> UGC Marketplace</h1>
+        <p>Connect brands with AI video creators. Performance-based. Lightning fast. Zero risk.</p>
+        <div class="hero-ctas">
+          <a href="ugcgo-auth.html" class="btn btn-accent">Start as Brand</a>
+          <a href="ugcgo-auth.html" class="btn btn-outline">Apply as Creator</a>
+        </div>
+        <div class="hero-stats">
+          <span>500+ AI Creators</span>
+          <span class="hero-stats-dot"></span>
+          <span>50+ Brands</span>
+          <span class="hero-stats-dot"></span>
+          <span>$0 upfront</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value">$7.1B</div>
+        <div class="stat-label">Market Size</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">34%</div>
+        <div class="stat-label">YoY Growth</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">2.9x</div>
+        <div class="stat-label">More Engagement</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">48h</div>
+        <div class="stat-label">Average Delivery</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>How it works</h2>
+      <p>Three simple steps to get AI-powered UGC content</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Post Your Brief</h3>
+        <p>Brands describe what they need and specifications.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>AI Creators Apply</h3>
+        <p>Creators pitch concepts within 24 hours.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Review & Pay</h3>
+        <p>Only pay for content you love.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- For Brands -->
+<section id="brands" class="section" style="background: #080808;">
+  <div class="container">
+    <div class="section-header">
+      <h2>For Brands</h2>
+      <p>Everything you need to scale your UGC production</p>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-bottom:4px;line-height:1;">$0</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">upfront cost</div>
+        <h4>Zero Risk</h4>
+        <p>Pay only for approved content. No retainers.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-bottom:4px;line-height:1;">50K+</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">verified creators</div>
+        <h4>AI-Native Creators</h4>
+        <p>Vetted creators using Kling, Runway, and top AI tools.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-bottom:4px;line-height:1;">24h</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">average delivery</div>
+        <h4>Fast Turnaround</h4>
+        <p>48-72 hour delivery. Rush options available.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-bottom:4px;line-height:1;">4.8x</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">avg ROAS</div>
+        <h4>Performance Data</h4>
+        <p>Track views, engagement, and conversions easily.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- For Creators -->
+<section id="creators" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>For Creators</h2>
+      <p>Build your AI content business with our platform</p>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <h4>Consistent Work</h4>
+        <p>Steady brief flow from vetted brands. Never hunt for clients again.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        </div>
+        <h4>AI Tools Built-in</h4>
+        <p>Discounted access to Kling, Runway, and other leading AI video generation platforms.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h4>Performance Bonuses</h4>
+        <p>Earn more when content goes viral. Revenue share on top-performing videos.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </div>
+        <h4>Instant Payments</h4>
+        <p>Escrow protection ensures you get paid immediately upon client approval.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Earnings Calculator -->
+<section class="section" style="background: var(--card);">
+  <div class="container">
+    <div class="section-header">
+      <h2>Earnings Calculator</h2>
+      <p>Estimate your monthly income as an AI creator</p>
+    </div>
+    <div class="calculator">
+      <h3>Creator Earnings Estimator</h3>
+      <p>Based on average CPM and performance bonuses</p>
+      <div class="range-container">
+        <div class="range-header">
+          <span class="range-label">Monthly Views</span>
+          <span class="range-value" id="viewsValue">1,000,000</span>
+        </div>
+        <input type="range" id="viewsRange" min="100000" max="5000000" step="100000" value="1000000">
+      </div>
+      <div class="earnings-result">
+        <div class="earnings-label">Estimated Monthly Earnings</div>
+        <div class="earnings-amount" id="earningsDisplay">$2,500</div>
+        <div class="earnings-period">per month</div>
+        <div class="earnings-bonus" id="bonusMessage">Includes viral bonus for 1M+ views</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Studio Section -->
+<section id="ai-studio" class="section" style="padding: 120px 0; background: #000;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom: 64px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(232,255,89,0.08);border:1px solid rgba(232,255,89,0.2);border-radius:99px;font-size:13px;color:var(--accent);font-weight:600;letter-spacing:0.04em;margin-bottom:24px;">
+        ⚡ Built-in AI Tools
+      </div>
+      <h2 style="font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:16px;">
+        Creator AI Studio
+      </h2>
+      <p style="font-size:17px;color:rgba(255,255,255,0.5);max-width:520px;margin:0 auto;line-height:1.6;">
+        Access the best AI video tools — built directly into your ugcgo workflow. No extra subscriptions.
+      </p>
+    </div>
+
+    <!-- Tools Grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:60px;">
+
+      <!-- HeyGen -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎭</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">HeyGen</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">AI Avatar Video</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(76,210,130,0.12);border:1px solid rgba(76,210,130,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#4cd282;">Live</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Create talking-head videos with AI avatars. 300+ languages, no camera needed. Best for product reviews and testimonials.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">AI Avatar</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Voice Clone</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">300+ Lang</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);">From <strong style="color:#fff;">$0.50</strong>/min</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="openToolModal('heygen')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Get Access →</button>
+            <a href="https://heygen.com" target="_blank" style="padding:8px 16px;border:1px solid rgba(232,255,89,0.3);color:#e8ff59;border-radius:99px;font-size:13px;text-decoration:none;font-weight:600;">Open Tool →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Runway -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#dc2626,#ea580c);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎬</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">Runway Gen-3</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Text & Image to Video</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(76,210,130,0.12);border:1px solid rgba(76,210,130,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#4cd282;">Live</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Hollywood-quality video generation from text or images. Gen-3 Alpha sets the industry standard for cinematic AI content.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Text→Video</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Image→Video</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">4K output</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);">From <strong style="color:#fff;">$0.05</strong>/sec</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="openToolModal('runway')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Get Access →</button>
+            <a href="https://runwayml.com" target="_blank" style="padding:8px 16px;border:1px solid rgba(232,255,89,0.3);color:#e8ff59;border-radius:99px;font-size:13px;text-decoration:none;font-weight:600;">Open Tool →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kling -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🌊</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">Kling AI</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Viral Short-Form Video</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(76,210,130,0.12);border:1px solid rgba(76,210,130,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#4cd282;">Live</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Optimised for TikTok and Reels format. Generates native 9:16 content that outperforms traditional UGC in virality tests.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">9:16 native</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">TikTok-optimized</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Fast render</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);">From <strong style="color:#fff;">$0.028</strong>/credit</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="openToolModal('kling')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Get Access →</button>
+            <a href="https://klingai.com" target="_blank" style="padding:8px 16px;border:1px solid rgba(232,255,89,0.3);color:#e8ff59;border-radius:99px;font-size:13px;text-decoration:none;font-weight:600;">Open Tool →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- OpenRouter Image Gen -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#059669,#10b981);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🖼️</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">AI Image Studio</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Gemini · GPT-5 · Flux</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(76,210,130,0.12);border:1px solid rgba(76,210,130,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#4cd282;">Live</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Product mockups, ad creatives, and thumbnails in seconds. Access Gemini 2.5, GPT-5 Image, and Flux from one interface.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Gemini 2.5</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">GPT-5 Image</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Flux Pro</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);">From <strong style="color:#fff;">$0.025</strong>/image</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="openToolModal('image')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Get Access →</button>
+            <a href="https://openrouter.ai" target="_blank" style="padding:8px 16px;border:1px solid rgba(232,255,89,0.3);color:#e8ff59;border-radius:99px;font-size:13px;text-decoration:none;font-weight:600;">Open Tool →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pika Labs -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">✨</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">Pika Labs</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Creative Effects & Morphing</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(255,180,60,0.12);border:1px solid rgba(255,180,60,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#ffb83c;">Beta</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Viral morphing effects, product animations, and creative transitions. Perfect for eye-catching intros that stop the scroll.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Morphing</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Product Anim</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Transitions</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);">From <strong style="color:#fff;">$8</strong>/mo</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="openToolModal('pika')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Get Access →</button>
+            <a href="https://pika.art" target="_blank" style="padding:8px 16px;border:1px solid rgba(232,255,89,0.3);color:#e8ff59;border-radius:99px;font-size:13px;text-decoration:none;font-weight:600;">Open Tool →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Script Writer -->
+      <div class="ai-tool-card" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:32px;transition:border-color 0.2s,transform 0.2s;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#ca8a04,#a16207);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">✍️</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">AI Script Writer</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Brief → Viral Script</div>
+          </div>
+          <div style="margin-left:auto;padding:4px 10px;background:rgba(76,210,130,0.12);border:1px solid rgba(76,210,130,0.25);border-radius:99px;font-size:11px;font-weight:600;color:#4cd282;">Live</div>
+        </div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">
+          Paste the brand brief — get a ready-to-record TikTok/Reels script in 10 seconds. Optimized for hooks, retention, and CTA.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Hook Generator</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">TikTok format</span>
+          <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:12px;color:rgba(255,255,255,0.5);">Multi-platform</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);"><strong style="color:var(--accent);">Free</strong> for creators</div>
+          <button onclick="openToolModal('script')" style="padding:8px 18px;background:var(--accent);color:#000;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">Try Now →</button>
+        </div>
+      </div>
+
+    </div><!-- /tools grid -->
+
+    <!-- Bottom CTA -->
+    <div style="text-align:center;padding:48px 24px;background:#0d0d0d;border:1px solid rgba(255,255,255,0.07);border-radius:24px;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Platform advantage</div>
+      <h3 style="font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:12px;">All tools. One platform. Zero markup.</h3>
+      <p style="font-size:15px;color:rgba(255,255,255,0.5);max-width:460px;margin:0 auto 28px;">ugcgo creators pay wholesale API rates. No extra subscriptions, no hidden fees. Just tools that make you money.</p>
+      <a href="ugcgo-auth.html" style="display:inline-block;padding:14px 32px;background:var(--accent);color:#000;font-weight:700;font-size:15px;border-radius:99px;text-decoration:none;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 24px rgba(232,255,89,0.35)'" onmouseout="this.style.boxShadow='none'">Apply as Creator →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Tool Access Modal -->
+<div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px;max-width:440px;width:100%;position:relative;">
+    <button onclick="closeToolModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;">×</button>
+    <div id="toolModalContent"></div>
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
+      <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;">Access included with your ugcgo Creator account</p>
+      <a href="#waitlist" onclick="closeToolModal()" style="display:inline-block;padding:12px 28px;background:var(--accent);color:#000;font-weight:700;font-size:14px;border-radius:99px;text-decoration:none;">Join Waitlist to Unlock</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const toolData = {
+  heygen: { icon:'🎭', name:'HeyGen', desc:'Create unlimited AI avatar videos for your ugcgo briefs. Supports 300+ languages and custom voice cloning. Perfect for product reviews, testimonials, and explainer content.', features:['300+ AI avatars','Voice cloning','Auto lip-sync','Bulk video generation'] },
+  runway: { icon:'🎬', name:'Runway Gen-3 Alpha', desc:'Generate cinematic-quality video from text prompts or images. The gold standard for high-production UGC that brands actually want to license.', features:['Text-to-video','Image-to-video','4K resolution','Camera controls'] },
+  kling: { icon:'🌊', name:'Kling AI', desc:'Purpose-built for short-form viral content. Native 9:16 ratio output that outperforms traditional UGC in TikTok virality benchmarks.', features:['9:16 native output','TikTok optimized','5-second to 2-min','Fast render (<3min)'] },
+  image: { icon:'🖼️', name:'AI Image Studio', desc:'Generate product mockups, ad creatives, and thumbnails using the best image generation models in one place. Gemini 2.5, GPT-5 Image, and Flux Pro.', features:['Gemini 2.5 Flash','GPT-5 Image','Flux Pro','Batch generation'] },
+  pika: { icon:'✨', name:'Pika Labs', desc:'Add stunning visual effects, morphing transitions, and product animations that make scroll-stopping content. Currently in beta for ugcgo creators.', features:['Product morphing','Scene transitions','Effect library','1-click styles'] },
+  script: { icon:'✍️', name:'AI Script Writer', desc:'Turn any brand brief into a ready-to-record viral script in seconds. Includes hook templates, retention tactics, and platform-specific formatting.', features:['Hook generator','Retention tactics','TikTok / Reels / YT Shorts','Brief-to-script in 10s'] }
+};
+function openToolModal(id) {
+  const t = toolData[id]; if (!t) return;
+  document.getElementById('toolModalContent').innerHTML = `
+    <div style="font-size:32px;margin-bottom:16px;">${t.icon}</div>
+    <h3 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:12px;">${t.name}</h3>
+    <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.65;margin-bottom:20px;">${t.desc}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${t.features.map(f=>`<span style="padding:5px 12px;background:rgba(232,255,89,0.08);border:1px solid rgba(232,255,89,0.2);border-radius:99px;font-size:12px;color:var(--accent);">${f}</span>`).join('')}
+    </div>`;
+  const m = document.getElementById('toolModal');
+  m.style.display = 'flex';
+  requestAnimationFrame(()=>m.style.opacity='1');
+}
+function closeToolModal() {
+  const m = document.getElementById('toolModal');
+  m.style.opacity='0';
+  setTimeout(()=>m.style.display='none',200);
+}
+</script>
+
+<!-- VIDEO STRIP — Kling AI content reel -->
+<section style="padding:60px 0;background:#000;overflow:hidden;">
+  <div style="text-align:center;margin-bottom:32px;">
+    <span style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;">⚡ AI-Generated UGC</span>
+    <h2 style="font-size:36px;font-weight:900;letter-spacing:-1.5px;margin-top:8px;">Real content. Real results.</h2>
+  </div>
+  <div style="display:flex;gap:20px;overflow-x:auto;padding:0 40px 20px;scrollbar-width:none;-ms-overflow-style:none;" id="videoStrip">
+    <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
+      <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-19.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+        <div style="font-size:12px;font-weight:700;color:#e8ff59;">2.4M views</div>
+      </div>
+    </div>
+    <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
+      <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-22.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+        <div style="font-size:12px;font-weight:700;color:#e8ff59;">1.8M views</div>
+      </div>
+    </div>
+    <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
+      <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-28.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+        <div style="font-size:12px;font-weight:700;color:#e8ff59;">3.1M views</div>
+      </div>
+    </div>
+    <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
+      <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-1.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+        <div style="font-size:12px;font-weight:700;color:#e8ff59;">920K views</div>
+      </div>
+    </div>
+    <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
+      <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-3.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
+        <div style="font-size:12px;font-weight:700;color:#e8ff59;">1.2M views</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATOR SHOWCASE SECTION -->
+<section id="creators-showcase" class="section" style="background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);">
+  <div class="container">
+    <div class="section-header">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(232,255,89,0.08);border:1px solid rgba(232,255,89,0.2);border-radius:99px;font-size:13px;color:var(--accent);font-weight:600;letter-spacing:0.04em;margin-bottom:24px;">
+        ⭐ Top Performers
+      </div>
+      <h2>Creator Showcase</h2>
+      <p>Meet the AI-powered creators driving results for top brands</p>
+    </div>
+
+    <!-- Featured Creators Grid — 9:16 Video Cards -->
+    <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:48px;">
+      
+      <!-- Creator 1 -->
+      <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:9/16;max-height:500px;background:#111;cursor:pointer;transition:transform 0.3s ease;" onmouseenter="this.querySelector('video').play()" onmouseleave="this.querySelector('video').pause();this.querySelector('video').currentTime=0">
+        <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-19.mp4" loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%);"></div>
+        <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">Top Creator</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <img src="img/creators/creator-19.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Maya Chen</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);">Beauty & AI</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.7);">👁 2.4M views</span>
+            <span style="font-size:12px;color:#e8ff59;font-weight:600;">$8,200 earned</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Creator 2 -->
+      <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:9/16;max-height:500px;background:#111;cursor:pointer;transition:transform 0.3s ease;" onmouseenter="this.querySelector('video').play()" onmouseleave="this.querySelector('video').pause();this.querySelector('video').currentTime=0">
+        <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-1.mp4" loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%);"></div>
+        <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">Rising Star</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <img src="img/creators/creator-1.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Alex Rivera</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);">Tech & Gaming</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.7);">👁 1.8M views</span>
+            <span style="font-size:12px;color:#e8ff59;font-weight:600;">$6,400 earned</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Creator 3 -->
+      <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:9/16;max-height:500px;background:#111;cursor:pointer;transition:transform 0.3s ease;" onmouseenter="this.querySelector('video').play()" onmouseleave="this.querySelector('video').pause();this.querySelector('video').currentTime=0">
+        <video src="https://trend-give-concept-utilize.trycloudflare.com/video/creator-3.mp4" loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;"></video>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%);"></div>
+        <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">#1 Brand Deals</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <img src="img/creators/creator-3.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Sofia Reyes</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);">Lifestyle & Fashion</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.7);">👁 3.1M views</span>
+            <span style="font-size:12px;color:#e8ff59;font-weight:600;">$12,500 earned</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- More Creators Mini Grid -->
+    <div style="display:grid;grid-template-columns:repeat(6, 1fr);gap:16px;">
+            <div style="text-align:center;">
+              <div style="font-size:18px;font-weight:800;color:var(--accent);">9.1%</div>
+              <div style="font-size:11px;color:var(--text-muted);">Engagement</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:18px;font-weight:800;color:var(--accent);">$18K</div>
+              <div style="font-size:11px;color:var(--text-muted);">Monthly</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:11px;color:var(--text-secondary);">Razer</span>
+            <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:11px;color:var(--text-secondary);">Logitech</span>
+            <span style="padding:4px 10px;background:rgba(255,255,255,0.05);border-radius:99px;font-size:11px;color:var(--text-secondary);">+12</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More Creators Mini Grid -->
+    <div style="display:grid;grid-template-columns:repeat(6, 1fr);gap:16px;">
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-5.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">Sarah K.</div>
+        <div style="font-size:12px;color:var(--accent);">$7.2K/mo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-6.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">David M.</div>
+        <div style="font-size:12px;color:var(--accent);">$5.8K/mo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-9.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">Emma W.</div>
+        <div style="font-size:12px;color:var(--accent);">$6.5K/mo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-11.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">Chris T.</div>
+        <div style="font-size:12px;color:var(--accent);">$8.1K/mo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-13.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">Lisa P.</div>
+        <div style="font-size:12px;color:var(--accent);">$4.9K/mo</div>
+      </div>
+      <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
+        <img src="img/creators/creator-17.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;">Ryan J.</div>
+        <div style="font-size:12px;color:var(--accent);">$10.2K/mo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.creator-card:hover { transform: translateY(-4px); border-color: rgba(232,255,89,0.2) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.creator-card:hover .creator-img { transform: scale(1.05); }
+</style>
+
+<!-- CASE STUDIES SECTION -->
+<section id="case-studies" class="section" style="background: var(--card);">
+  <div class="container">
+    <div class="section-header">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(232,255,89,0.08);border:1px solid rgba(232,255,89,0.2);border-radius:99px;font-size:13px;color:var(--accent);font-weight:600;letter-spacing:0.04em;margin-bottom:24px;">
+        📊 Real Results
+      </div>
+      <h2>Case Studies</h2>
+      <p>How brands are scaling with AI-powered UGC</p>
+    </div>
+
+    <!-- Case Study 1 - Featured -->
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:32px;margin-bottom:40px;background:#000;border:1px solid var(--border);border-radius:24px;overflow:hidden;">
+      <div style="padding:48px;display:flex;flex-direction:column;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <div style="width:56px;height:56px;background:linear-gradient(135deg, #667eea, #764ba2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;">✨</div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">Beauty Brand</div>
+            <div style="font-size:20px;font-weight:700;">GlowSkincare Co.</div>
+          </div>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;">
+          GlowSkincare needed 50+ UGC videos monthly for their TikTok and Meta campaigns. Traditional agencies quoted $75K/month. With ugcgo, they scaled to 200+ videos while reducing costs by 78%.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;">
+          <div>
+            <div style="font-size:32px;font-weight:800;color:var(--accent);letter-spacing:-1px;">340%</div>
+            <div style="font-size:13px;color:var(--text-muted);">ROAS Increase</div>
+          </div>
+          <div>
+            <div style="font-size:32px;font-weight:800;color:var(--accent);letter-spacing:-1px;">$16.5K</div>
+            <div style="font-size:13px;color:var(--text-muted);">Monthly Savings</div>
+          </div>
+          <div>
+            <div style="font-size:32px;font-weight:800;color:var(--accent);letter-spacing:-1px;">2.1M</div>
+            <div style="font-size:13px;color:var(--text-muted);">Organic Views</div>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;min-height:400px;">
+        <img src="img/creators/creator-2.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg, #000 0%, transparent 50%);"></div>
+        <div style="position:absolute;bottom:24px;right:24px;padding:16px 24px;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);border-radius:16px;border:1px solid rgba(255,255,255,0.1);">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Campaign Result</div>
+          <div style="font-size:20px;font-weight:800;color:var(--accent);">$847K Revenue</div>
+          <div style="font-size:13px;color:#4cd282;">↑ 156% vs previous quarter</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case Studies Grid -->
+    <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:24px;">
+      
+      <!-- Case Study 2 -->
+      <div style="background:#000;border:1px solid var(--border);border-radius:20px;padding:32px;transition:all 0.3s ease;" class="case-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg, #f093fb, #f5576c);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">👟</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">StreetKicks</div>
+            <div style="font-size:12px;color:var(--text-muted);">DTC Sneaker Brand</div>
+          </div>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;">
+          Launched 15 AI creator partnerships for their limited edition drop. Generated 12M+ organic impressions and sold out in 48 hours.
+        </p>
+        <div style="display:flex;gap:32px;padding-top:20px;border-top:1px solid var(--border);">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">$2.4M</div>
+            <div style="font-size:12px;color:var(--text-muted);">Launch Revenue</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">48h</div>
+            <div style="font-size:12px;color:var(--text-muted);">Sellout Time</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">12M+</div>
+            <div style="font-size:12px;color:var(--text-muted);">Impressions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study 3 -->
+      <div style="background:#000;border:1px solid var(--border);border-radius:20px;padding:32px;transition:all 0.3s ease;" class="case-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg, #4facfe, #00f2fe);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">🎮</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">GameForge Studio</div>
+            <div style="font-size:12px;color:var(--text-muted);">Indie Game Developer</div>
+          </div>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;">
+          Pre-launch UGC campaign with 8 gaming creators. Built 500K wishlist before Steam launch. 89% lower CAC than traditional ads.
+        </p>
+        <div style="display:flex;gap:32px;padding-top:20px;border-top:1px solid var(--border);">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">500K</div>
+            <div style="font-size:12px;color:var(--text-muted);">Wishlist Adds</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">$89K</div>
+            <div style="font-size:12px;color:var(--text-muted);">Launch Revenue</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">-89%</div>
+            <div style="font-size:12px;color:var(--text-muted);">CAC Reduction</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study 4 -->
+      <div style="background:#000;border:1px solid var(--border);border-radius:20px;padding:32px;transition:all 0.3s ease;" class="case-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg, #dc2626, #ea580c);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">☕</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">Artisan Coffee Co.</div>
+            <div style="font-size:12px;color:var(--text-muted);">Subscription Box</div>
+          </div>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;">
+          Monthly UGC subscription content. 40 videos per month maintaining consistent brand voice across all creator partnerships.
+        </p>
+        <div style="display:flex;gap:32px;padding-top:20px;border-top:1px solid var(--border);">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">3.2x</div>
+            <div style="font-size:12px;color:var(--text-muted);">Retention Rate</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">+3400</div>
+            <div style="font-size:12px;color:var(--text-muted);">New Subscribers</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">8.7%</div>
+            <div style="font-size:12px;color:var(--text-muted);">Conversion</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study 5 -->
+      <div style="background:#000;border:1px solid var(--border);border-radius:20px;padding:32px;transition:all 0.3s ease;" class="case-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg, #059669, #10b981);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">💪</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;">FitPro Supplements</div>
+            <div style="font-size:12px;color:var(--text-muted);">Sports Nutrition</div>
+          </div>
+        </div>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;">
+          A/B testing 25 AI-generated UGC variants against traditional content. AI content outperformed with 2.4x higher CTR and 67% lower CPA.
+        </p>
+        <div style="display:flex;gap:32px;padding-top:20px;border-top:1px solid var(--border);">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">2.4x</div>
+            <div style="font-size:12px;color:var(--text-muted);">Higher CTR</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">-67%</div>
+            <div style="font-size:12px;color:var(--text-muted);">Lower CPA</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);">$1.2M</div>
+            <div style="font-size:12px;color:var(--text-muted);">Q4 Revenue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.case-card:hover { transform: translateY(-4px); border-color: rgba(232,255,89,0.15) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+/* ===== ANIMATIONS ===== */
+
+/* Fade in up — для секций при скролле */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Float — для hero элементов */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Pulse glow — для accent элементов */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(232,255,89,0.2); }
+  50% { box-shadow: 0 0 40px rgba(232,255,89,0.5), 0 0 80px rgba(232,255,89,0.2); }
+}
+
+/* Shimmer — для кнопок */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Slide in from left */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Scale in */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Counter number animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Apply animations */
+.hero-title { animation: fadeInUp 0.9s ease-out; }
+.hero-subtitle { animation: fadeInUp 1.1s ease-out; }
+.hero-cta { animation: fadeInUp 1.3s ease-out; }
+
+/* Stats bar numbers */
+.stat-value { animation: countUp 0.6s ease-out both; }
+
+/* Sections — scroll reveal via Intersection Observer (added in JS) */
+.section-header { opacity: 0; transform: translateY(25px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.section-header.visible { opacity: 1; transform: translateY(0); }
+
+.card { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s; }
+.card.visible { opacity: 1; transform: translateY(0); }
+
+/* Stagger delays for cards */
+.card:nth-child(1) { transition-delay: 0.1s; }
+.card:nth-child(2) { transition-delay: 0.2s; }
+.card:nth-child(3) { transition-delay: 0.3s; }
+.card:nth-child(4) { transition-delay: 0.4s; }
+
+/* CTA button shimmer effect */
+.btn-primary {
+  background-size: 200% 100%;
+  background-image: linear-gradient(90deg, #e8ff59 0%, #f5ff99 50%, #e8ff59 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* AI Tool cards hover lift */
+.ai-tool-card:hover {
+  transform: translateY(-6px) scale(1.01) !important;
+  box-shadow: 0 20px 60px rgba(232,255,89,0.15) !important;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Glow on accent elements */
+.badge, .step-number, [style*="color: var(--accent)"] {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Smooth section transitions */
+.section { transition: background 0.3s ease; }
+
+/* Mosaic card reveal */
+.mosaic-card { 
+  animation: scaleIn 0.5s ease-out both;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+</style>
+
+<!-- TESTIMONIALS SECTION -->
+<section id="testimonials" class="section" style="background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);">
+  <div class="container">
+    <div class="section-header">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(232,255,89,0.08);border:1px solid rgba(232,255,89,0.2);border-radius:99px;font-size:13px;color:var(--accent);font-weight:600;letter-spacing:0.04em;margin-bottom:24px;">
+        💬 Success Stories
+      </div>
+      <h2>What Our Community Says</h2>
+      <p>From early access brands and creators</p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-bottom:48px;">
+      
+      <!-- Testimonial 1 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "ugcgo transformed our content strategy. We went from producing 10 videos a month to 100+. The AI creators understand our brand voice better than some traditional agencies we've worked with."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-4.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Jennifer Walsh</div>
+            <div style="font-size:13px;color:var(--text-muted);">CMO, GlowSkincare Co.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "As a creator, I was skeptical about AI tools. But the integrated AI Studio gives me access to Runway and HeyGen at wholesale prices. My earnings tripled in 3 months."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-1.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Jordan Blake</div>
+            <div style="font-size:13px;color:var(--text-muted);">Fashion Creator, 1.8M followers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "The ROI is insane. We spent $15K on traditional UGC and got decent results. Spent $5K on ugcgo and saw 3x the engagement. The performance-based model is game-changing."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-5.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Marcus Chen</div>
+            <div style="font-size:13px;color:var(--text-muted);">Founder, StreetKicks</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 4 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "I went from juggling 5 different subscriptions to just ugcgo. All the AI tools I need, steady stream of brand deals, and payments that hit my account instantly."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-3.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Alex Rivera</div>
+            <div style="font-size:13px;color:var(--text-muted);">Gaming Creator, 3.2M followers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 5 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "Our indie game went from 0 to 500K wishlists thanks to the UGC campaign. The creators understood our aesthetic perfectly. Best marketing investment we've made."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-6.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Sarah Kim</div>
+            <div style="font-size:13px;color:var(--text-muted);">Marketing Lead, GameForge</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 6 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;">
+        <div style="font-size:48px;color:var(--accent);opacity:0.3;position:absolute;top:20px;right:24px;">"</div>
+        <div style="display:flex;gap:4px;margin-bottom:20px;">
+          <span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span><span style="color:var(--accent);">★</span>
+        </div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          "Started as a side hustle, now it's my full-time income. The AI Script Writer alone saves me 10 hours a week. I can focus on being creative instead of admin work."
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="img/creators/creator-9.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Emma Watson</div>
+            <div style="font-size:13px;color:var(--text-muted);">Lifestyle Creator, 890K followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:24px;padding:40px;background:var(--card);border:1px solid var(--border);border-radius:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--accent);margin-bottom:8px;">4.9/5</div>
+        <div style="font-size:14px;color:var(--text-muted);">Average Rating</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">from 200+ reviews</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--accent);margin-bottom:8px;">94%</div>
+        <div style="font-size:14px;color:var(--text-muted);">Retention Rate</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">brands renew monthly</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--accent);margin-bottom:8px;">$4.2M</div>
+        <div style="font-size:14px;color:var(--text-muted);">Creator Earnings</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">paid out in 2025</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--accent);margin-bottom:8px;">12K+</div>
+        <div style="font-size:14px;color:var(--text-muted);">UGC Videos</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">delivered this year</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUSTED BY / LOGOS SECTION -->
+<section class="section" style="background:var(--card);padding:80px 0;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:16px;">Trusted by innovative brands</div>
+      <h3 style="font-size:28px;font-weight:700;letter-spacing:-0.5px;">Powering the next generation of UGC</h3>
+    </div>
+    
+    <!-- Logo Grid -->
+    <div style="display:grid;grid-template-columns:repeat(6, 1fr);gap:32px;align-items:center;opacity:0.6;">
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Nike</div>
+      </div>
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Sephora</div>
+      </div>
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Glossier</div>
+      </div>
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Razer</div>
+      </div>
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Adidas</div>
+      </div>
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-1px;color:var(--text);">Logitech</div>
+      </div>
+    </div>
+
+    <!-- Additional Stats -->
+    <div style="margin-top:64px;display:grid;grid-template-columns:repeat(3, 1fr);gap:32px;">
+      <div style="padding:32px;background:#000;border:1px solid var(--border);border-radius:16px;text-align:center;">
+        <div style="font-size:48px;font-weight:800;color:var(--accent);margin-bottom:12px;">2.4B+</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Total Views Generated</div>
+        <div style="font-size:14px;color:var(--text-muted);">Across all creator content</div>
+      </div>
+      <div style="padding:32px;background:#000;border:1px solid var(--border);border-radius:16px;text-align:center;">
+        <div style="font-size:48px;font-weight:800;color:var(--accent);margin-bottom:12px;">$18M+</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Brand Revenue Driven</div>
+        <div style="font-size:14px;color:var(--text-muted);">Attributable to ugcgo campaigns</div>
+      </div>
+      <div style="padding:32px;background:#000;border:1px solid var(--border);border-radius:16px;text-align:center;">
+        <div style="font-size:48px;font-weight:800;color:var(--accent);margin-bottom:12px;">156%</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Average ROAS</div>
+        <div style="font-size:14px;color:var(--text-muted);">Return on ad spend</div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+document.getElementById('toolModal').addEventListener('click', function(e){ if(e.target===this) closeToolModal(); });
+document.querySelectorAll('.ai-tool-card').forEach(function(card){
+  card.addEventListener('mouseenter',function(){ card.style.borderColor='rgba(232,255,89,0.2)'; card.style.transform='translateY(-2px)'; });
+  card.addEventListener('mouseleave',function(){ card.style.borderColor='rgba(255,255,255,0.07)'; card.style.transform=''; });
+});
+</script>
+
+<!-- Waitlist Form -->
+<section id="waitlist" class="waitlist-section">
+  <div class="container">
+    <div class="waitlist-form" id="waitlistFormContainer">
+      <h3>Join the Waitlist</h3>
+      <p>Be the first to access the AI-First UGC Marketplace</p>
+      <form id="waitlistForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="emailInput" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">I am joining as</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="userType" value="brand" required>
+              <span class="radio-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Brand
+              </span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="userType" value="creator">
+              <span class="radio-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Creator
+              </span>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-accent form-submit">Join Waitlist</button>
+      </form>
+    </div>
+    <div class="waitlist-form success-message" id="successMessage">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h4>You are on the list</h4>
+      <p>We will reach out soon with early access details.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div class="copyright">ugcgo.ai 2026</div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll Reveal via Intersection Observer
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.section-header, .card, .ai-tool-card').forEach(el => {
+  revealObserver.observe(el);
+});
+
+// Counter animation for stats
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const text = el.textContent;
+      const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+      if (!isNaN(num) && num > 0) {
+        const suffix = text.replace(/[0-9.]/g, '');
+        let start = 0;
+        const duration = 1500;
+        const step = (num / duration) * 16;
+        const timer = setInterval(() => {
+          start = Math.min(start + step, num);
+          el.textContent = (num >= 10 ? Math.round(start) : start.toFixed(1)) + suffix;
+          if (start >= num) clearInterval(timer);
+        }, 16);
+        statsObserver.unobserve(el);
+      }
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-value').forEach(el => statsObserver.observe(el));
+
+
+// Earnings Calculator
+const viewsRange = document.getElementById('viewsRange');
+const viewsValue = document.getElementById('viewsValue');
+const earningsDisplay = document.getElementById('earningsDisplay');
+const bonusMessage = document.getElementById('bonusMessage');
+
+function formatNumber(num) {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(0) + 'K';
+  }
+  return num.toString();
+}
+
+function formatCurrency(num) {
+  return '$' + num.toLocaleString();
+}
+
+function calculateEarnings(views) {
+  const baseRate = 0.002;
+  let earnings = views * baseRate;
+  
+  if (views >= 1000000) {
+    const bonusMultiplier = 1 + ((views - 1000000) / 4000000) * 0.5;
+    earnings *= bonusMultiplier;
+  }
+  
+  return Math.round(earnings);
+}
+
+function updateCalculator() {
+  const views = parseInt(viewsRange.value);
+  viewsValue.textContent = formatNumber(views);
+  const earnings = calculateEarnings(views);
+  earningsDisplay.textContent = formatCurrency(earnings);
+  
+  if (views >= 1000000) {
+    bonusMessage.classList.add('visible');
+  } else {
+    bonusMessage.classList.remove('visible');
+  }
+}
+
+viewsRange.addEventListener('input', updateCalculator);
+updateCalculator();
+
+// Waitlist Form
+const waitlistForm = document.getElementById('waitlistForm');
+const waitlistFormContainer = document.getElementById('waitlistFormContainer');
+const successMessage = document.getElementById('successMessage');
+const emailInput = document.getElementById('emailInput');
+
+waitlistForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const email = emailInput.value;
+  const userType = document.querySelector('input[name="userType"]:checked')?.value;
+  
+  if (!email || !userType) return;
+  
+  const entry = {
+    email: email,
+    type: userType,
+    timestamp: new Date().toISOString(),
+    source: 'ugcgo.ai landing page'
+  };
+  
+  let waitlist = JSON.parse(localStorage.getItem('ugcgoWaitlist') || '[]');
+  waitlist.push(entry);
+  localStorage.setItem('ugcgoWaitlist', JSON.stringify(waitlist));
+  
+  waitlistFormContainer.style.display = 'none';
+  successMessage.classList.add('visible');
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelector('.nav-links').classList.remove('active');
+    }
+  });
+});
+
+// Nav scroll effect
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset;
+  
+  if (currentScroll > 50) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+  
+  lastScroll = currentScroll;
+});
+
+// Intersection Observer for animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, observerOptions);
+
+// Observe cards and steps
+document.querySelectorAll('.card, .step, .stat-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') !== 'light';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('ugcgo-theme', isDark ? 'light' : 'dark');
+}
+// Restore saved theme
+(function() {
+  const saved = localStorage.getItem('ugcgo-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.textContent = saved === 'light' ? '🌙' : '☀️';
+  }
+})();
+</script>
+</body>
+</html>
