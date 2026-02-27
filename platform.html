@@ -962,7 +962,7 @@ async function renderBrandOverview(el) {
         <button class="btn btn-outline" style="font-size:13px;padding:8px 16px" onclick="setBrandTab('campaigns')">View All →</button>
       </div>
       <div class="cards-grid">
-        ${(camps||[]).slice(0,3).map(c => campCard(c)).join('') || '<div class="empty" style="border:1.5px dashed var(--border);border-radius:16px;padding:48px;text-align:center"><div style="font-size:40px;margin-bottom:12px">🎯</div><h3 style="font-weight:900;margin-bottom:8px">No campaigns yet</h3><p style="color:var(--mid);font-size:14px;margin-bottom:20px">Create your first UGC campaign to get started</p><button class="btn btn-dark" onclick="openModal('modalNewCampaign')">+ New Campaign</button></div>'}
+        ${(camps||[]).slice(0,3).map(c => campCard(c)).join('') || '<div class="empty" style="border:1.5px dashed var(--border);border-radius:16px;padding:48px;text-align:center"><div style="font-size:40px;margin-bottom:12px">🎯</div><h3 style="font-weight:900;margin-bottom:8px">No campaigns yet</h3><p style="color:var(--mid);font-size:14px;margin-bottom:20px">Create your first UGC campaign to get started</p><button class="btn btn-dark" onclick="openModal(&apos;modalNewCampaign&apos;)">+ New Campaign</button></div>'}
       </div>
     </div>`;
 }
@@ -1548,7 +1548,31 @@ async function submitApplication() {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
+// Expose critical functions to window for inline onclick handlers
+window.showPage = showPage;
+window.requireAuth = requireAuth;
+window.filterMkt = filterMkt;
+window.switchMktTab = switchMktTab;
+window.setRole = setRole;
+window.setBrandTab = setBrandTab;
+window.setCreatorTab = setCreatorTab;
+window.toggleStatus = toggleStatus;
+window.openApplyModal = openApplyModal;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.loadMarketplace = loadMarketplace;
+
 init();
+
+// Fallback: ensure marketplace loads even if init() has timing issues
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var grid = document.getElementById('mktCampaignsGrid');
+    if (grid && grid.querySelector('.mkt-empty') && grid.querySelector('.mkt-empty').textContent.includes('Loading')) {
+      loadMarketplace();
+    }
+  }, 1500);
+});
 </script>
 </body>
 </html>
