@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ugcgo.ai — Where AI Meets Creator Culture</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#010208;color:#e0e6ff;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:root{--lime:#adff2f;--blue:#3d6fff;--glow:rgba(61,111,255,.2);--dark:#010208;--card:#070b1a;--border:rgba(255,255,255,.08)}
+
+/* AURORA BG */
+body::before{content:"";position:fixed;inset:0;background:
+  radial-gradient(ellipse 800px 400px at 20% 20%,rgba(61,111,255,.12) 0%,transparent 60%),
+  radial-gradient(ellipse 600px 400px at 80% 60%,rgba(173,255,47,.06) 0%,transparent 60%),
+  radial-gradient(ellipse 500px 300px at 50% 90%,rgba(61,111,255,.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0;animation:aurora 15s ease infinite alternate}
+@keyframes aurora{0%{opacity:.7;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:0 5%;height:64px;display:flex;justify-content:space-between;align-items:center;background:rgba(1,2,8,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-weight:900;font-size:18px;letter-spacing:-.5px;color:#fff}
+.logo span{color:var(--lime)}
+.nav-c{display:flex;gap:4px}
+.nav-c a{font-size:13px;color:rgba(255,255,255,.5);padding:7px 14px;border-radius:6px;transition:.15s}
+.nav-c a:hover{color:#fff;background:var(--border)}
+.btn-launch{background:linear-gradient(135deg,var(--blue),var(--lime));color:#000;font-weight:800;font-size:13px;padding:9px 22px;border:none;cursor:pointer;border-radius:8px;transition:.15s}
+.btn-launch:hover{transform:scale(1.04);box-shadow:0 0 24px rgba(173,255,47,.3)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 5% 60px;position:relative;z-index:1}
+
+/* ANIMATED ORBIT SVG */
+.orbit-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.25}
+.orbit-bg svg{width:min(800px,90vw);height:min(800px,90vw)}
+
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(61,111,255,.15);border:1px solid rgba(61,111,255,.3);color:#8ab4ff;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:32px}
+.hero-pill-dot{width:6px;height:6px;background:var(--lime);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1{font-size:clamp(48px,8vw,110px);font-weight:900;letter-spacing:-4px;line-height:.9;margin-bottom:24px}
+h1 .w{color:#fff}
+h1 .g{background:linear-gradient(135deg,var(--blue),var(--lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block}
+.hero-sub{font-size:17px;color:rgba(255,255,255,.5);max-width:540px;margin:0 auto 40px;line-height:1.7}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-grd{background:linear-gradient(135deg,var(--blue),var(--lime));color:#000;font-weight:800;font-size:16px;padding:14px 40px;border:none;cursor:pointer;border-radius:10px;transition:.15s}
+.btn-grd:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(61,111,255,.4)}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--border);color:#fff;font-size:16px;padding:14px 32px;cursor:pointer;border-radius:10px;transition:.2s;backdrop-filter:blur(10px)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.hero-metrics{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
+.hm{text-align:center}
+.hm-val{font-size:32px;font-weight:900;color:var(--lime);letter-spacing:-1px}
+.hm-label{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.hm-div{width:1px;background:var(--border)}
+
+/* CARD GRID */
+section{padding:80px 5%;position:relative;z-index:1}
+.s-tag{font-size:11px;letter-spacing:2px;color:var(--lime);text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.s-h{font-size:clamp(32px,5vw,60px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:48px}
+.s-h .g{background:linear-gradient(135deg,var(--blue),var(--lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* BENTO-LIKE FEATURE GRID */
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;transition:.2s;position:relative;overflow:hidden}
+.fi::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:.3s}
+.fi:hover::before{opacity:1}
+.fi:hover{border-color:rgba(61,111,255,.3);transform:translateY(-3px);background:#0a1020}
+.fi.wide{grid-column:span 2}
+.fi-ico{font-size:28px;margin-bottom:16px}
+.fi-t{font-size:15px;font-weight:700;margin-bottom:8px;color:#fff}
+.fi-d{font-size:13px;color:rgba(255,255,255,.4);line-height:1.6}
+.fi-badge{display:inline-block;font-size:10px;color:var(--lime);border:1px solid rgba(173,255,47,.3);padding:2px 8px;border-radius:4px;margin-top:10px;letter-spacing:.5px}
+
+/* VIDEO WALL */
+.vid-wall{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.vw{position:relative;aspect-ratio:9/16;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--card)}
+.vw video{width:100%;height:100%;object-fit:cover;display:block}
+.vw img{width:100%;height:100%;object-fit:cover;display:block}
+.vw-info{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(transparent,rgba(1,2,8,.9))}
+.vw-n{font-size:13px;font-weight:700;color:#fff}
+.vw-v{font-size:11px;color:var(--lime);margin-top:2px;font-weight:700}
+
+/* CREATORS */
+.creator-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cr{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s;cursor:pointer}
+.cr:hover{border-color:rgba(173,255,47,.3);transform:translateY(-4px);box-shadow:0 8px 32px rgba(173,255,47,.08)}
+.cr img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.cr-info{padding:14px}
+.cr-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+.cr-niche{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.cr-views{font-size:13px;font-weight:700;color:var(--lime)}
+
+/* SVG STATS CIRCLE */
+.svg-stats-section{background:rgba(61,111,255,.04);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.svg-stats-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1000px;margin:0 auto}
+.svg-rings{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+.svg-ring-item{text-align:center}
+.svg-ring-item svg{width:100px;height:100px}
+.ring-val{font-size:14px;font-weight:900;color:#fff;margin-top:8px}
+.ring-label{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.svg-text h3{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:12px;color:#fff;line-height:1}
+.svg-text p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.7}
+
+/* PRICING */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:900px;margin:48px auto 0}
+.pg{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px;position:relative;transition:.2s}
+.pg:hover{transform:translateY(-4px)}
+.pg.pro{border-color:rgba(173,255,47,.3);background:linear-gradient(135deg,rgba(173,255,47,.06),var(--card))}
+.pg-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--lime));color:#000;font-size:10px;font-weight:800;padding:3px 12px;border-radius:100px;white-space:nowrap}
+.pg-tier{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.pg-price{font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:4px;color:#fff}
+.pg-price sub{font-size:16px;font-weight:400;color:rgba(255,255,255,.4)}
+.pg-period{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:24px}
+.pg-list{list-style:none;margin-bottom:28px}
+.pg-list li{font-size:13px;color:rgba(255,255,255,.5);padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:8px}
+.pg-list li::before{content:"✓";color:var(--lime);font-weight:700}
+.pg-btn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:.2s}
+.pg-btn.o{background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--border)}
+.pg-btn.o:hover{background:rgba(255,255,255,.12)}
+.pg-btn.g{background:linear-gradient(135deg,var(--blue),var(--lime));color:#000}
+.pg-btn.g:hover{box-shadow:0 4px 20px rgba(173,255,47,.3)}
+
+/* CTA */
+.cta-space{text-align:center;background:linear-gradient(180deg,transparent,rgba(61,111,255,.08))}
+.cta-space h2{font-size:clamp(44px,7vw,88px);font-weight:900;letter-spacing:-3px;margin-bottom:20px;line-height:.9;color:#fff}
+.cta-space p{font-size:16px;color:rgba(255,255,255,.4);margin-bottom:40px}
+
+footer{border-top:1px solid var(--border);padding:40px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;position:relative;z-index:1}
+.fl a{font-size:12px;color:rgba(255,255,255,.3);margin-right:20px;transition:.2s}
+.fl a:hover{color:var(--lime)}
+.fc{font-size:12px;color:rgba(255,255,255,.2)}
+
+@media(max-width:900px){
+  .nav-c{display:none}
+  .fg{grid-template-columns:1fr}
+  .fi.wide{grid-column:span 1}
+  .vid-wall{grid-template-columns:repeat(2,1fr)}
+  .creator-row{grid-template-columns:repeat(2,1fr)}
+  .svg-stats-inner{grid-template-columns:1fr}
+  .plan-grid{grid-template-columns:1fr;max-width:420px}
+  footer{flex-direction:column;text-align:center}
+  .hero-metrics{gap:24px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">ugcgo<span>.ai</span></div>
+  <div class="nav-c"><a href="#">For Brands</a><a href="#">Creators</a><a href="#">AI Studio</a><a href="#">Pricing</a></div>
+  <button class="btn-launch" onclick="location.href='ugcgo-auth.html'">Launch Free →</button>
+</nav>
+
+<section class="hero">
+  <div class="orbit-bg">
+    <svg viewBox="0 0 800 800">
+      <circle cx="400" cy="400" r="300" fill="none" stroke="rgba(61,111,255,.15)" stroke-width="1" stroke-dasharray="8 16">
+        <animateTransform attributeName="transform" type="rotate" from="0 400 400" to="360 400 400" dur="40s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="400" cy="400" r="200" fill="none" stroke="rgba(173,255,47,.1)" stroke-width="1">
+        <animateTransform attributeName="transform" type="rotate" from="360 400 400" to="0 400 400" dur="25s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="400" cy="400" r="120" fill="none" stroke="rgba(61,111,255,.2)" stroke-width="1" stroke-dasharray="4 8">
+        <animateTransform attributeName="transform" type="rotate" from="0 400 400" to="360 400 400" dur="15s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="400" cy="100" r="6" fill="rgba(173,255,47,.6)"><animateTransform attributeName="transform" type="rotate" from="0 400 400" to="360 400 400" dur="40s" repeatCount="indefinite"/></circle>
+      <circle cx="700" cy="400" r="4" fill="rgba(61,111,255,.8)"><animateTransform attributeName="transform" type="rotate" from="120 400 400" to="480 400 400" dur="25s" repeatCount="indefinite"/></circle>
+    </svg>
+  </div>
+  <div class="hero-pill"><span class="hero-pill-dot"></span>AI-First UGC Marketplace · Live Now</div>
+  <h1>
+    <span class="w">AI creates.</span><br>
+    <span class="g">Brands win.</span>
+  </h1>
+  <p class="hero-sub">From brief to 30 viral TikTok videos in 24 hours. Performance pricing — you only pay for content that works.</p>
+  <div class="hero-btns">
+    <button class="btn-grd" onclick="location.href='ugcgo-auth.html'">Start Free — No card needed</button>
+    <button class="btn-ghost">Watch 2-min Demo</button>
+  </div>
+  <div class="hero-metrics">
+    <div class="hm"><div class="hm-val" data-count="50" data-suffix="K+">0</div><div class="hm-label">Videos Made</div></div>
+    <div class="hm-div"></div>
+    <div class="hm"><div class="hm-val" data-count="2.4" data-suffix="B">0</div><div class="hm-label">Total Views</div></div>
+    <div class="hm-div"></div>
+    <div class="hm"><div class="hm-val" data-count="158" data-suffix="%">0</div><div class="hm-label">Avg ROI</div></div>
+    <div class="hm-div"></div>
+    <div class="hm"><div class="hm-val" data-count="12" data-suffix="K">0</div><div class="hm-label">Brands</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="s-tag">AI Studio</div>
+  <h2 class="s-h">6 tools. <span class="g">Zero overhead.</span></h2>
+  <div class="fg">
+    <div class="fi wide"><div class="fi-ico">🎬</div><div class="fi-t">AI Video Generation</div><div class="fi-d">Kling, Runway, and Pika — turn creative briefs into polished vertical video content in minutes, not weeks.</div><span class="fi-badge">KLING · RUNWAY · PIKA</span></div>
+    <div class="fi wide"><div class="fi-ico">🤖</div><div class="fi-t">AI Image & Creative Studio</div><div class="fi-d">Gemini & Flux Studio generate product photos, lifestyle content, and ad creatives at scale.</div><span class="fi-badge">GEMINI + FLUX</span></div>
+    <div class="fi"><div class="fi-ico">✍️</div><div class="fi-t">Script AI</div><div class="fi-d">TikTok-optimized viral scripts and captions.</div></div>
+    <div class="fi"><div class="fi-ico">👤</div><div class="fi-t">AI Avatar</div><div class="fi-d">HeyGen talking-head videos for any product.</div></div>
+    <div class="fi"><div class="fi-ico">📊</div><div class="fi-t">Brief Engine</div><div class="fi-d">One brief → full week of content.</div></div>
+    <div class="fi"><div class="fi-ico">📈</div><div class="fi-t">Analytics</div><div class="fi-d">Pay only for what performs best.</div></div>
+  </div>
+</section>
+
+<section style="background:rgba(0,0,0,.3);border-top:1px solid var(--border)">
+  <div class="s-tag">Content Showcase</div>
+  <h2 class="s-h"><span class="g">Viral content</span><br>that converts.</h2>
+  <div class="vid-wall">
+    <div class="vw"><video autoplay muted loop playsinline preload="auto" src="video/creator-1.mp4"></video><div class="vw-info"><div class="vw-n">Sara K. — Beauty</div><div class="vw-v">↑ 4.2M views</div></div></div>
+    <div class="vw"><video autoplay muted loop playsinline preload="auto" src="video/creator-19.mp4"></video><div class="vw-info"><div class="vw-n">Aisha R. — Fashion</div><div class="vw-v">↑ 6.1M views</div></div></div>
+    <div class="vw"><video autoplay muted loop playsinline preload="auto" src="video/creator-22.mp4"></video><div class="vw-info"><div class="vw-n">Zara N. — Lifestyle</div><div class="vw-v">↑ 5.4M views</div></div></div>
+    <div class="vw"><img src="img/demo/fashion_ugc.png" loading="eager" alt="Fashion UGC"><div class="vw-info"><div class="vw-n">AI Generated</div><div class="vw-v">Fashion Campaign</div></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="s-tag">Community</div>
+  <h2 class="s-h">The <span class="g">AI creators.</span></h2>
+  <div class="creator-row">
+    <div class="cr"><img src="img/creators_new/creator_sofia.png" loading="eager" alt="Sofia"><div class="cr-info"><div class="cr-name">Sofia M.</div><div class="cr-niche">Beauty & Skincare</div><div class="cr-views">↑ 4.2M/mo</div></div></div>
+    <div class="cr"><img src="img/creators_new/creator_aisha.png" loading="eager" alt="Aisha"><div class="cr-info"><div class="cr-name">Aisha J.</div><div class="cr-niche">Fashion & Style</div><div class="cr-views">↑ 6.1M/mo</div></div></div>
+    <div class="cr"><img src="img/creators_new/creator_emma.png" loading="eager" alt="Emma"><div class="cr-info"><div class="cr-name">Emma L.</div><div class="cr-niche">Makeup & Beauty</div><div class="cr-views">↑ 7.3M/mo</div></div></div>
+    <div class="cr"><img src="img/creators_new/creator_zara.png" loading="eager" alt="Zara"><div class="cr-info"><div class="cr-name">Zara N.</div><div class="cr-niche">Travel & Vlogs</div><div class="cr-views">↑ 3.9M/mo</div></div></div>
+  </div>
+</section>
+
+<section class="svg-stats-section">
+  <div class="svg-stats-inner">
+    <div class="svg-rings">
+      <div class="svg-ring-item"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" stroke="#adff2f" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(-90 50 50)"><animate attributeName="stroke-dashoffset" from="251" to="50" dur="2s" fill="freeze"/></circle><text x="50" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="-apple-system">80%</text></svg><div class="ring-val">Cost Saved</div><div class="ring-label">vs agencies</div></div>
+      <div class="svg-ring-item"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" stroke="#3d6fff" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="75" stroke-linecap="round" transform="rotate(-90 50 50)"><animate attributeName="stroke-dashoffset" from="251" to="75" dur="2s" fill="freeze"/></circle><text x="50" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="-apple-system">70%</text></svg><div class="ring-val">Faster</div><div class="ring-label">delivery speed</div></div>
+      <div class="svg-ring-item"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" stroke="#adff2f" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="30" stroke-linecap="round" transform="rotate(-90 50 50)"><animate attributeName="stroke-dashoffset" from="251" to="30" dur="2s" fill="freeze"/></circle><text x="50" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="-apple-system">88%</text></svg><div class="ring-val">Retention</div><div class="ring-label">clients renew</div></div>
+    </div>
+    <div class="svg-text">
+      <h3>Performance<br><span style="background:linear-gradient(135deg,#3d6fff,#adff2f);-webkit-background-clip:text;-webkit-text-fill-color:transparent">that speaks.</span></h3>
+      <p>Real numbers from real campaigns. Pay only for content that actually drives results. Performance-first, always.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:rgba(0,0,0,.3);border-top:1px solid var(--border)">
+  <div class="s-tag" style="text-align:center">Pricing</div>
+  <h2 class="s-h" style="text-align:center"><span class="g">Scale</span> your way.</h2>
+  <div class="plan-grid">
+    <div class="pg"><div class="pg-tier">Starter</div><div class="pg-price">$199<sub>/mo</sub></div><div class="pg-period">Test before you scale</div><ul class="pg-list"><li>10 videos/month</li><li>5 creators</li><li>Basic AI tools</li><li>Email support</li></ul><button class="pg-btn o" onclick="location.href='ugcgo-auth.html'">Get Started</button></div>
+    <div class="pg pro"><div class="pg-badge">MOST POPULAR</div><div class="pg-tier">Growth</div><div class="pg-price">$499<sub>/mo</sub></div><div class="pg-period">For scaling brands</div><ul class="pg-list"><li>30 videos/month</li><li>Full AI Studio</li><li>20 creators</li><li>A/B testing</li><li>Priority support</li></ul><button class="pg-btn g" onclick="location.href='ugcgo-auth.html'">Get Started →</button></div>
+    <div class="pg"><div class="pg-tier">Scale</div><div class="pg-price">$999<sub>/mo</sub></div><div class="pg-period">Unlimited growth</div><ul class="pg-list"><li>Unlimited videos</li><li>Custom models</li><li>White-label</li><li>Dedicated manager</li></ul><button class="pg-btn o" onclick="location.href='ugcgo-auth.html'">Contact Sales</button></div>
+  </div>
+</section>
+
+<section class="cta-space">
+  <h2>The future of UGC<br><span style="background:linear-gradient(135deg,#3d6fff,#adff2f);-webkit-background-clip:text;-webkit-text-fill-color:transparent">is here.</span></h2>
+  <p>Join 50,000+ brands generating content with AI. Cancel anytime.</p>
+  <button class="btn-grd" style="font-size:16px;padding:16px 48px" onclick="location.href='ugcgo-auth.html'">Start Creating Free</button>
+</section>
+
+<footer>
+  <div class="logo">ugcgo<span>.ai</span></div>
+  <div class="fl"><a href="#">Brands</a><a href="#">Creators</a><a href="#">Studio</a><a href="#">Pricing</a><a href="#">Privacy</a></div>
+  <div class="fc">© 2024 ugcgo.ai</div>
+</footer>
+
+<script>
+function cnt(el){const v=parseFloat(el.dataset.count),s=el.dataset.suffix||"",d=1300,t0=performance.now();(function f(t){const p=Math.min((t-t0)/d,1),e=1-Math.pow(1-p,3),c=v*e;el.textContent=(v>=100?Math.round(c):c.toFixed(v<10?1:0))+s;if(p<1)requestAnimationFrame(f)})(t0)}
+const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){cnt(e.target);ob.unobserve(e.target)}}),{threshold:.3});
+document.querySelectorAll("[data-count]").forEach(el=>ob.observe(el));
+</script>
+</body>
+</html>
