@@ -361,9 +361,13 @@ tr:hover td{background:#fafaf5}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Applications
         </div>
+        <div class="sidebar-item" onclick="setBrandTab('creators')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="21" r="1"/><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M16 11l2 2 4-4"/></svg>
+          Find Creators
+        </div>
         <div class="sidebar-item" onclick="setBrandTab('messages')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Messages
+          Messages <span id="brandUnreadBadge" style="display:none;background:#c8ff00;color:#0a0a0a;border-radius:100px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:4px">0</span>
         </div>
         <div class="sidebar-item" onclick="setBrandTab('profile')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -774,15 +778,15 @@ function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
 async function setBrandTab(tab) {
   brandTab = tab;
   document.querySelectorAll('#page-brand .sidebar-item').forEach((el,i) => {
-    el.classList.toggle('active', ['overview','campaigns','applications','messages','profile'][i] === tab);
+    el.classList.toggle('active', ['overview','campaigns','applications','creators','messages','profile'][i] === tab);
   });
   const content = document.getElementById('brandContent');
   content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-  
   if (tab === 'overview') await renderBrandOverview(content);
   else if (tab === 'campaigns') await renderBrandCampaigns(content);
   else if (tab === 'applications') await renderBrandApplications(content);
-  else if (tab === 'messages') renderMessages(content, 'brand');
+  else if (tab === 'creators') await renderBrandCreators(content);
+  else if (tab === 'messages') await renderMessagesReal(content, 'brand');
   else if (tab === 'profile') renderProfile(content);
 }
 
@@ -797,7 +801,7 @@ async function setCreatorTab(tab) {
   else if (tab === 'browse') await renderCreatorBrowse(content);
   else if (tab === 'applications') await renderCreatorApplications(content);
   else if (tab === 'portfolio') renderCreatorPortfolio(content);
-  else if (tab === 'messages') renderMessages(content, 'creator');
+  else if (tab === 'messages') await renderMessagesReal(content, 'creator');
   else if (tab === 'profile') renderProfile(content);
 }
 
@@ -1112,87 +1116,148 @@ const mockMessages = {
   ]
 };
 
-function renderMessages(el, role) {
-  const threads = mockThreads.filter(t => role === 'brand' ? t.role === 'creator' : t.role === 'brand');
+// ========== REAL MESSAGING SYSTEM ==========
+let activeConvId = null;
+let msgSubscription = null;
+
+async function renderMessagesReal(el, role) {
+  const field = role === 'brand' ? 'brand_id' : 'creator_id';
+  const otherField = role === 'brand' ? 'creator_id' : 'brand_id';
+  const { data: convs } = await sb.from('conversations').select(`*, user_profiles!conversations_${otherField}_fkey(id,full_name,avatar_url)`).eq(field, currentUser.id).order('last_message_at', {ascending:false});
+  
   el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Messages</div>
-      <h1>Messages</h1>
-      <p>${role === 'brand' ? 'Chat with creators' : 'Chat with brands'}</p>
-    </div>
-    <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;height:600px" id="msgLayout">
-      <div>
-        <div class="msg-list">
-          ${threads.map(t => `
-            <div class="msg-thread ${t.unread?'unread':''}" onclick="openThread(${t.id})">
-              ${t.avatar ? `<img src="${t.avatar}" onerror="this.style.display='none'" style="width:42px;height:42px;border-radius:100px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">` : `<div style="width:42px;height:42px;border-radius:100px;background:#f0f0ea;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">👤</div>`}
-              <div style="flex:1;min-width:0">
-                <div style="font-size:14px;font-weight:600;margin-bottom:2px" class="msg-name">${t.name}</div>
-                <div style="font-size:13px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.last}</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-                <div style="font-size:11px;color:var(--mid)">${t.time}</div>
-                ${t.unread ? '<div class="unread-dot"></div>' : ''}
-              </div>
+    <div class="dash-header"><div class="eyebrow">Messages</div><h1>Messages</h1></div>
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:calc(100vh - 240px);min-height:500px">
+      <div style="border-right:1px solid var(--border);overflow-y:auto;background:var(--bg)">
+        ${(convs||[]).length === 0 ? `<div style="padding:32px 16px;text-align:center;color:var(--mid);font-size:14px">${role==='brand'?'No conversations yet.<br><br>Find creators and start chatting!':'No messages yet.<br><br>Brands will reach out when they like your profile.'}</div>` :
+        (convs||[]).map(c => {
+          const other = c[`user_profiles`];
+          const name = other?.full_name || 'User';
+          const avatar = other?.avatar_url;
+          const t = c.last_message_at ? new Date(c.last_message_at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) : '';
+          return `<div class="msg-thread" id="thread-${c.id}" onclick="openConversation('${c.id}','${name.replace(/'/g,'').replace(/"/g,'')}','${avatar||''}')">
+            ${avatar ? `<img src="${avatar}" style="width:42px;height:42px;border-radius:100px;object-fit:cover;flex-shrink:0">` : `<div style="width:42px;height:42px;border-radius:100px;background:#e0e0d8;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px">👤</div>`}
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:14px;margin-bottom:2px">${name}</div>
+              <div style="font-size:12px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.last_message||'Start chatting'}</div>
             </div>
-          `).join('')}
-        </div>
+            <div style="font-size:11px;color:var(--mid);flex-shrink:0">${t}</div>
+          </div>`;
+        }).join('')}
       </div>
-      <div id="msgChatArea" style="border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:14px">
-        Select a conversation
+      <div id="msgChatArea" style="display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:14px;background:var(--card)">
+        <div style="text-align:center"><div style="font-size:32px;margin-bottom:8px">💬</div><div>Select a conversation</div></div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-function openThread(threadId) {
-  const thread = mockThreads.find(t => t.id === threadId);
-  const msgs = mockMessages[threadId] || [];
-  thread.unread = false;
+async function openConversation(convId, name, avatar) {
+  activeConvId = convId;
+  // Mark thread active
+  document.querySelectorAll('.msg-thread').forEach(t => t.classList.remove('active'));
+  const tEl = document.getElementById('thread-'+convId);
+  if (tEl) tEl.classList.add('active');
+  
   const chatArea = document.getElementById('msgChatArea');
+  chatArea.style.display = 'flex';
+  chatArea.style.flexDirection = 'column';
+  chatArea.style.justifyContent = '';
+  chatArea.style.alignItems = '';
+  
+  // Load messages
+  const { data: msgs } = await sb.from('messages').select('*').eq('conversation_id', convId).order('created_at', {ascending:true});
+  
+  const avatarHtml = avatar ? `<img src="${avatar}" style="width:36px;height:36px;border-radius:100px;object-fit:cover">` : `<div style="width:36px;height:36px;border-radius:100px;background:#e0e0d8;display:flex;align-items:center;justify-content:center">👤</div>`;
+  
   chatArea.innerHTML = `
-    <div style="display:flex;flex-direction:column;height:100%">
-      <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px">
-        ${thread.avatar ? `<img src="${thread.avatar}" style="width:32px;height:32px;border-radius:100px;object-fit:cover">` : '<div style="width:32px;height:32px;border-radius:100px;background:#f0f0ea;display:flex;align-items:center;justify-content:center">👤</div>'}
-        ${thread.name}
-      </div>
-      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px" id="msgBubbles">
-        ${msgs.map(m => `
-          <div style="display:flex;${m.from==='me'?'justify-content:flex-end':''}">
-            <div class="msg-bubble ${m.from==='me'?'mine':'theirs'}">
-              ${m.text}
-              <div style="font-size:10px;opacity:.5;margin-top:4px;text-align:right">${m.time}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      <div class="msg-input-row">
-        <input type="text" placeholder="Type a message..." id="msgTextInput" onkeydown="if(event.key==='Enter')sendMsg(${threadId})">
-        <button class="btn btn-dark" onclick="sendMsg(${threadId})" style="padding:10px 16px">Send</button>
-      </div>
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--card)">
+      ${avatarHtml}
+      <span style="font-weight:700;font-size:15px">${name}</span>
     </div>
-  `;
-  chatArea.style.display = 'block';
+    <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px" id="msgBubbles">
+      ${(msgs||[]).map(m => {
+        const mine = m.sender_id === currentUser.id;
+        const t = new Date(m.created_at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+        return `<div style="display:flex;${mine?'justify-content:flex-end':''}">
+          <div class="msg-bubble ${mine?'mine':'theirs'}">${m.content}<div style="font-size:10px;opacity:.5;margin-top:3px;text-align:right">${t}</div></div>
+        </div>`;
+      }).join('') || `<div style="text-align:center;color:var(--mid);font-size:13px;padding:20px">Start the conversation!</div>`}
+    </div>
+    <div class="msg-input-row" style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--card)">
+      <input type="text" placeholder="Type a message..." id="msgTextInput" style="flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:100px;background:var(--bg);color:var(--text);font-size:14px" onkeydown="if(event.key==='Enter')sendRealMsg()">
+      <button class="btn btn-dark" onclick="sendRealMsg()" style="padding:10px 20px;border-radius:100px">Send</button>
+    </div>`;
+  
   const bubbles = document.getElementById('msgBubbles');
-  bubbles.scrollTop = bubbles.scrollHeight;
+  if (bubbles) bubbles.scrollTop = bubbles.scrollHeight;
+  
+  // Realtime subscription
+  if (msgSubscription) sb.removeChannel(msgSubscription);
+  msgSubscription = sb.channel('conv-'+convId)
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'messages', filter:`conversation_id=eq.${convId}`}, payload => {
+      const m = payload.new;
+      if (m.sender_id === currentUser.id) return; // already shown
+      const b = document.getElementById('msgBubbles'); if (!b) return;
+      const t = new Date(m.created_at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+      b.insertAdjacentHTML('beforeend', `<div style="display:flex;"><div class="msg-bubble theirs">${m.content}<div style="font-size:10px;opacity:.5;margin-top:3px;text-align:right">${t}</div></div></div>`);
+      b.scrollTop = b.scrollHeight;
+    }).subscribe();
 }
 
-function sendMsg(threadId) {
+async function sendRealMsg() {
   const input = document.getElementById('msgTextInput');
-  const text = input.value.trim(); if (!text) return;
-  const bubbles = document.getElementById('msgBubbles');
-  const time = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
-  bubbles.insertAdjacentHTML('beforeend', `
-    <div style="display:flex;justify-content:flex-end">
-      <div class="msg-bubble mine">${text}<div style="font-size:10px;opacity:.5;margin-top:4px;text-align:right">${time}</div></div>
-    </div>
-  `);
-  if (!mockMessages[threadId]) mockMessages[threadId] = [];
-  mockMessages[threadId].push({ from:'me', text, time });
-  const thread = mockThreads.find(t => t.id === threadId);
-  if (thread) thread.last = text;
+  const text = input.value.trim(); if (!text || !activeConvId) return;
   input.value = '';
-  bubbles.scrollTop = bubbles.scrollHeight;
+  
+  // Optimistic UI
+  const b = document.getElementById('msgBubbles');
+  const t = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  if (b) { b.insertAdjacentHTML('beforeend', `<div style="display:flex;justify-content:flex-end"><div class="msg-bubble mine">${text}<div style="font-size:10px;opacity:.5;margin-top:3px;text-align:right">${t}</div></div></div>`); b.scrollTop=b.scrollHeight; }
+  
+  // Insert to DB
+  await sb.from('messages').insert({ conversation_id: activeConvId, sender_id: currentUser.id, content: text });
+  await sb.from('conversations').update({ last_message: text, last_message_at: new Date().toISOString() }).eq('id', activeConvId);
+  
+  // Update thread preview
+  const tEl = document.getElementById('thread-'+activeConvId);
+  if (tEl) { const preview = tEl.querySelector('div > div:last-child'); if (preview) { const prev2 = preview.querySelector('div:nth-child(2)'); if (prev2) prev2.textContent = text; } }
+}
+
+async function startConversation(creatorId, creatorName, creatorAvatar, campaignId) {
+  // Find or create conversation
+  let { data: existing } = await sb.from('conversations').select('id').eq('brand_id', currentUser.id).eq('creator_id', creatorId).maybeSingle();
+  let convId;
+  if (existing) {
+    convId = existing.id;
+  } else {
+    const { data: newConv } = await sb.from('conversations').insert({
+      brand_id: currentUser.id, creator_id: creatorId, campaign_id: campaignId||null, last_message: ''
+    }).select('id').single();
+    convId = newConv?.id;
+  }
+  if (convId) {
+    await setBrandTab('messages');
+    setTimeout(() => openConversation(convId, creatorName, creatorAvatar||''), 400);
+  }
+}
+
+async function renderBrandCreators(el) {
+  const { data: creators } = await sb.from('user_profiles').select('*').eq('role','creator').limit(20);
+  el.innerHTML = `
+    <div class="dash-header"><div class="eyebrow">Find Creators</div><h1>Creator Discovery</h1><p>Find the perfect UGC creator for your campaign</p></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px">
+      ${(creators||[]).filter(c=>c.full_name&&c.full_name!=='Test Creator').map(c => {
+        const avatar = c.avatar_url ? `<img src="${c.avatar_url}" style="width:64px;height:64px;border-radius:100px;object-fit:cover;margin:0 auto 12px;display:block">` : `<div style="width:64px;height:64px;border-radius:100px;background:#e0e0d8;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px">👤</div>`;
+        const handle = c.website||'';
+        return `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center">
+          ${avatar}
+          <div style="font-weight:800;font-size:15px;margin-bottom:4px">${c.full_name}</div>
+          ${handle?`<div style="font-size:12px;color:var(--mid);margin-bottom:12px">${handle}</div>`:''}
+          ${c.bio?`<div style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.4">${c.bio.slice(0,80)}</div>`:''}
+          <button class="btn btn-dark" style="width:100%;font-size:13px;padding:9px" onclick="startConversation('${c.id}','${(c.full_name||'').replace(/'/g,'')}','${c.avatar_url||''}',null)">💬 Message</button>
+        </div>`;
+      }).join('') || '<div class="empty"><h3>No creators yet</h3></div>'}
+    </div>`;
 }
 
 // ========== ENHANCED CAMPAIGN CARD ==========
