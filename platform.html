@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ugcgo.ai — Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f8f8f2;--text:#0a0a0a;--mid:#4a4a4a;--border:#e0e0d8;
+  --lime:#c8ff00;--card:#fff;--radius:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:var(--bg)}
+.logo{font-size:22px;font-weight:900;letter-spacing:-1px;cursor:pointer}
+.logo span{color:var(--lime);background:#0a0a0a;padding:2px 6px;border-radius:4px}
+.nav-actions{display:flex;gap:12px;align-items:center}
+.btn{padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--text)}
+.btn-lime{background:var(--lime);color:#0a0a0a}
+.btn-lime:hover{opacity:.85}
+.btn-dark{background:#0a0a0a;color:#fff}
+.btn-dark:hover{background:#222}
+.btn-danger{background:#ff4444;color:#fff}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* AUTH PAGE */
+.auth-wrap{min-height:calc(100vh - 65px);display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.auth-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:48px;width:100%;max-width:460px}
+.auth-card h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px}
+.auth-card p{color:var(--mid);font-size:15px;margin-bottom:32px}
+.role-tabs{display:flex;gap:8px;margin-bottom:28px;background:#f0f0ea;padding:4px;border-radius:100px}
+.role-tab{flex:1;padding:10px;text-align:center;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--mid)}
+.role-tab.active{background:#0a0a0a;color:#fff}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px}
+.form-group input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none;transition:border .2s}
+.form-group input:focus{border-color:#0a0a0a}
+.auth-submit{width:100%;padding:14px;background:#0a0a0a;color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.auth-submit:hover{opacity:.85}
+.auth-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--mid)}
+.auth-switch a{color:var(--text);font-weight:600;cursor:pointer;text-decoration:underline}
+.auth-error{background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;padding:12px 16px;border-radius:8px;font-size:14px;margin-bottom:16px;display:none}
+.brand-badge{display:inline-block;padding:4px 12px;background:var(--lime);color:#0a0a0a;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.creator-badge{display:inline-block;padding:4px 12px;background:#0a0a0a;color:#fff;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* DASHBOARD */
+.dash-wrap{display:flex;min-height:calc(100vh - 65px)}
+
+/* SIDEBAR */
+.sidebar{width:240px;border-right:1px solid var(--border);padding:24px 16px;flex-shrink:0}
+.sidebar-section{margin-bottom:24px}
+.sidebar-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);padding:0 12px;margin-bottom:8px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:var(--mid);transition:all .2s}
+.sidebar-item:hover{background:#f0f0ea;color:var(--text)}
+.sidebar-item.active{background:#0a0a0a;color:#fff}
+.sidebar-item svg{width:16px;height:16px;flex-shrink:0}
+
+/* MAIN CONTENT */
+.dash-content{flex:1;padding:40px;overflow:auto}
+.dash-header{margin-bottom:32px}
+.dash-header h1{font-size:32px;font-weight:900;letter-spacing:-1.5px;margin-bottom:4px}
+.dash-header p{color:var(--mid);font-size:15px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:8px}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.stat-card.accent{border-top:3px solid var(--lime)}
+.stat-value{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1}
+.stat-label{font-size:13px;color:var(--mid);margin-top:6px;font-weight:500}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.card-meta{font-size:13px;color:var(--mid)}
+.card-actions{display:flex;gap:8px;margin-top:16px}
+.tag{display:inline-block;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600}
+.tag-active{background:#e8fff0;color:#00aa44}
+.tag-draft{background:#f0f0ea;color:var(--mid)}
+.tag-pending{background:#fff8e0;color:#aa7700}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius);padding:40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:22px;font-weight:900;letter-spacing:-1px;margin-bottom:24px}
+.modal-footer{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 20px;color:var(--mid)}
+.empty svg{width:48px;height:48px;margin:0 auto 16px;opacity:.3}
+.empty h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+th{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mid);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);background:#fafaf5}
+td{padding:14px 16px;font-size:14px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf5}
+
+/* PROFILE SECTION */
+.profile-wrap{max-width:600px}
+.avatar-big{width:80px;height:80px;border-radius:50%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;font-weight:900;margin-bottom:20px}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--mid)}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:#0a0a0a;border-radius:50%;animation:spin .8s linear infinite;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .dash-wrap{flex-direction:column}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:12px;display:flex;gap:4px;overflow-x:auto}
+  .sidebar-section{margin:0}
+  .sidebar-label{display:none}
+  .sidebar-item{white-space:nowrap;flex-shrink:0}
+  .dash-content{padding:20px}
+  .auth-card{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="goHome()">ugc<span>go</span></div>
+  <div class="nav-actions" id="navActions">
+    <button class="btn btn-outline" onclick="showPage('login')">Sign In</button>
+    <button class="btn btn-lime" onclick="showPage('register')">Get Started</button>
+  </div>
+</nav>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p>Sign in to your ugcgo account</p>
+      <div class="auth-error" id="loginError"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="auth-submit" onclick="doLogin()">Sign In →</button>
+      <div class="auth-switch">No account? <a onclick="showPage('register')">Create one free</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER PAGE -->
+<div class="page" id="page-register">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h1>Join ugcgo</h1>
+      <p>Choose your account type to get started</p>
+      <div class="role-tabs">
+        <div class="role-tab active" id="tab-brand" onclick="setRole('brand')">🏢 Brand</div>
+        <div class="role-tab" id="tab-creator" onclick="setRole('creator')">🎬 Creator</div>
+      </div>
+      <div class="auth-error" id="regError"></div>
+      <div class="form-group" id="companyField">
+        <label>Company Name</label>
+        <input type="text" id="regCompany" placeholder="Acme Inc.">
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPass" placeholder="At least 8 characters" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="auth-submit" onclick="doRegister()">Create Account →</button>
+      <div class="auth-switch">Already have an account? <a onclick="showPage('login')">Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- BRAND DASHBOARD -->
+<div class="page" id="page-brand">
+  <div class="dash-wrap">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Brand</div>
+        <div class="sidebar-item active" onclick="setBrandTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Overview
+        </div>
+        <div class="sidebar-item" onclick="setBrandTab('campaigns')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Campaigns
+        </div>
+        <div class="sidebar-item" onclick="setBrandTab('applications')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Applications
+        </div>
+        <div class="sidebar-item" onclick="setBrandTab('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </div>
+      </div>
+      <div class="sidebar-section" style="margin-top:auto">
+        <div class="sidebar-item" onclick="doLogout()" style="color:#ff4444">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </div>
+      </div>
+    </div>
+    <div class="dash-content" id="brandContent">
+      <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATOR DASHBOARD -->
+<div class="page" id="page-creator">
+  <div class="dash-wrap">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Creator</div>
+        <div class="sidebar-item active" onclick="setCreatorTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Overview
+        </div>
+        <div class="sidebar-item" onclick="setCreatorTab('browse')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Browse Campaigns
+        </div>
+        <div class="sidebar-item" onclick="setCreatorTab('applications')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          My Applications
+        </div>
+        <div class="sidebar-item" onclick="setCreatorTab('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </div>
+      </div>
+      <div class="sidebar-section" style="margin-top:auto">
+        <div class="sidebar-item" onclick="doLogout()" style="color:#ff4444">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </div>
+      </div>
+    </div>
+    <div class="dash-content" id="creatorContent">
+      <div class="loading"><div class="spinner"></div> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CAMPAIGN MODAL -->
+<div class="modal-overlay" id="modalNewCampaign">
+  <div class="modal">
+    <h2>New Campaign</h2>
+    <div class="form-group">
+      <label>Campaign Title</label>
+      <input type="text" id="campTitle" placeholder="Summer UGC Collection">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input type="text" id="campDesc" placeholder="What content do you need?">
+    </div>
+    <div class="form-group">
+      <label>Budget ($)</label>
+      <input type="number" id="campBudget" placeholder="500">
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" id="campCategory" placeholder="Beauty, Fashion, Tech...">
+    </div>
+    <div class="form-group">
+      <label>Requirements</label>
+      <input type="text" id="campReq" placeholder="30-60 sec video, authentic feel...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalNewCampaign')">Cancel</button>
+      <button class="btn btn-dark" onclick="createCampaign()">Create Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPLY MODAL -->
+<div class="modal-overlay" id="modalApply">
+  <div class="modal">
+    <h2>Apply to Campaign</h2>
+    <input type="hidden" id="applyCampId">
+    <div class="form-group">
+      <label>Your Pitch</label>
+      <input type="text" id="applyPitch" placeholder="Why are you the perfect fit?">
+    </div>
+    <div class="form-group">
+      <label>Portfolio URL</label>
+      <input type="text" id="applyPortfolio" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Proposed Rate ($)</label>
+      <input type="number" id="applyRate" placeholder="150">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modalApply')">Cancel</button>
+      <button class="btn btn-dark" onclick="submitApplication()">Submit Application</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoY3dzYmVxcGh5dG1kanJzZ3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MjgzODUsImV4cCI6MjA4NzQwNDM4NX0.i6y2f0ON6Gwsy9jSNKjwPA5S--odGznbC3R5ROwgkQI';
+const { createClient } = supabase;
+const sb = createClient(SB_URL, SB_ANON);
+
+let currentUser = null;
+let currentProfile = null;
+let currentRole = 'brand';
+let brandTab = 'overview';
+let creatorTab = 'overview';
+
+// INIT
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    await loadProfile();
+    goToDashboard();
+  } else {
+    showPage('login');
+  }
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      await loadProfile();
+      goToDashboard();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null; currentProfile = null;
+      showPage('login');
+    }
+  });
+}
+
+async function loadProfile() {
+  const { data, error } = await sb.from('user_profiles').select('*').eq('id', currentUser.id).single();
+  if (data) currentProfile = data;
+}
+
+function goHome() {
+  if (currentUser) goToDashboard();
+  else showPage('login');
+}
+
+function goToDashboard() {
+  if (!currentProfile) { showPage('login'); return; }
+  if (currentProfile.role === 'brand') {
+    showPage('brand');
+    setBrandTab('overview');
+    document.getElementById('navActions').innerHTML = `
+      <span class="brand-badge">Brand</span>
+      <button class="btn btn-outline" onclick="doLogout()">Logout</button>`;
+  } else {
+    showPage('creator');
+    setCreatorTab('overview');
+    document.getElementById('navActions').innerHTML = `
+      <span class="creator-badge">Creator</span>
+      <button class="btn btn-outline" onclick="doLogout()">Logout</button>`;
+  }
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if (el) el.classList.add('active');
+}
+
+function setRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + role).classList.add('active');
+  document.getElementById('companyField').style.display = role === 'brand' ? 'block' : 'none';
+}
+
+// AUTH
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+  if (!email || !pass) { showErr(err, 'Please fill all fields'); return; }
+  const btn = document.querySelector('#page-login .auth-submit');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Sign In →'; btn.disabled = false;
+  if (error) showErr(err, error.message);
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const company = document.getElementById('regCompany').value.trim();
+  const err = document.getElementById('regError');
+  err.style.display = 'none';
+  if (!name || !email || !pass) { showErr(err, 'Please fill all fields'); return; }
+  if (pass.length < 8) { showErr(err, 'Password must be at least 8 characters'); return; }
+  const btn = document.querySelector('#page-register .auth-submit');
+  btn.textContent = 'Creating account...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { role: currentRole, full_name: name, company_name: company } }
+  });
+  btn.textContent = 'Create Account →'; btn.disabled = false;
+  if (error) { showErr(err, error.message); return; }
+  // Upsert profile manually (trigger backup)
+  if (data.user) {
+    await sb.from('user_profiles').upsert({
+      id: data.user.id, role: currentRole,
+      full_name: name, company_name: company
+    }, { onConflict: 'id' });
+    currentUser = data.user;
+    currentProfile = { id: data.user.id, role: currentRole, full_name: name, company_name: company };
+    goToDashboard();
+  }
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('navActions').innerHTML = `
+    <button class="btn btn-outline" onclick="showPage('login')">Sign In</button>
+    <button class="btn btn-lime" onclick="showPage('register')">Get Started</button>`;
+}
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+// BRAND DASHBOARD
+async function setBrandTab(tab) {
+  brandTab = tab;
+  document.querySelectorAll('#page-brand .sidebar-item').forEach((el,i) => {
+    el.classList.toggle('active', ['overview','campaigns','applications','profile'][i] === tab);
+  });
+  const content = document.getElementById('brandContent');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  
+  if (tab === 'overview') await renderBrandOverview(content);
+  else if (tab === 'campaigns') await renderBrandCampaigns(content);
+  else if (tab === 'applications') await renderBrandApplications(content);
+  else if (tab === 'profile') renderProfile(content);
+}
+
+async function renderBrandOverview(el) {
+  const { data: camps } = await sb.from('campaigns').select('*').eq('brand_id', currentUser.id);
+  const { data: apps } = await sb.from('applications').select('*, campaigns!inner(brand_id)').eq('campaigns.brand_id', currentUser.id);
+  const name = currentProfile?.company_name || currentProfile?.full_name || 'Brand';
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Brand Dashboard</div>
+      <h1>Welcome, ${name} 👋</h1>
+      <p>Manage your UGC campaigns and creator applications</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card accent">
+        <div class="stat-value">${(camps||[]).length}</div>
+        <div class="stat-label">Total Campaigns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(camps||[]).filter(c=>c.status==='active').length}</div>
+        <div class="stat-label">Active Campaigns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(apps||[]).length}</div>
+        <div class="stat-label">Applications Received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(apps||[]).filter(a=>a.status==='pending').length}</div>
+        <div class="stat-label">Pending Review</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="eyebrow">Recent Campaigns</div>
+      <button class="btn btn-dark" onclick="openModal('modalNewCampaign')">+ New Campaign</button>
+    </div>
+    <div class="cards-grid">
+      ${(camps||[]).slice(0,3).map(c => campCard(c)).join('') || '<div class="empty"><h3>No campaigns yet</h3><p>Create your first UGC campaign to get started</p></div>'}
+    </div>`;
+}
+
+async function renderBrandCampaigns(el) {
+  const { data: camps } = await sb.from('campaigns').select('*').eq('brand_id', currentUser.id).order('created_at', {ascending: false});
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Campaigns</div>
+      <h1>Your Campaigns</h1>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+      <button class="btn btn-dark" onclick="openModal('modalNewCampaign')">+ New Campaign</button>
+    </div>
+    <div class="cards-grid">
+      ${(camps||[]).map(c => campCard(c)).join('') || '<div class="empty"><h3>No campaigns yet</h3><p>Create your first campaign</p></div>'}
+    </div>`;
+}
+
+async function renderBrandApplications(el) {
+  const { data: apps } = await sb.from('applications').select('*, campaigns(title)').order('created_at', {ascending: false});
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Applications</div>
+      <h1>Creator Applications</h1>
+    </div>
+    ${(apps||[]).length === 0 ? '<div class="empty"><h3>No applications yet</h3><p>Applications will appear here when creators apply to your campaigns</p></div>' : `
+    <table>
+      <thead><tr><th>Campaign</th><th>Creator</th><th>Rate</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        ${(apps||[]).map(a => `<tr>
+          <td>${a.campaigns?.title || '—'}</td>
+          <td>${a.creator_id.slice(0,8)}...</td>
+          <td>${a.proposed_rate ? '$'+a.proposed_rate : '—'}</td>
+          <td><span class="tag tag-${a.status}">${a.status}</span></td>
+          <td>
+            ${a.status === 'pending' ? `<button class="btn btn-lime" style="padding:6px 12px;font-size:12px" onclick="updateApp('${a.id}','accepted')">Accept</button>
+            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;margin-left:6px" onclick="updateApp('${a.id}','rejected')">Decline</button>` : ''}
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`}`;
+}
+
+function campCard(c) {
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div class="card-title">${c.title}</div>
+      <span class="tag tag-${c.status}">${c.status}</span>
+    </div>
+    <div class="card-meta">${c.description || 'No description'}</div>
+    ${c.budget ? `<div style="margin-top:10px;font-weight:700">$$${c.budget}</div>` : ''}
+    <div class="card-actions">
+      <button class="btn btn-outline" style="padding:8px 14px;font-size:13px" onclick="toggleStatus('${c.id}','${c.status}')">
+        ${c.status === 'draft' ? '▶ Activate' : '⏸ Pause'}
+      </button>
+    </div>
+  </div>`;
+}
+
+// CREATOR DASHBOARD
+async function setCreatorTab(tab) {
+  creatorTab = tab;
+  document.querySelectorAll('#page-creator .sidebar-item').forEach((el,i) => {
+    el.classList.toggle('active', ['overview','browse','applications','profile'][i] === tab);
+  });
+  const content = document.getElementById('creatorContent');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
+  
+  if (tab === 'overview') await renderCreatorOverview(content);
+  else if (tab === 'browse') await renderBrowseCampaigns(content);
+  else if (tab === 'applications') await renderMyApplications(content);
+  else if (tab === 'profile') renderProfile(content);
+}
+
+async function renderCreatorOverview(el) {
+  const { data: myApps } = await sb.from('applications').select('*, campaigns(title, status, budget)').eq('creator_id', currentUser.id);
+  const { data: camps } = await sb.from('campaigns').select('*').eq('status', 'active').limit(3);
+  const name = currentProfile?.full_name || 'Creator';
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Creator Dashboard</div>
+      <h1>Hey, ${name} 🎬</h1>
+      <p>Find brands to collaborate with and grow your income</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card accent">
+        <div class="stat-value">${(myApps||[]).length}</div>
+        <div class="stat-label">Applications Sent</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(myApps||[]).filter(a=>a.status==='accepted').length}</div>
+        <div class="stat-label">Accepted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(camps||[]).length}</div>
+        <div class="stat-label">Open Campaigns</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="eyebrow">Open Campaigns</div>
+      <button class="btn btn-dark" onclick="setCreatorTab('browse')">Browse All →</button>
+    </div>
+    <div class="cards-grid">
+      ${(camps||[]).map(c => creatorCampCard(c)).join('') || '<div class="empty"><h3>No active campaigns</h3><p>Check back soon for new opportunities</p></div>'}
+    </div>`;
+}
+
+async function renderBrowseCampaigns(el) {
+  const { data: camps } = await sb.from('campaigns').select('*').eq('status', 'active').order('created_at', {ascending: false});
+  const { data: myApps } = await sb.from('applications').select('campaign_id').eq('creator_id', currentUser.id);
+  const appliedIds = new Set((myApps||[]).map(a => a.campaign_id));
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Browse</div>
+      <h1>Open Campaigns</h1>
+      <p>Find brand deals that match your style</p>
+    </div>
+    <div class="cards-grid">
+      ${(camps||[]).map(c => creatorCampCard(c, appliedIds.has(c.id))).join('') || '<div class="empty"><h3>No active campaigns</h3><p>Check back soon for new opportunities</p></div>'}
+    </div>`;
+}
+
+async function renderMyApplications(el) {
+  const { data: apps } = await sb.from('applications').select('*, campaigns(title, budget, category)').eq('creator_id', currentUser.id).order('created_at', {ascending: false});
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Applications</div>
+      <h1>My Applications</h1>
+    </div>
+    ${(apps||[]).length === 0 ? '<div class="empty"><h3>No applications yet</h3><p>Browse campaigns and apply to get started</p></div>' : `
+    <table>
+      <thead><tr><th>Campaign</th><th>Category</th><th>My Rate</th><th>Status</th></tr></thead>
+      <tbody>
+        ${(apps||[]).map(a => `<tr>
+          <td>${a.campaigns?.title || '—'}</td>
+          <td>${a.campaigns?.category || '—'}</td>
+          <td>${a.proposed_rate ? '$'+a.proposed_rate : '—'}</td>
+          <td><span class="tag tag-${a.status}">${a.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`}`;
+}
+
+function creatorCampCard(c, alreadyApplied=false) {
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div class="card-title">${c.title}</div>
+      ${c.category ? `<span class="tag tag-draft">${c.category}</span>` : ''}
+    </div>
+    <div class="card-meta">${c.description || 'Looking for UGC creators'}</div>
+    ${c.budget ? `<div style="margin-top:10px;font-weight:700;color:var(--text)">Budget: $$${c.budget}</div>` : ''}
+    <div class="card-actions">
+      ${alreadyApplied 
+        ? '<span class="tag tag-active">✓ Applied</span>'
+        : `<button class="btn btn-dark" style="padding:8px 16px;font-size:13px" onclick="openApply('${c.id}')">Apply Now</button>`
+      }
+    </div>
+  </div>`;
+}
+
+function renderProfile(el) {
+  const p = currentProfile || {};
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Settings</div>
+      <h1>Your Profile</h1>
+    </div>
+    <div class="profile-wrap">
+      <div class="avatar-big">${(p.full_name||'U')[0].toUpperCase()}</div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="profName" value="${p.full_name||''}" placeholder="Your name">
+      </div>
+      ${p.role==='brand' ? `<div class="form-group"><label>Company Name</label><input type="text" id="profCompany" value="${p.company_name||''}" placeholder="Acme Inc."></div>` : ''}
+      <div class="form-group">
+        <label>Bio</label>
+        <input type="text" id="profBio" value="${p.bio||''}" placeholder="Tell brands about yourself...">
+      </div>
+      <div class="form-group">
+        <label>Website</label>
+        <input type="text" id="profWebsite" value="${p.website||''}" placeholder="https://...">
+      </div>
+      <div style="margin-top:4px;padding:12px 16px;background:#f0f0ea;border-radius:8px;font-size:14px;color:var(--mid)">
+        Email: <strong>${currentUser?.email}</strong> &nbsp;·&nbsp; Role: <strong>${p.role}</strong>
+      </div>
+      <button class="btn btn-dark" style="margin-top:20px;padding:12px 28px" onclick="saveProfile()">Save Changes</button>
+    </div>`;
+}
+
+// ACTIONS
+async function createCampaign() {
+  const title = document.getElementById('campTitle').value.trim();
+  if (!title) return;
+  const { error } = await sb.from('campaigns').insert({
+    brand_id: currentUser.id,
+    title,
+    description: document.getElementById('campDesc').value,
+    budget: parseFloat(document.getElementById('campBudget').value) || null,
+    category: document.getElementById('campCategory').value,
+    requirements: document.getElementById('campReq').value,
+    status: 'draft'
+  });
+  if (!error) { closeModal('modalNewCampaign'); setBrandTab('campaigns'); }
+  else alert(error.message);
+}
+
+async function toggleStatus(id, current) {
+  const newStatus = current === 'draft' ? 'active' : 'draft';
+  await sb.from('campaigns').update({ status: newStatus }).eq('id', id);
+  setBrandTab(brandTab);
+}
+
+function openApply(campId) {
+  document.getElementById('applyCampId').value = campId;
+  openModal('modalApply');
+}
+
+async function submitApplication() {
+  const campId = document.getElementById('applyCampId').value;
+  const { error } = await sb.from('applications').insert({
+    campaign_id: campId,
+    creator_id: currentUser.id,
+    pitch: document.getElementById('applyPitch').value,
+    portfolio_url: document.getElementById('applyPortfolio').value,
+    proposed_rate: parseFloat(document.getElementById('applyRate').value) || null
+  });
+  if (!error) { closeModal('modalApply'); setCreatorTab('browse'); }
+  else alert(error.message);
+}
+
+async function updateApp(id, status) {
+  await sb.from('applications').update({ status }).eq('id', id);
+  setBrandTab('applications');
+}
+
+async function saveProfile() {
+  const updates = {
+    full_name: document.getElementById('profName')?.value,
+    bio: document.getElementById('profBio')?.value,
+    website: document.getElementById('profWebsite')?.value,
+  };
+  if (document.getElementById('profCompany')) updates.company_name = document.getElementById('profCompany').value;
+  const { error } = await sb.from('user_profiles').update(updates).eq('id', currentUser.id);
+  if (!error) { await loadProfile(); alert('Profile saved!'); }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+init();
+</script>
+</body>
+</html>
