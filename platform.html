@@ -713,6 +713,10 @@ function showPage(id) {
   if (id === 'marketplace' || id === 'login' || id === 'register') {
     nav.innerHTML = `<button class="btn btn-outline" onclick="showPage('login')">Sign In</button><button class="btn btn-lime" onclick="showPage('register')">Get Started</button>`;
   }
+  // Load marketplace data when showing marketplace
+  if (id === 'marketplace') {
+    loadMarketplace();
+  }
 }
 
 function setRole(role) {
