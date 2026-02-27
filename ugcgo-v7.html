@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="warm">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ugcgo.ai — Where AI Meets Creator Culture</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0e0b07;--s:#161008;--c:#1c1509;--warm:#f5c842;--orange:#ff7a35;--cream:#f0e6c8;--t:#f0e6c8;--m:#8a7a5a;--b:#2a2010;--r:4px}
+html,body{overflow-x:hidden;font-family:'Georgia',serif;background:var(--bg);color:var(--t)}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 6%;height:64px;background:rgba(14,11,7,.95);border-bottom:1px solid var(--b)}
+.logo{font-size:20px;font-weight:700;font-style:italic;color:var(--warm);letter-spacing:.5px}
+.logo span{font-style:normal;color:var(--cream);font-size:14px;font-weight:400;margin-left:4px;opacity:.6}
+.nav-links{display:flex;gap:32px;font-family:-apple-system,sans-serif;font-size:13px;color:var(--m)}
+.nav-links a:hover{color:var(--warm)}
+.btn-warm{background:var(--warm);color:#000;font-family:-apple-system,sans-serif;font-weight:700;font-size:13px;padding:9px 22px;border:none;cursor:pointer;border-radius:2px;transition:.15s}
+.btn-warm:hover{background:var(--orange);transform:translateY(-1px)}
+
+/* HERO — EDITORIAL FULL BLEED */
+.hero{min-height:100vh;display:grid;grid-template-rows:1fr auto;padding:80px 0 0;overflow:hidden;position:relative}
+.hero-top{display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:60px 6% 40px;gap:60px}
+.hero-kicker{font-family:-apple-system,sans-serif;font-size:11px;letter-spacing:3px;color:var(--orange);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.hero-kicker::before{content:"";display:block;width:32px;height:1px;background:var(--orange)}
+h1{font-size:clamp(52px,7vw,96px);font-weight:700;line-height:.92;letter-spacing:-3px;margin-bottom:28px;color:var(--cream)}
+h1 em{color:var(--warm);font-style:italic}
+.hero-body{font-size:17px;color:var(--m);line-height:1.8;max-width:420px;margin-bottom:40px;font-family:-apple-system,sans-serif}
+.hero-cta{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.btn-big{background:var(--warm);color:#000;font-family:-apple-system,sans-serif;font-weight:800;font-size:15px;padding:14px 36px;border:none;cursor:pointer;border-radius:2px;transition:.15s}
+.btn-big:hover{background:var(--orange)}
+.hero-footnote{font-family:-apple-system,sans-serif;font-size:12px;color:var(--m)}
+.hero-right{position:relative;height:100%}
+.hero-img-main{width:100%;height:480px;object-fit:cover;display:block;filter:sepia(.15) contrast(1.05)}
+.hero-badge-float{position:absolute;bottom:20px;right:20px;background:var(--warm);color:#000;font-family:-apple-system,sans-serif;font-size:12px;font-weight:700;padding:10px 16px;border-radius:2px}
+
+/* BOTTOM STRIP */
+.hero-strip{background:var(--warm);padding:14px 6%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.strip-stat{font-family:-apple-system,sans-serif;text-align:center}
+.strip-n{font-size:24px;font-weight:800;color:#000;letter-spacing:-1px}
+.strip-l{font-size:10px;color:rgba(0,0,0,.6);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.strip-div{width:1px;background:rgba(0,0,0,.2);height:36px}
+
+/* SECTION: VIDEO ROW */
+.vid-row{padding:80px 6%}
+.editorial-head{margin-bottom:48px}
+.section-number{font-family:-apple-system,sans-serif;font-size:12px;color:var(--orange);letter-spacing:2px;margin-bottom:8px}
+.section-h2{font-size:clamp(32px,5vw,56px);line-height:1;letter-spacing:-2px;color:var(--cream);margin-bottom:0}
+.section-h2 em{color:var(--warm);font-style:italic}
+.vids{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.vc{position:relative;aspect-ratio:9/16;overflow:hidden;background:var(--c)}
+.vc video{width:100%;height:100%;object-fit:cover;display:block}
+.vc-caption{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.vc-n{font-size:13px;font-weight:700;color:var(--warm)}
+.vc-m{font-size:11px;color:var(--m);margin-top:2px;font-family:-apple-system,sans-serif}
+
+/* FEATURES — EDITORIAL GRID */
+.features-editorial{padding:80px 6%;background:var(--s);border-top:1px solid var(--b)}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b);margin-top:48px}
+.feat-item{background:var(--s);padding:36px;border-right:none}
+.feat-num{font-size:48px;font-weight:700;color:var(--b);letter-spacing:-2px;line-height:1;margin-bottom:8px;font-style:italic}
+.feat-title{font-size:20px;font-weight:700;color:var(--cream);margin-bottom:10px;letter-spacing:-.5px}
+.feat-desc{font-size:14px;color:var(--m);line-height:1.7;font-family:-apple-system,sans-serif}
+
+/* CREATORS EDITORIAL */
+.creators-ed{padding:80px 6%}
+.creators-scroll{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+.c-ed{background:var(--c);border:1px solid var(--b);overflow:hidden}
+.c-ed img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;filter:sepia(.1)}
+.c-ed-info{padding:16px}
+.c-ed-name{font-size:16px;font-weight:700;color:var(--cream);margin-bottom:4px;letter-spacing:-.3px}
+.c-ed-niche{font-size:12px;color:var(--m);font-family:-apple-system,sans-serif;margin-bottom:6px}
+.c-ed-views{font-size:13px;color:var(--warm);font-family:-apple-system,sans-serif;font-weight:700}
+
+/* PRICING EDITORIAL */
+.pricing-ed{padding:80px 6%;background:var(--s);border-top:1px solid var(--b)}
+.plans-ed{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.plan-ed{border:1px solid var(--b);padding:36px}
+.pe-tier{font-family:-apple-system,sans-serif;font-size:11px;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:12px}
+.pe-p{font-size:48px;font-weight:700;color:var(--warm);letter-spacing:-2px;line-height:1;font-style:italic}
+.pe-p sub{font-size:16px;color:var(--m);font-weight:400;font-style:normal}
+.pe-name{font-size:13px;color:var(--m);font-family:-apple-system,sans-serif;margin:8px 0 24px}
+.pe-list{list-style:none;margin-bottom:28px}
+.pe-list li{font-size:13px;color:var(--m);padding:8px 0;border-bottom:1px solid var(--b);font-family:-apple-system,sans-serif;display:flex;gap:8px}
+.pe-list li::before{content:"–";color:var(--warm)}
+.pe-btn{width:100%;padding:12px;background:none;border:1px solid var(--b);color:var(--cream);font-family:-apple-system,sans-serif;font-size:13px;cursor:pointer;transition:.2s;letter-spacing:.5px}
+.pe-btn:hover{background:var(--warm);color:#000;border-color:var(--warm)}
+.plan-ed.featured{border-color:var(--warm);background:rgba(245,200,66,.04)}
+.plan-ed.featured .pe-btn{background:var(--warm);color:#000;border-color:var(--warm)}
+
+/* CTA */
+.cta-ed{padding:100px 6%;text-align:center;position:relative;overflow:hidden}
+.cta-ed::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(245,200,66,.06) 0%,transparent 70%)}
+.cta-h{font-size:clamp(44px,7vw,88px);font-weight:700;letter-spacing:-3px;margin-bottom:20px;color:var(--cream);line-height:.95}
+.cta-h em{color:var(--warm);font-style:italic}
+.cta-sub{font-size:16px;color:var(--m);margin-bottom:40px;font-family:-apple-system,sans-serif}
+
+/* FOOTER */
+footer{padding:40px 6%;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.fl{display:flex;gap:24px;font-size:12px;color:var(--m);font-family:-apple-system,sans-serif}
+.fl a:hover{color:var(--warm)}
+
+@media(max-width:900px){
+  .hero-top{grid-template-columns:1fr;gap:32px}
+  .hero-right{height:300px}
+  .hero-img-main{height:300px}
+  .vids{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
+  .creators-scroll{grid-template-columns:repeat(2,1fr)}
+  .plans-ed{grid-template-columns:1fr}
+  .nav-links{display:none}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">ugcgo<span>— AI UGC Platform</span></div>
+  <div class="nav-links">
+    <a href="#">For Brands</a><a href="#">Creators</a><a href="#">AI Studio</a><a href="#">Pricing</a>
+  </div>
+  <button class="btn-warm" onclick="location.href='ugcgo-auth.html'">Get Started Free</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-kicker">Performance-Based UGC Platform</div>
+      <h1>The AI<br><em>creates.</em><br>You grow.</h1>
+      <p class="hero-body">Brief in Monday. Thirty viral TikTok videos by Tuesday. Pay only for content that actually performs. No agencies. No overhead.</p>
+      <div class="hero-cta">
+        <button class="btn-big" onclick="location.href='ugcgo-auth.html'">Start Creating Free</button>
+        <span class="hero-footnote">No credit card · Cancel anytime</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img class="hero-img-main" src="img/demo/premium_skincare.png" loading="lazy" alt="UGC Content">
+      <div class="hero-badge-float">↑ 4.2M views this week</div>
+    </div>
+  </div>
+  <div class="hero-strip">
+    <div class="strip-stat"><div class="strip-n">50K+</div><div class="strip-l">Videos Generated</div></div>
+    <div class="strip-div"></div>
+    <div class="strip-stat"><div class="strip-n">2.4B</div><div class="strip-l">Total Views</div></div>
+    <div class="strip-div"></div>
+    <div class="strip-stat"><div class="strip-n">158%</div><div class="strip-l">Avg ROI</div></div>
+    <div class="strip-div"></div>
+    <div class="strip-stat"><div class="strip-n">12K+</div><div class="strip-l">Active Brands</div></div>
+    <div class="strip-div"></div>
+    <div class="strip-stat"><div class="strip-n">$198M</div><div class="strip-l">Paid to Creators</div></div>
+  </div>
+</section>
+
+<section class="vid-row">
+  <div class="editorial-head">
+    <div class="section-number">01 — CONTENT SHOWCASE</div>
+    <h2 class="section-h2">Real content.<br><em>Real results.</em></h2>
+  </div>
+  <div class="vids">
+    <div class="vc"><video src="video/creator-1.mp4" autoplay muted loop playsinline preload="metadata"></video><div class="vc-caption"><div class="vc-n">Sara K. — Beauty & Skincare</div><div class="vc-m">↑ 4.2M views · TRENDING</div></div></div>
+    <div class="vc"><video src="video/creator-19.mp4" autoplay muted loop playsinline preload="metadata"></video><div class="vc-caption"><div class="vc-n">Aisha R. — Fashion & Style</div><div class="vc-m">↑ 6.1M views · VIRAL</div></div></div>
+    <div class="vc"><video src="video/creator-28.mp4" autoplay muted loop playsinline preload="metadata"></video><div class="vc-caption"><div class="vc-n">Zara N. — Lifestyle</div><div class="vc-m">↑ 5.4M views · TOP PERFORMER</div></div></div>
+  </div>
+</section>
+
+<section class="features-editorial">
+  <div class="editorial-head">
+    <div class="section-number">02 — AI STUDIO</div>
+    <h2 class="section-h2">Six tools.<br><em>One platform.</em></h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-item"><div class="feat-num">01</div><div class="feat-title">AI Image Generation</div><div class="feat-desc">Product photos, lifestyle content, ad creatives — in seconds using Gemini and Flux Studio.</div></div>
+    <div class="feat-item"><div class="feat-num">02</div><div class="feat-title">AI Video (Kling)</div><div class="feat-desc">Turn creative briefs into polished vertical video with Kling, Runway, and Pika models.</div></div>
+    <div class="feat-item"><div class="feat-num">03</div><div class="feat-title">Script Writer</div><div class="feat-desc">Viral-optimized scripts and captions tuned specifically for TikTok and Reels algorithms.</div></div>
+    <div class="feat-item"><div class="feat-num">04</div><div class="feat-title">AI Avatar (HeyGen)</div><div class="feat-desc">Talking-head video for any product or promotion. Any voice, any language, instantly.</div></div>
+    <div class="feat-item"><div class="feat-num">05</div><div class="feat-title">Brand Brief Engine</div><div class="feat-desc">Submit your brief once. AI generates an entire week of on-brand content automatically.</div></div>
+    <div class="feat-item"><div class="feat-num">06</div><div class="feat-title">Performance Tracking</div><div class="feat-desc">See exactly what converts. Pay creators bonuses for top performers. Data-driven always.</div></div>
+  </div>
+</section>
+
+<section class="creators-ed">
+  <div class="editorial-head">
+    <div class="section-number">03 — CREATOR COMMUNITY</div>
+    <h2 class="section-h2">Meet the<br><em>AI creators.</em></h2>
+  </div>
+  <div class="creators-scroll">
+    <div class="c-ed"><img src="img/creators_new/creator_sofia.png" loading="lazy" alt="Sofia"><div class="c-ed-info"><div class="c-ed-name">Sofia M.</div><div class="c-ed-niche">Beauty & Skincare</div><div class="c-ed-views">↑ 4.2M views/mo</div></div></div>
+    <div class="c-ed"><img src="img/creators_new/creator_aisha.png" loading="lazy" alt="Aisha"><div class="c-ed-info"><div class="c-ed-name">Aisha J.</div><div class="c-ed-niche">Fashion & Style</div><div class="c-ed-views">↑ 6.1M views/mo</div></div></div>
+    <div class="c-ed"><img src="img/creators_new/creator_emma.png" loading="lazy" alt="Emma"><div class="c-ed-info"><div class="c-ed-name">Emma L.</div><div class="c-ed-niche">Makeup & Beauty</div><div class="c-ed-views">↑ 7.3M views/mo</div></div></div>
+    <div class="c-ed"><img src="img/creators_new/creator_alex.png" loading="lazy" alt="Lexi"><div class="c-ed-info"><div class="c-ed-name">Lexi R.</div><div class="c-ed-niche">TikTok & Trends</div><div class="c-ed-views">↑ 9.1M views/mo</div></div></div>
+  </div>
+</section>
+
+<section class="pricing-ed">
+  <div class="editorial-head">
+    <div class="section-number">04 — PRICING</div>
+    <h2 class="section-h2">Scale<br><em>your budget.</em></h2>
+  </div>
+  <div class="plans-ed">
+    <div class="plan-ed"><div class="pe-tier">Starter</div><div class="pe-p">$199<sub>/mo</sub></div><div class="pe-name">Test before you scale</div><ul class="pe-list"><li>10 videos</li><li>5 creators</li><li>Basic AI tools</li><li>Email support</li></ul><button class="pe-btn" onclick="location.href='ugcgo-auth.html'">Get Started</button></div>
+    <div class="plan-ed featured"><div class="pe-tier">Growth — Most Popular</div><div class="pe-p">$499<sub>/mo</sub></div><div class="pe-name">For scaling brands</div><ul class="pe-list"><li>30 videos</li><li>Full AI Studio</li><li>20 creators</li><li>A/B testing</li><li>Priority support</li></ul><button class="pe-btn" onclick="location.href='ugcgo-auth.html'">Get Started →</button></div>
+    <div class="plan-ed"><div class="pe-tier">Scale</div><div class="pe-p">$999<sub>/mo</sub></div><div class="pe-name">Unlimited everything</div><ul class="pe-list"><li>Unlimited videos</li><li>Custom models</li><li>White-label</li><li>Dedicated manager</li></ul><button class="pe-btn" onclick="location.href='ugcgo-auth.html'">Contact Sales</button></div>
+  </div>
+</section>
+
+<section class="cta-ed">
+  <h2 class="cta-h">The future of<br>UGC is <em>here.</em></h2>
+  <p class="cta-sub">Join 50,000+ brands already creating on ugcgo.ai</p>
+  <button class="btn-big" style="font-size:16px;padding:16px 48px" onclick="location.href='ugcgo-auth.html'">Start Creating Free</button>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:16px">ugcgo.ai</div>
+  <div class="fl"><a href="#">Brands</a><a href="#">Creators</a><a href="#">Studio</a><a href="#">Pricing</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+  <div style="font-size:12px;color:var(--m);font-family:-apple-system,sans-serif">© 2024 ugcgo.ai</div>
+</footer>
+</body>
+</html>

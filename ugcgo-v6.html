@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ugcgo.ai — AI UGC Platform</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#02040a;--c1:#0a0f1e;--c2:#0d1428;--neon:#00ffcc;--neon2:#ff00aa;--accent:#ffe500;--t:#e8eeff;--m:#5a6a9a;--b:rgba(0,255,204,.12)}
+html,body{overflow-x:hidden;font-family:'Courier New',Courier,monospace;background:var(--bg);color:var(--t)}
+a{color:inherit;text-decoration:none}
+
+/* GRID BG */
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,204,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,204,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:60px;background:rgba(2,4,10,.9);border-bottom:1px solid var(--b);backdrop-filter:blur(12px)}
+.logo{font-size:18px;font-weight:700;letter-spacing:2px;color:var(--neon);text-shadow:0 0 20px rgba(0,255,204,.5)}
+.logo span{color:var(--neon2)}
+.nav-links{display:flex;gap:32px;font-size:12px;letter-spacing:1px;color:var(--m)}
+.nav-links a:hover{color:var(--neon)}
+.btn-neon{background:transparent;border:1px solid var(--neon);color:var(--neon);font-family:inherit;font-size:12px;letter-spacing:2px;padding:8px 20px;cursor:pointer;transition:.2s;text-transform:uppercase;position:relative}
+.btn-neon::before{content:"";position:absolute;inset:0;background:var(--neon);opacity:0;transition:.2s}
+.btn-neon:hover::before{opacity:.1}
+.btn-neon:hover{box-shadow:0 0 20px rgba(0,255,204,.3);text-shadow:0 0 8px var(--neon)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 5% 60px;position:relative;z-index:1}
+.hero-inner{max-width:900px}
+.terminal-line{font-size:13px;color:var(--neon);letter-spacing:2px;margin-bottom:24px;opacity:.8}
+.terminal-line::before{content:"> ";color:var(--neon2)}
+h1{font-size:clamp(48px,8vw,110px);font-weight:700;line-height:.95;letter-spacing:-2px;margin-bottom:24px;font-family:-apple-system,sans-serif}
+.h1-neon{color:var(--neon);text-shadow:0 0 40px rgba(0,255,204,.4),0 0 80px rgba(0,255,204,.15)}
+.h1-pink{color:var(--neon2);text-shadow:0 0 40px rgba(255,0,170,.4)}
+.hero-sub{font-size:16px;color:var(--m);line-height:1.7;max-width:500px;margin:0 auto 40px;font-family:-apple-system,sans-serif}
+.btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+.btn-primary{background:var(--neon);color:#000;font-weight:700;font-size:14px;padding:12px 32px;border:none;cursor:pointer;letter-spacing:1px;transition:.2s;font-family:inherit}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,255,204,.5);transform:translateY(-2px)}
+.btn-ghost{background:none;border:1px solid var(--m);color:var(--t);font-size:14px;padding:12px 32px;cursor:pointer;transition:.2s;font-family:inherit;letter-spacing:1px}
+.btn-ghost:hover{border-color:var(--neon2);color:var(--neon2)}
+
+/* SCANLINE METRICS */
+.metrics{display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+.metric{padding:20px 40px;border:1px solid var(--b);background:rgba(0,255,204,.03);text-align:center;position:relative}
+.metric::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
+.m-val{font-size:32px;font-weight:700;color:var(--neon);font-family:-apple-system,sans-serif;letter-spacing:-1px}
+.m-label{font-size:10px;color:var(--m);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+
+/* VIDEO SECTION */
+.vid-section{padding:80px 5%;position:relative;z-index:1}
+.vid-header{text-align:center;margin-bottom:48px}
+.section-tag{font-size:11px;letter-spacing:3px;color:var(--neon2);text-transform:uppercase;margin-bottom:12px}
+.section-h{font-size:clamp(28px,5vw,52px);font-weight:700;font-family:-apple-system,sans-serif;letter-spacing:-1px}
+.section-h .hl{color:var(--neon)}
+.vid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--b)}
+.vid-card{position:relative;aspect-ratio:9/16;overflow:hidden;background:var(--c1)}
+.vid-card video{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.2)}
+.vid-card::before{content:"";position:absolute;inset:0;border:1px solid transparent;transition:.3s;z-index:2}
+.vid-card:hover::before{border-color:var(--neon);box-shadow:inset 0 0 20px rgba(0,255,204,.15)}
+.vid-info{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(2,4,10,.9));z-index:3}
+.vid-creator{font-size:13px;font-weight:700;color:var(--neon);letter-spacing:.5px}
+.vid-meta{font-size:11px;color:var(--m);margin-top:2px;letter-spacing:.5px}
+
+/* FEATURES TERMINAL */
+.features{padding:80px 5%;position:relative;z-index:1}
+.terminal-box{background:var(--c1);border:1px solid var(--b);padding:32px;border-radius:4px;max-width:900px;margin:0 auto}
+.terminal-header{display:flex;align-items:center;gap:8px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--b)}
+.dot-r{width:12px;height:12px;border-radius:50%;background:#ff5f56}
+.dot-y{width:12px;height:12px;border-radius:50%;background:#ffbd2e}
+.dot-g{width:12px;height:12px;border-radius:50%;background:#27c93f}
+.terminal-title{font-size:12px;color:var(--m);margin-left:8px;letter-spacing:1px}
+.cmd-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cmd{font-size:14px;padding:12px 16px;background:rgba(0,255,204,.04);border:1px solid rgba(0,255,204,.1);display:flex;gap:12px;align-items:flex-start}
+.cmd-name{color:var(--neon);white-space:nowrap;font-size:13px;min-width:160px}
+.cmd-desc{color:var(--m);font-size:12px;font-family:-apple-system,sans-serif;line-height:1.5}
+
+/* PRICING */
+.pricing{padding:80px 5%;position:relative;z-index:1;text-align:center}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--b);max-width:900px;margin:40px auto 0}
+.plan{background:var(--c1);padding:40px 32px;text-align:left;position:relative;border:1px solid transparent;transition:.2s}
+.plan:hover{border-color:var(--neon);background:var(--c2)}
+.plan.hot{background:var(--c2)}
+.plan-tag{font-size:10px;letter-spacing:2px;color:var(--neon2);text-transform:uppercase;margin-bottom:12px}
+.plan-p{font-size:48px;font-weight:700;color:var(--neon);font-family:-apple-system,sans-serif;letter-spacing:-2px;line-height:1}
+.plan-p sub{font-size:16px;color:var(--m);font-weight:400}
+.plan-name{font-size:13px;color:var(--m);margin:8px 0 24px;letter-spacing:1px}
+.plan-list{list-style:none;margin-bottom:28px}
+.plan-list li{font-size:12px;color:var(--m);padding:7px 0;border-bottom:1px solid var(--b);display:flex;gap:8px}
+.plan-list li::before{content:"$ ";color:var(--neon)}
+.plan-btn{width:100%;padding:11px;background:none;border:1px solid var(--neon);color:var(--neon);font-family:inherit;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:.2s}
+.plan.hot .plan-btn{background:var(--neon);color:#000}
+.plan-btn:hover{background:var(--neon);color:#000}
+
+/* CTA */
+.cta{padding:80px 5%;text-align:center;position:relative;z-index:1}
+.cta h2{font-size:clamp(36px,6vw,72px);font-weight:700;font-family:-apple-system,sans-serif;letter-spacing:-2px;margin-bottom:16px}
+.cta p{font-size:16px;color:var(--m);margin-bottom:36px;font-family:-apple-system,sans-serif}
+.cta-line{width:1px;height:60px;background:linear-gradient(var(--neon),transparent);margin:0 auto 36px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--b);padding:32px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;position:relative;z-index:1}
+.f-links{display:flex;gap:24px;font-size:11px;color:var(--m);letter-spacing:.5px}
+.f-links a:hover{color:var(--neon)}
+.f-c{font-size:11px;color:var(--m);letter-spacing:.5px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .metrics{flex-direction:column;align-items:center}
+  .metric{width:100%;max-width:300px}
+  .vid-grid{grid-template-columns:1fr}
+  .cmd-list{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr;max-width:440px}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">UGC<span>GO</span>.AI</div>
+  <div class="nav-links">
+    <a href="#">FOR_BRANDS</a>
+    <a href="#">CREATORS</a>
+    <a href="#">AI_STUDIO</a>
+    <a href="#">PRICING</a>
+  </div>
+  <button class="btn-neon" onclick="location.href='ugcgo-auth.html'">LAUNCH_APP →</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="terminal-line">SYSTEM STATUS: ALL SYSTEMS OPERATIONAL</div>
+    <h1>
+      <span class="h1-neon">AI-Powered</span><br>
+      <span class="h1-pink">UGC Factory</span>
+    </h1>
+    <p class="hero-sub">Brief in. Viral UGC out. 24 hours. Performance-based pricing. The intersection of AI creativity and creator culture.</p>
+    <div class="btns">
+      <button class="btn-primary" onclick="location.href='ugcgo-auth.html'">INITIALIZE_FREE_TRIAL</button>
+      <button class="btn-ghost">VIEW_DEMO.MP4</button>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="m-val" data-count="50" data-suffix="K+">0</div><div class="m-label">Videos_Generated</div></div>
+      <div class="metric"><div class="m-val" data-count="2.4" data-suffix="B">0</div><div class="m-label">Total_Views</div></div>
+      <div class="metric"><div class="m-val" data-count="158" data-suffix="%">0</div><div class="m-label">Avg_ROI</div></div>
+      <div class="metric"><div class="m-val" data-count="12" data-suffix="K+">0</div><div class="m-label">Active_Brands</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="vid-section">
+  <div class="vid-header">
+    <div class="section-tag">// OUTPUT_SAMPLES</div>
+    <h2 class="section-h">Content that <span class="hl">converts</span></h2>
+  </div>
+  <div class="vid-grid">
+    <div class="vid-card">
+      <video src="video/creator-1.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="vid-info"><div class="vid-creator">CREATOR_001 :: Beauty</div><div class="vid-meta">STATUS: VIRAL · 4.2M views</div></div>
+    </div>
+    <div class="vid-card">
+      <video src="video/creator-19.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="vid-info"><div class="vid-creator">CREATOR_002 :: Fashion</div><div class="vid-meta">STATUS: VIRAL · 6.1M views</div></div>
+    </div>
+    <div class="vid-card">
+      <video src="video/creator-22.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="vid-info"><div class="vid-creator">CREATOR_003 :: Lifestyle</div><div class="vid-meta">STATUS: ACTIVE · 5.4M views</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="vid-header" style="text-align:center;margin-bottom:32px">
+    <div class="section-tag">// AI_MODULES</div>
+    <h2 class="section-h">Everything you need <span class="hl">in one stack</span></h2>
+  </div>
+  <div class="terminal-box">
+    <div class="terminal-header">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="terminal-title">ugcgo-studio v3.0 — AI Content Pipeline</span>
+    </div>
+    <div class="cmd-list">
+      <div class="cmd"><span class="cmd-name">$ image_gen</span><span class="cmd-desc">Product photos & lifestyle creatives via Gemini + Flux in seconds</span></div>
+      <div class="cmd"><span class="cmd-name">$ video_gen</span><span class="cmd-desc">Kling, Runway, Pika — turn briefs into vertical video content</span></div>
+      <div class="cmd"><span class="cmd-name">$ script_ai</span><span class="cmd-desc">Viral scripts & captions optimized for TikTok algorithm</span></div>
+      <div class="cmd"><span class="cmd-name">$ avatar_gen</span><span class="cmd-desc">HeyGen talking-head videos — any product, any language</span></div>
+      <div class="cmd"><span class="cmd-name">$ brief_engine</span><span class="cmd-desc">Input brief once → full week of on-brand content, automated</span></div>
+      <div class="cmd"><span class="cmd-name">$ performance</span><span class="cmd-desc">Track CTR, views, conversions. Pay only for what performs.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing">
+  <div class="section-tag">// PRICING_TIERS</div>
+  <h2 class="section-h" style="margin-bottom:0">Scale on <span class="hl">your terms</span></h2>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-tag">TIER_01</div>
+      <div class="plan-p">$199<sub>/mo</sub></div>
+      <div class="plan-name">STARTER_PACKAGE</div>
+      <ul class="plan-list"><li>10 videos/month</li><li>5 creator matches</li><li>Basic AI tools</li><li>Email support</li></ul>
+      <button class="plan-btn" onclick="location.href='ugcgo-auth.html'">DEPLOY →</button>
+    </div>
+    <div class="plan hot">
+      <div class="plan-tag">TIER_02 // RECOMMENDED</div>
+      <div class="plan-p">$499<sub>/mo</sub></div>
+      <div class="plan-name">GROWTH_PACKAGE</div>
+      <ul class="plan-list"><li>30 videos/month</li><li>Full AI Studio access</li><li>20 creators</li><li>A/B testing</li><li>Priority support</li></ul>
+      <button class="plan-btn" onclick="location.href='ugcgo-auth.html'">DEPLOY →</button>
+    </div>
+    <div class="plan">
+      <div class="plan-tag">TIER_03</div>
+      <div class="plan-p">$999<sub>/mo</sub></div>
+      <div class="plan-name">SCALE_PACKAGE</div>
+      <ul class="plan-list"><li>Unlimited videos</li><li>Custom AI models</li><li>White-label option</li><li>Dedicated manager</li></ul>
+      <button class="plan-btn" onclick="location.href='ugcgo-auth.html'">DEPLOY →</button>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta-line"></div>
+  <h2>Ready to <span style="color:var(--neon)">deploy</span>?</h2>
+  <p>Join 50,000+ brands already running on ugcgo.ai</p>
+  <button class="btn-primary" style="font-size:16px;padding:14px 44px" onclick="location.href='ugcgo-auth.html'">INITIALIZE_FREE_TRIAL</button>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:14px">UGCGO.AI_v3.0</div>
+  <div class="f-links"><a href="#">BRANDS</a><a href="#">CREATORS</a><a href="#">STUDIO</a><a href="#">PRICING</a><a href="#">PRIVACY</a></div>
+  <div class="f-c">© 2024 UGCGO.AI — ALL_RIGHTS_RESERVED</div>
+</footer>
+
+<script>
+function cnt(el){const v=parseFloat(el.dataset.count),s=el.dataset.suffix||"",d=1200,t0=performance.now();(function f(t){const p=Math.min((t-t0)/d,1),e=1-Math.pow(1-p,3),c=v*e;el.textContent=(v>=100?Math.round(c):c.toFixed(v<10?1:0))+s;if(p<1)requestAnimationFrame(f)})(t0)}
+const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){cnt(e.target);ob.unobserve(e.target)}}),{threshold:.3});
+document.querySelectorAll("[data-count]").forEach(el=>ob.observe(el));
+</script>
+</body>
+</html>
