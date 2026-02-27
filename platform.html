@@ -807,24 +807,86 @@ async function setCreatorTab(tab) {
 
 async function renderCreatorOverview(el) {
   const name = currentProfile?.full_name || 'Creator';
+  const handle = currentProfile?.website ? '@' + currentProfile.website.replace(/^@/,'') : '';
   const { data: apps } = await sb.from('applications').select('*, campaigns(title,budget,category)').eq('creator_id', currentUser.id);
   const active = (apps||[]).filter(a=>a.status==='accepted');
   const pending = (apps||[]).filter(a=>a.status==='pending');
+  const avatarUrl = currentProfile?.avatar_url || '';
+  
   el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Creator Dashboard</div>
-      <h1>Welcome, ${name} 👋</h1>
-      <p>Find campaigns and grow your portfolio</p>
+    <style>
+      @keyframes float { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+      @keyframes float2 { 0%,100%{transform:translateY(0) rotate(3deg)} 50%{transform:translateY(-8px) rotate(-3deg)} }
+      @keyframes float3 { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-16px) rotate(1deg)} }
+      @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+      .photo-float-1{animation:float 4s ease-in-out infinite}
+      .photo-float-2{animation:float2 5s ease-in-out infinite 1s}
+      .photo-float-3{animation:float3 3.5s ease-in-out infinite .5s}
+    </style>
+    <!-- CREATOR HERO -->
+    <div style="background:#0a0a0a;border-radius:20px;padding:28px;margin-bottom:24px;min-height:220px;position:relative;overflow:hidden">
+      <!-- floating UGC photo collage -->
+      <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:10px;align-items:center">
+        <div class="photo-float-1" style="width:80px;height:110px;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.1)">
+          <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&q=80" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="photo-float-2" style="width:90px;height:130px;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid rgba(200,255,0,.2)">
+          <img src="https://images.unsplash.com/photo-1596003906949-67221c37965c?w=200&q=80" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="photo-float-3" style="width:75px;height:105px;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.1)">
+          <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&q=80" style="width:100%;height:100%;object-fit:cover">
+        </div>
+      </div>
+      <!-- gradient fade over photos -->
+      <div style="position:absolute;right:0;top:0;bottom:0;width:200px;background:linear-gradient(to right,#0a0a0a 30%,transparent)"></div>
+      <!-- text content -->
+      <div style="position:relative;z-index:2;max-width:55%">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:8px">Creator Space</div>
+        <div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:4px">Hey, ${name} ✨</div>
+        ${handle ? `<div style="color:#666;font-size:13px;margin-bottom:20px">${handle}</div>` : '<div style="margin-bottom:20px"></div>'}
+        <button class="btn btn-lime" style="font-weight:800;font-size:13px;padding:10px 20px" onclick="setCreatorTab('browse')">Find Campaigns →</button>
+      </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-card accent"><div class="stat-value">${(apps||[]).length}</div><div class="stat-label">Total Applications</div></div>
-      <div class="stat-card"><div class="stat-value">${active.length}</div><div class="stat-label">Active Deals</div></div>
-      <div class="stat-card"><div class="stat-value">${pending.length}</div><div class="stat-label">Pending</div></div>
-      <div class="stat-card"><div class="stat-value">$0</div><div class="stat-label">Earned</div></div>
+
+    <!-- COMPACT STATS -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px">
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px">${(apps||[]).length}</div>
+        <div style="font-size:11px;color:var(--mid);font-weight:600;margin-top:2px">Applied</div>
+      </div>
+      <div style="background:var(--lime);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px;color:#0a0a0a">${active.length}</div>
+        <div style="font-size:11px;color:#0a0a0a;font-weight:600;margin-top:2px">Active</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px">${pending.length}</div>
+        <div style="font-size:11px;color:var(--mid);font-weight:600;margin-top:2px">Pending</div>
+      </div>
     </div>
-    <div style="margin-bottom:16px"><div class="eyebrow">Recent Applications</div></div>
-    ${(apps||[]).length === 0 ? `<div class="empty"><h3>No applications yet</h3><p>Browse open campaigns and apply to get started</p><button class="btn btn-lime" onclick="setCreatorTab('browse')" style="margin-top:16px">Browse Campaigns →</button></div>` :
-    `<div class="cards-grid">${(apps||[]).slice(0,4).map(a=>`<div class="camp-card"><div class="camp-title">${a.campaigns?.title||'Campaign'}</div><div style="display:flex;justify-content:space-between;margin-top:12px"><span>$${a.campaigns?.budget||'?'}</span><span class="status-${a.status}">${a.status}</span></div></div>`).join('')}</div>`}`;
+
+    <!-- RECENT ACTIVITY -->
+    ${(apps||[]).length === 0 ? 
+      `<div style="border:1.5px dashed var(--border);border-radius:16px;padding:48px;text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">🎬</div>
+        <h3 style="font-weight:900;margin-bottom:8px">Your story starts here</h3>
+        <p style="color:var(--mid);font-size:14px;margin-bottom:20px">Find brands that match your vibe and apply</p>
+        <button class="btn btn-dark" onclick="setCreatorTab('browse')">Browse Open Campaigns →</button>
+      </div>` :
+      `<div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:12px">Recent Activity</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${(apps||[]).slice(0,4).map(a=>`
+            <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700;font-size:14px">${a.campaigns?.title||'Campaign'}</div>
+                <div style="font-size:12px;color:var(--mid);margin-top:2px">${a.campaigns?.category||''} · $${a.campaigns?.budget||'?'}</div>
+              </div>
+              <span class="tag tag-${a.status==='accepted'?'active':a.status==='pending'?'draft':'pending'}" style="font-size:11px">${a.status}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`
+    }`;
 }
 
 async function renderCreatorBrowse(el) {
@@ -857,36 +919,47 @@ async function renderBrandOverview(el) {
   const { data: camps } = await sb.from('campaigns').select('*').eq('brand_id', currentUser.id);
   const { data: apps } = await sb.from('applications').select('*, campaigns!inner(brand_id)').eq('campaigns.brand_id', currentUser.id);
   const name = currentProfile?.company_name || currentProfile?.full_name || 'Brand';
+  const activeCamps = (camps||[]).filter(c=>c.status==='active');
+  const pendingApps = (apps||[]).filter(a=>a.status==='pending');
   el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Brand Dashboard</div>
-      <h1>Welcome, ${name} 👋</h1>
-      <p>Manage your UGC campaigns and creator applications</p>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card accent">
-        <div class="stat-value">${(camps||[]).length}</div>
-        <div class="stat-label">Total Campaigns</div>
+    <div style="padding:0 0 32px">
+      <!-- HERO HEADER -->
+      <div style="background:#0a0a0a;border-radius:20px;padding:32px;margin-bottom:28px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:200px;height:200px;background:var(--lime);border-radius:50%;opacity:.08"></div>
+        <div style="position:absolute;bottom:-50px;right:60px;width:140px;height:140px;background:var(--lime);border-radius:50%;opacity:.05"></div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:10px">Brand Dashboard</div>
+        <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:6px">Welcome, ${name} 👋</div>
+        <div style="color:#888;font-size:14px;margin-bottom:24px">Manage your UGC campaigns and creator applications</div>
+        <button class="btn btn-lime" style="font-weight:800;font-size:14px" onclick="openModal('modalNewCampaign')">+ New Campaign</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value">${(camps||[]).filter(c=>c.status==='active').length}</div>
-        <div class="stat-label">Active Campaigns</div>
+      <!-- STATS ROW -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px">
+        <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px">${(camps||[]).length}</div>
+          <div style="font-size:13px;color:var(--mid);font-weight:600;margin-top:4px">Total Campaigns</div>
+        </div>
+        <div style="background:var(--lime);border-radius:16px;padding:20px">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:#0a0a0a">${activeCamps.length}</div>
+          <div style="font-size:13px;color:#0a0a0a;font-weight:600;margin-top:4px">Active Now</div>
+        </div>
+        <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px">${(apps||[]).length}</div>
+          <div style="font-size:13px;color:var(--mid);font-weight:600;margin-top:4px">Applications</div>
+        </div>
+        <div style="background:#0a0a0a;border-radius:16px;padding:20px;position:relative;overflow:hidden">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:#fff">${pendingApps.length}</div>
+          <div style="font-size:13px;color:#aaa;font-weight:600;margin-top:4px">Pending Review</div>
+          ${pendingApps.length > 0 ? '<div style="position:absolute;top:12px;right:12px;background:var(--lime);width:8px;height:8px;border-radius:50%"></div>' : ''}
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value">${(apps||[]).length}</div>
-        <div class="stat-label">Applications Received</div>
+      <!-- RECENT CAMPAIGNS -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid)">Recent Campaigns</div>
+        <button class="btn btn-outline" style="font-size:13px;padding:8px 16px" onclick="setBrandTab('campaigns')">View All →</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value">${(apps||[]).filter(a=>a.status==='pending').length}</div>
-        <div class="stat-label">Pending Review</div>
+      <div class="cards-grid">
+        ${(camps||[]).slice(0,3).map(c => campCard(c)).join('') || '<div class="empty" style="border:1.5px dashed var(--border);border-radius:16px;padding:48px;text-align:center"><div style="font-size:40px;margin-bottom:12px">🎯</div><h3 style="font-weight:900;margin-bottom:8px">No campaigns yet</h3><p style="color:var(--mid);font-size:14px;margin-bottom:20px">Create your first UGC campaign to get started</p><button class="btn btn-dark" onclick="openModal('modalNewCampaign')">+ New Campaign</button></div>'}
       </div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div class="eyebrow">Recent Campaigns</div>
-      <button class="btn btn-dark" onclick="openModal('modalNewCampaign')">+ New Campaign</button>
-    </div>
-    <div class="cards-grid">
-      ${(camps||[]).slice(0,3).map(c => campCard(c)).join('') || '<div class="empty"><h3>No campaigns yet</h3><p>Create your first UGC campaign to get started</p></div>'}
     </div>`;
 }
 
@@ -1261,6 +1334,14 @@ async function renderBrandCreators(el) {
 }
 
 // ========== ENHANCED CAMPAIGN CARD ==========
+
+async function toggleStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'draft' ? 'active' : currentStatus === 'active' ? 'paused' : 'active';
+  const { error } = await sb.from('campaigns').update({status: newStatus}).eq('id', id);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  showToast(newStatus === 'active' ? '✅ Campaign activated!' : '⏸ Campaign paused');
+  await setBrandTab('campaigns');
+}
 function campCard(c, showApply) {
   const statusClass = c.status === 'active' ? 'tag-active' : c.status === 'draft' ? 'tag-draft' : 'tag-pending';
   const cats = c.category ? `<span style="font-size:12px;color:var(--mid)">${c.category}</span>` : '';
