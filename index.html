@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ugcgo.ai — The AI-First UGC Marketplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,20 +48,12 @@
 [data-theme="light"] .card { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
 [data-theme="light"] .ai-tool-card { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
 html { scroll-behavior: smooth; }
-html, body {
-  overflow-x: hidden;
-  max-width: 100%;
-  width: 100%;
-  position: relative;
-}
-* {
-  box-sizing: border-box;
-}
 body { 
   background: var(--bg); 
   color: var(--text); 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
   line-height: 1.6; 
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -471,7 +463,7 @@ nav.scrolled {
 }
 
 /* How it Works */
-.section { padding: 140px 0; position: relative; overflow: hidden; }
+.section { padding: 140px 0; }
 .section.alt-bg { background: #0d0d0d; }
 .card h4 { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 10px; }
 .card p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
@@ -963,97 +955,21 @@ footer {
   
   /* Video Strip — горизонтальный скролл на мобайле */
   #videoStrip { 
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 12px !important;
-    padding: 16px !important;
-    max-width: 100vw;
-    width: 100%;
+    padding: 0 16px 20px !important; 
+    gap: 12px !important; 
   }
   #videoStrip > div { 
-    flex: 0 0 140px;
     width: 150px !important; 
-    height: 267px !important;
-    scroll-snap-align: start;
+    height: 267px !important; 
   }
   
   /* Section headers */
   .section-header h2 { font-size: clamp(28px, 8vw, 40px) !important; }
   
-  /* Hero overflow fix */
-  .hero { overflow: hidden !important; }
-  
   /* Mosaic — скрыть на мобайле для производительности */
-  .mosaic-container {
-    opacity: 0.25;
-    pointer-events: none;
-    overflow: hidden !important;
-    max-width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    padding: 0 !important;
-  }
-  .mosaic-column { max-width: 33vw !important; overflow: hidden !important; }
-  
-  /* Hide large glow on mobile */
-  .hero-glow { display: none !important; }
-  
-  /* SVG deco — clip on mobile */
-  .svg-deco-hero { max-width: 60vw !important; overflow: hidden !important; }
-  
-  /* ===== NUCLEAR MOBILE OVERFLOW FIX ===== */
-  /* Force ALL multi-column grids to single column */
-  div[style*="grid-template-columns: repeat(2"],
-  div[style*="grid-template-columns:repeat(2"],
-  div[style*="grid-template-columns: repeat(3"],
-  div[style*="grid-template-columns:repeat(3"],
-  div[style*="grid-template-columns: repeat(4"],
-  div[style*="grid-template-columns:repeat(4"] { 
-    display: flex !important; 
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  /* Case cards */
-  .case-card { 
-    width: 100% !important; 
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  
-  /* Video strip — clamp widths */
-  #videoStrip > div,
-  div[style*="flex-shrink:0;width:200px"],
-  div[style*="flex-shrink: 0; width: 200px"] {
-    flex: 0 0 140px !important;
-    width: 140px !important;
-    max-width: 140px !important;
-  }
-  
-  /* Stats bar items */
-  div[style*="text-align:center;padding:20px"],
-  div[style*="text-align: center; padding: 20px"] {
-    min-width: 0 !important;
-    flex: 1 1 40% !important;
-  }
-  
-  /* Clamp all absolute glow/orb elements */
-  div[style*="width: 1000px"],
-  div[style*="width:1000px"],
-  div[style*="width: 800px"],
-  div[style*="width:800px"] {
-    width: 100% !important;
-    max-width: 100vw !important;
-  }
-  
-  /* Section containers overflow protection */
-  .section, section { overflow: hidden !important; }
-  .container { overflow: hidden !important; }
+  .mosaic-container { display: none; }
+  /* Hero без мозаики — добавить красивый gradient вместо */
+  .hero { background: linear-gradient(135deg, #0a0a0a 0%, #111 50%, #0f0f0f 100%); }
   
   .steps { grid-template-columns: 1fr; gap: 24px; }
   .step { padding: 32px 24px; }
@@ -1064,6 +980,19 @@ footer {
   .earnings-amount { font-size: 40px; }
   .waitlist-form { padding: 32px 24px; border-radius: 24px; }
   .radio-group { flex-direction: column; }
+  
+  /* Fix case-card absolute overflow */
+  .case-card {
+    position: relative !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Scroll indicator line — скрыть на мобайле */
+  #scrollProgressLine { display: none; }
 }
 @media (max-width: 480px) {
   .hero h1 { font-size: 32px !important; }
@@ -1093,86 +1022,74 @@ footer {
   color: var(--text);
 }
 
-/* SVG Animations */
-@keyframes coinSpin {
-  0% { transform: rotateY(0); }
-  100% { transform: rotateY(360deg); }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.card:hover .card-icon svg {
-  animation: float 2s ease-in-out infinite;
-  color: #fff;
-}
-.hero-badge svg {
-  animation: coinSpin 3s linear infinite;
-  transform-style: preserve-3d;
-}
-.step:hover .step-number {
-  transform: scale(1.1) rotate(5deg);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+/* ===== PREMIUM ANIMATIONS ===== */
 
-/* Mobile Overflow Fix */
-@media (max-width: 768px) {
-  html, body {
-    overflow-x: hidden;
-    position: relative;
-    width: 100%;
-  }
-  .mosaic-wrapper {
-    width: 100%;
-    overflow: hidden;
-  }
-}
-
-/* ===== SVG DECORATIONS ===== */
-.svg-deco {
-  position: absolute;
+/* Scroll progress line */
+#scrollProgressLine {
+  position: fixed;
+  left: 0; top: 0;
+  width: 2px; height: 0%;
+  background: linear-gradient(to bottom, #e8ff59, rgba(232,255,89,0));
+  z-index: 9999;
   pointer-events: none;
-  z-index: 0;
-  opacity: 0.15;
+  opacity: 0.6;
+  transition: height 0.08s linear;
 }
-.svg-deco-hero {
+
+/* Glitch on hero H1 — subtle, every 7s */
+@keyframes glitch {
+  0%,88%,100% { transform: translate(0); clip-path: none; }
+  89% { transform: translate(-3px, 1px); clip-path: inset(10% 0 60% 0); }
+  90% { transform: translate(3px, -1px); clip-path: inset(60% 0 10% 0); }
+  91% { transform: translate(-1px, 2px); clip-path: none; filter: hue-rotate(60deg); }
+  92% { transform: translate(0); filter: none; }
+}
+
+/* Floating lime orbs in hero bg */
+@keyframes floatOrb1 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: 0.06; }
+  33%  { transform: translate(30px,-40px) scale(1.1); opacity: 0.10; }
+  66%  { transform: translate(-20px,20px) scale(0.9); opacity: 0.05; }
+}
+@keyframes floatOrb2 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: 0.05; }
+  50%  { transform: translate(-40px,30px) scale(1.15); opacity: 0.09; }
+}
+
+.hero-orb-1 {
   position: absolute;
-  top: 0; right: 0;
-  width: min(600px, 60vw);
-  height: auto;
-  opacity: 0.12;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,255,89,0.15) 0%, transparent 70%);
+  top: -100px; right: -100px;
   pointer-events: none;
-  z-index: 0;
+  animation: floatOrb1 12s ease-in-out infinite;
+}
+.hero-orb-2 {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,255,89,0.10) 0%, transparent 70%);
+  bottom: 0; left: 10%;
+  pointer-events: none;
+  animation: floatOrb2 16s ease-in-out infinite;
 }
 
-@keyframes svgRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Section entrance animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes svgPulse {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
-  50% { opacity: 0.18; transform: scale(1.05); }
+.reveal-anim {
+  opacity: 0;
+  animation: fadeInUp 0.7s ease forwards;
 }
-@keyframes svgDraw {
-  from { stroke-dashoffset: 1000; }
-  to { stroke-dashoffset: 0; }
-}
-@keyframes floatY {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-
-.deco-ring { animation: svgRotate 20s linear infinite; transform-origin: center; }
-.deco-pulse { animation: svgPulse 4s ease-in-out infinite; }
-.deco-draw {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: svgDraw 3s ease-out 0.5s forwards;
-}
-.deco-float { animation: floatY 6s ease-in-out infinite; }
 </style>
 </head>
 <body>
+
+<!-- Scroll progress line -->
+<div id="scrollProgressLine"></div>
 
 <!-- Navigation -->
 <nav>
@@ -1197,17 +1114,10 @@ footer {
 </nav>
 
 <!-- Hero -->
-<section class="hero">
-<!-- SVG Decorations -->
-<svg class="svg-deco-hero" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <circle class="deco-ring" cx="300" cy="300" r="280" stroke="#e8ff59" stroke-width="0.5" stroke-dasharray="8 4" opacity="0.4"/>
-  <circle class="deco-pulse" cx="300" cy="300" r="220" stroke="#e8ff59" stroke-width="1" opacity="0.2"/>
-  <circle cx="300" cy="300" r="160" stroke="#e8ff59" stroke-width="0.5" opacity="0.15"/>
-  <path class="deco-draw" d="M 300 80 Q 520 180 520 300 Q 520 420 300 520 Q 80 420 80 300 Q 80 180 300 80 Z" stroke="#e8ff59" stroke-width="1" fill="none" opacity="0.5"/>
-  <circle class="deco-float" cx="480" cy="140" r="6" fill="#e8ff59" opacity="0.6"/>
-  <circle class="deco-float" cx="120" cy="460" r="4" fill="#e8ff59" opacity="0.4" style="animation-delay: -2s"/>
-  <circle cx="540" cy="380" r="3" fill="#e8ff59" opacity="0.5"/>
-</svg>
+<section class="hero" style="position:relative;overflow:hidden">
+  <div class="hero-orb-1"></div>
+  <div class="hero-orb-2"></div>
+  <canvas id="heroParticles" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.7"></canvas>
   <!-- Mosaic Background Wrapper -->
   <div class="mosaic-wrapper">
     <div class="mosaic-container">
@@ -1218,7 +1128,7 @@ footer {
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-7.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fitness Challenge</div><div class="mosaic-card-stats">3.4M views<span class="mosaic-card-dot"></span>$12,000</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-8.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Tech Unboxing</div><div class="mosaic-card-stats">678K views<span class="mosaic-card-dot"></span>$2,400</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-9.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Nike Product Review</div><div class="mosaic-card-stats">1.2M views<span class="mosaic-card-dot"></span>$4,800</div></div></div>
-        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-28.mp4" poster="img/ugc/ugc-4.png" muted loop playsinline autoplay style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Skincare Routine 2025</div><div class="mosaic-card-stats">856K views<span class="mosaic-card-dot"></span>$3,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-28.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Skincare Routine 2025</div><div class="mosaic-card-stats">856K views<span class="mosaic-card-dot"></span>$3,200</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-11.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Gaming Setup Tour</div><div class="mosaic-card-stats">2.1M views<span class="mosaic-card-dot"></span>$8,500</div></div></div>
       </div>
       <div class="mosaic-column">
@@ -1227,7 +1137,7 @@ footer {
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-11.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Travel Vlog Paris</div><div class="mosaic-card-stats">2.7M views<span class="mosaic-card-dot"></span>$9,500</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-12.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Phone Drop Test</div><div class="mosaic-card-stats">4.2M views<span class="mosaic-card-dot"></span>$15,000</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-1.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Dance Tutorial</div><div class="mosaic-card-stats">1.3M views<span class="mosaic-card-dot"></span>$4,500</div></div></div>
-        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-22.mp4" poster="img/ugc/ugc-2.png" muted loop playsinline autoplay style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fashion Haul Summer</div><div class="mosaic-card-stats">1.8M views<span class="mosaic-card-dot"></span>$6,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-22.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Fashion Haul Summer</div><div class="mosaic-card-stats">1.8M views<span class="mosaic-card-dot"></span>$6,200</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-3.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">ASMR Product Test</div><div class="mosaic-card-stats">945K views<span class="mosaic-card-dot"></span>$3,800</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-1.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Travel Vlog Paris</div><div class="mosaic-card-stats">2.7M views<span class="mosaic-card-dot"></span>$9,500</div></div></div>
       </div>
@@ -1236,7 +1146,7 @@ footer {
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-3.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Makeup Tutorial Glow</div><div class="mosaic-card-stats">1.1M views<span class="mosaic-card-dot"></span>$4,100</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-4.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Car Detailing Tips</div><div class="mosaic-card-stats">756K views<span class="mosaic-card-dot"></span>$2,700</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-5.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Desk Setup Office</div><div class="mosaic-card-stats">1.9M views<span class="mosaic-card-dot"></span>$6,800</div></div></div>
-        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-19.mp4" poster="img/ugc/ugc-5.png" muted loop playsinline autoplay style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Pet Product Review</div><div class="mosaic-card-stats">2.8M views<span class="mosaic-card-dot"></span>$10,200</div></div></div>
+        <div class="mosaic-card"><div class="mosaic-card-thumb"><video src="video/creator-19.mp4" muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Pet Product Review</div><div class="mosaic-card-stats">2.8M views<span class="mosaic-card-dot"></span>$10,200</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-7.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Healthy Snack Ideas</div><div class="mosaic-card-stats">2.4M views<span class="mosaic-card-dot"></span>$8,800</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-8.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Makeup Tutorial Glow</div><div class="mosaic-card-stats">1.1M views<span class="mosaic-card-dot"></span>$4,100</div></div></div>
         <div class="mosaic-card"><div class="mosaic-card-thumb"><img src="img/ugc/ugc-9.png" style="width:100%;height:100%;object-fit:cover;"></div><div class="mosaic-card-meta"><div class="mosaic-card-title">Car Detailing Tips</div><div class="mosaic-card-stats">756K views<span class="mosaic-card-dot"></span>$2,700</div></div></div>
@@ -1298,10 +1208,6 @@ footer {
 
 <!-- How it Works -->
 <section class="section">
-<svg style="position:absolute;top:50%;left:-60px;transform:translateY(-50%);width:120px;height:120px;opacity:0.08;pointer-events:none;" viewBox="0 0 120 120" aria-hidden="true">
-  <circle class="deco-ring" cx="60" cy="60" r="55" stroke="#e8ff59" stroke-width="1" stroke-dasharray="4 3" fill="none"/>
-  <circle cx="60" cy="60" r="35" stroke="#e8ff59" stroke-width="0.5" fill="none" opacity="0.5"/>
-</svg>
   <div class="container">
     <div class="section-header">
       <h2>How it works</h2>
@@ -1692,19 +1598,19 @@ function closeToolModal() {
       </div>
     </div>
     <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
-      <video src="video/creator-28.mp4"  muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <video src="video/creator-28.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
         <div style="font-size:12px;font-weight:700;color:#e8ff59;">3.1M views</div>
       </div>
     </div>
     <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
-      <video src="video/creator-1.mp4"  muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <video src="video/creator-1.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
         <div style="font-size:12px;font-weight:700;color:#e8ff59;">920K views</div>
       </div>
     </div>
     <div style="flex-shrink:0;width:200px;height:356px;border-radius:16px;overflow:hidden;position:relative;">
-      <video src="video/creator-3.mp4"  muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <video src="video/creator-3.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>
       <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
         <div style="font-size:12px;font-weight:700;color:#e8ff59;">1.2M views</div>
       </div>
@@ -1733,7 +1639,7 @@ function closeToolModal() {
         <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">Top Creator</div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <img src="img/creators/creator-19.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <img src="img/creators_new/creator_sofia.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
             <div>
               <div style="font-size:14px;font-weight:700;color:#fff;">Maya Chen</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.6);">Beauty & AI</div>
@@ -1753,7 +1659,7 @@ function closeToolModal() {
         <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">Rising Star</div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <img src="img/creators/creator-1.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <img src="img/creators_new/creator_marcus.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
             <div>
               <div style="font-size:14px;font-weight:700;color:#fff;">Alex Rivera</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.6);">Tech & Gaming</div>
@@ -1773,7 +1679,7 @@ function closeToolModal() {
         <div style="position:absolute;top:12px;right:12px;padding:5px 12px;background:rgba(232,255,89,0.15);border:1px solid rgba(232,255,89,0.4);border-radius:99px;font-size:12px;font-weight:700;color:#e8ff59;">#1 Brand Deals</div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <img src="img/creators/creator-3.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
+            <img src="img/creators_new/creator_aisha.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e8ff59;">
             <div>
               <div style="font-size:14px;font-weight:700;color:#fff;">Sofia Reyes</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.6);">Lifestyle & Fashion</div>
@@ -1811,32 +1717,32 @@ function closeToolModal() {
     <!-- More Creators Mini Grid -->
     <div style="display:grid;grid-template-columns:repeat(6, 1fr);gap:16px;">
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-5.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_daniel.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">Sarah K.</div>
         <div style="font-size:12px;color:var(--accent);">$7.2K/mo</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-6.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_yuki.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">David M.</div>
         <div style="font-size:12px;color:var(--accent);">$5.8K/mo</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-9.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_emma.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">Emma W.</div>
         <div style="font-size:12px;color:var(--accent);">$6.5K/mo</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-11.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_alex.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">Chris T.</div>
         <div style="font-size:12px;color:var(--accent);">$8.1K/mo</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-13.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_zara.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">Lisa P.</div>
         <div style="font-size:12px;color:var(--accent);">$4.9K/mo</div>
       </div>
       <div style="text-align:center;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;">
-        <img src="img/creators/creator-17.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+        <img src="img/creators_new/creator_sofia.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:600;">Ryan J.</div>
         <div style="font-size:12px;color:var(--accent);">$10.2K/mo</div>
       </div>
@@ -1889,7 +1795,7 @@ function closeToolModal() {
         </div>
       </div>
       <div style="position:relative;min-height:400px;">
-        <img src="img/creators/creator-2.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+        <img src="img/creators_new/creator_marcus.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
         <div style="position:absolute;inset:0;background:linear-gradient(90deg, #000 0%, transparent 50%);"></div>
         <div style="position:absolute;bottom:24px;right:24px;padding:16px 24px;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);border-radius:16px;border:1px solid rgba(255,255,255,0.1);">
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Campaign Result</div>
@@ -2137,7 +2043,7 @@ function closeToolModal() {
           "ugcgo transformed our content strategy. We went from producing 10 videos a month to 100+. The AI creators understand our brand voice better than some traditional agencies we've worked with."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-4.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_aisha.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Jennifer Walsh</div>
             <div style="font-size:13px;color:var(--text-muted);">CMO, GlowSkincare Co.</div>
@@ -2155,7 +2061,7 @@ function closeToolModal() {
           "As a creator, I was skeptical about AI tools. But the integrated AI Studio gives me access to Runway and HeyGen at wholesale prices. My earnings tripled in 3 months."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-1.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_marcus.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Jordan Blake</div>
             <div style="font-size:13px;color:var(--text-muted);">Fashion Creator, 1.8M followers</div>
@@ -2173,7 +2079,7 @@ function closeToolModal() {
           "The ROI is insane. We spent $15K on traditional UGC and got decent results. Spent $5K on ugcgo and saw 3x the engagement. The performance-based model is game-changing."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-5.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_daniel.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Marcus Chen</div>
             <div style="font-size:13px;color:var(--text-muted);">Founder, StreetKicks</div>
@@ -2191,7 +2097,7 @@ function closeToolModal() {
           "I went from juggling 5 different subscriptions to just ugcgo. All the AI tools I need, steady stream of brand deals, and payments that hit my account instantly."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-3.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_aisha.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Alex Rivera</div>
             <div style="font-size:13px;color:var(--text-muted);">Gaming Creator, 3.2M followers</div>
@@ -2209,7 +2115,7 @@ function closeToolModal() {
           "Our indie game went from 0 to 500K wishlists thanks to the UGC campaign. The creators understood our aesthetic perfectly. Best marketing investment we've made."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-6.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_yuki.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Sarah Kim</div>
             <div style="font-size:13px;color:var(--text-muted);">Marketing Lead, GameForge</div>
@@ -2227,7 +2133,7 @@ function closeToolModal() {
           "Started as a side hustle, now it's my full-time income. The AI Script Writer alone saves me 10 hours a week. I can focus on being creative instead of admin work."
         </p>
         <div style="display:flex;align-items:center;gap:12px;">
-          <img src="img/creators/creator-9.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+          <img src="img/creators_new/creator_emma.png" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
           <div>
             <div style="font-size:15px;font-weight:600;">Emma Watson</div>
             <div style="font-size:13px;color:var(--text-muted);">Lifestyle Creator, 890K followers</div>
@@ -2484,29 +2390,10 @@ waitlistForm.addEventListener('submit', function(e) {
     source: 'ugcgo.ai landing page'
   };
   
-  // Save locally
   let waitlist = JSON.parse(localStorage.getItem('ugcgoWaitlist') || '[]');
   waitlist.push(entry);
   localStorage.setItem('ugcgoWaitlist', JSON.stringify(waitlist));
-
-  // Save to Supabase (using existing chat_messages table)
-  const SUPA_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co';
-  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoY3dzYmVxcGh5dG1kanJzZ3ZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTgyODM4NSwiZXhwIjoyMDg3NDA0Mzg1fQ.rFS9M6pcbEvRZlmUYrikQ_VzWazEI0VIOUlNeTl3aDo';
-  fetch(`${SUPA_URL}/rest/v1/chat_messages`, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPA_KEY,
-      'Authorization': `Bearer ${SUPA_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify({
-      role: 'user',
-      content: JSON.stringify(entry),
-      session_id: 'waitlist'
-    })
-  }).catch(() => {}); // silent fail — localStorage is the backup
-
+  
   waitlistFormContainer.style.display = 'none';
   successMessage.classList.add('visible');
 });
@@ -2582,84 +2469,99 @@ function toggleTheme() {
 </script>
 
 <script>
-// Mobile overflow emergency fix — runs after DOM load
-(function mobileFix() {
-  if (window.innerWidth > 768) return;
+// ===== PREMIUM ANIMATIONS =====
+
+// 1. Scroll progress line
+window.addEventListener('scroll', function() {
+  const el = document.getElementById('scrollProgressLine');
+  if (!el) return;
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  el.style.height = Math.min(pct, 100) + '%';
+});
+
+// 2. Particle canvas in hero
+(function() {
+  const canvas = document.getElementById('heroParticles');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const COLOR = '#e8ff59';
+  let W, H, particles = [];
   
-  document.addEventListener('DOMContentLoaded', function() {
-    const vw = window.innerWidth;
-    
-    // Fix all elements that overflow viewport
-    function fixOverflow() {
-      document.querySelectorAll('*').forEach(function(el) {
-        const rect = el.getBoundingClientRect();
-        if (rect.right > vw + 2) {
-          const style = el.getAttribute('style') || '';
-          const computed = window.getComputedStyle(el);
-          
-          // Fix width:200px flex items (video strip cards)
-          if (style.includes('width:200px') || style.includes('width: 200px')) {
-            el.style.width = '150px';
-            el.style.minWidth = '150px';
-            el.style.maxWidth = '150px';
-          }
-          // Fix multi-column grids
-          if (style.includes('grid-template-columns') || computed.gridTemplateColumns.includes('repeat')) {
-            el.style.display = 'flex';
-            el.style.flexDirection = 'column';
-            el.style.width = '100%';
-          }
-          // Fix width:64px items in a grid row
-          if (style.includes('text-align:center;padding:20px') || style.includes('text-align: center; padding: 20px')) {
-            el.style.flex = '1 1 calc(50% - 8px)';
-            el.style.minWidth = '0';
-          }
-          // Fix absolute positioned elements overflowing
-          if (computed.position === 'absolute' && rect.right > vw + 10) {
-            el.style.maxWidth = '100%';
-            el.style.overflow = 'hidden';
-          }
-        }
-      });
-      
-      // Fix parent containers with multi-col grids (catches inline style variations)
-      document.querySelectorAll('div').forEach(function(el) {
-        const computed = window.getComputedStyle(el);
-        const cols = computed.gridTemplateColumns;
-        // If it has 2+ equal columns that make items overflow
-        if (cols && cols !== 'none' && !cols.includes('minmax') && 
-            el.getBoundingClientRect().width > vw + 2) {
-          el.style.display = 'flex';
-          el.style.flexDirection = 'column';
-          el.style.width = '100%';
-          el.style.maxWidth = '100%';
-        }
-      });
-    }
-    
-    fixOverflow();
-    // Run again after any layout shifts
-    setTimeout(fixOverflow, 500);
-  });
-  
-  // Also run immediately for synchronous rendering
-  if (document.readyState !== 'loading') {
-    setTimeout(function() {
-      document.querySelectorAll('div').forEach(function(el) {
-        const s = el.getAttribute('style') || '';
-        if ((s.includes('grid-template-columns') && s.includes('repeat(')) ) {
-          el.style.setProperty('display', 'flex', 'important');
-          el.style.setProperty('flex-direction', 'column', 'important');
-        }
-        if (s.includes('width:200px') || s.includes('width: 200px')) {
-          if (!s.includes('height:200px')) { // not square elements
-            el.style.setProperty('width', '150px', 'important');
-            el.style.setProperty('flex', '0 0 150px', 'important');
-          }
-        }
-      });
-    }, 100);
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
   }
+  resize();
+  window.addEventListener('resize', resize);
+  
+  for (let i = 0; i < 50; i++) {
+    particles.push({
+      x: Math.random() * 1440, y: Math.random() * 700,
+      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.5 + 0.5, a: Math.random() * 0.4 + 0.08
+    });
+  }
+  
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // Draw particles
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = COLOR;
+      ctx.globalAlpha = p.a;
+      ctx.fill();
+    });
+    // Connect nearby
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 110) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = COLOR;
+          ctx.globalAlpha = (1 - d / 110) * 0.07;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  // Only run on non-mobile
+  if (window.innerWidth > 768) draw();
+})();
+
+// 3. Glitch effect on hero H1
+(function() {
+  const h1 = document.querySelector('.hero h1');
+  if (!h1) return;
+  setInterval(function() {
+    h1.style.animation = 'glitch 0.4s steps(1) forwards';
+    setTimeout(function() { h1.style.animation = ''; }, 400);
+  }, 7000);
+})();
+
+// 4. Reveal animations on scroll
+(function() {
+  const targets = document.querySelectorAll('.section-header, .card, .step, .stat-item');
+  if (!window.IntersectionObserver) return;
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-anim');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  targets.forEach(function(t) { obs.observe(t); });
 })();
 </script>
 </body>
