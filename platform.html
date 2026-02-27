@@ -825,10 +825,12 @@ async function renderCreatorOverview(el) {
 
 async function renderCreatorBrowse(el) {
   const { data: camps } = await sb.from('campaigns').select('*').eq('status','active').order('created_at',{ascending:false});
+  const { data: myApps } = await sb.from('applications').select('campaign_id').eq('creator_id', currentUser.id);
+  const appliedIds = new Set((myApps||[]).map(a=>a.campaign_id));
   el.innerHTML = `
     <div class="dash-header"><div class="eyebrow">Browse</div><h1>Open Campaigns</h1></div>
     <div class="cards-grid">
-      ${(camps||[]).map(c => campCard(c, true)).join('') || '<div class="empty"><h3>No campaigns available</h3></div>'}
+      ${(camps||[]).map(c => creatorCampCard(c, appliedIds.has(c.id))).join('') || '<div class="empty"><h3>No campaigns available</h3></div>'}
     </div>`;
 }
 
