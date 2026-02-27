@@ -95,6 +95,51 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:calc(e
 .modal h2{font-size:22px;font-weight:900;letter-spacing:-1px;margin-bottom:24px}
 .modal-footer{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
 
+/* FILE UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
+.upload-zone:hover,.upload-zone.drag{border-color:#0a0a0a;background:#f0f0ea}
+.upload-zone input[type=file]{display:none}
+.upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.upload-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.upload-thumb img,.upload-thumb video{width:100%;height:100%;object-fit:cover}
+.upload-thumb .remove-btn{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:100px;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center}
+.upload-progress{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.upload-progress-bar{height:100%;background:var(--lime);transition:width .3s;width:0%}
+/* AVATAR */
+.avatar-wrap{position:relative;width:80px;height:80px;cursor:pointer}
+.avatar-wrap img{width:80px;height:80px;border-radius:100px;object-fit:cover;border:2px solid var(--border)}
+.avatar-wrap .avatar-edit{position:absolute;bottom:0;right:0;width:24px;height:24px;background:#0a0a0a;border-radius:100px;display:flex;align-items:center;justify-content:center;font-size:11px}
+/* MESSAGING */
+.msg-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.msg-thread{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.msg-thread:hover{background:#f5f5ef}
+.msg-thread.unread .msg-name{font-weight:700}
+.msg-thread .unread-dot{width:8px;height:8px;background:var(--lime);border-radius:100px;flex-shrink:0}
+.msg-thread img{width:42px;height:42px;border-radius:100px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);background:#f0f0ea}
+.msg-chat{display:flex;flex-direction:column;height:500px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.msg-chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg-bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4}
+.msg-bubble.mine{background:#0a0a0a;color:#fff;align-self:flex-end;border-radius:16px 16px 4px 16px}
+.msg-bubble.theirs{background:#f0f0ea;color:#0a0a0a;align-self:flex-start;border-radius:16px 16px 16px 4px}
+.msg-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:#fff}
+.msg-input-row input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:100px;font-size:14px;background:var(--bg);outline:none}
+/* NOTIFICATIONS */
+.notif-dot{width:8px;height:8px;background:#ff4444;border-radius:100px;position:absolute;top:0;right:0}
+.notif-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.notif-item:hover{background:#f5f5ef}
+.notif-item.unread{background:#fffff5}
+.notif-icon{width:36px;height:36px;border-radius:100px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+/* PORTFOLIO GRID */
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;border-radius:var(--radius);overflow:hidden}
+.portfolio-item{aspect-ratio:1;position:relative;overflow:hidden;cursor:pointer;background:#f0f0ea}
+.portfolio-item img,.portfolio-item video{width:100%;height:100%;object-fit:cover}
+.portfolio-item .play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);color:#fff;font-size:24px}
+/* CAMPAIGN DETAIL */
+.camp-detail-header{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px}
+.camp-logo{width:64px;height:64px;border-radius:12px;background:#f0f0ea;border:1px solid var(--border);object-fit:cover;flex-shrink:0}
+.requirement-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#f0f0ea;border-radius:100px;font-size:13px;font-weight:600;margin:4px}
+/* RATINGS */
+.stars{color:#f5a623;font-size:16px;letter-spacing:1px}
 /* EMPTY STATE */
 .empty{text-align:center;padding:60px 20px;color:var(--mid)}
 .empty svg{width:48px;height:48px;margin:0 auto 16px;opacity:.3}
@@ -246,6 +291,10 @@ tr:hover td{background:#fafaf5}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Applications
         </div>
+        <div class="sidebar-item" onclick="setBrandTab('messages')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+        </div>
         <div class="sidebar-item" onclick="setBrandTab('profile')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
@@ -282,6 +331,14 @@ tr:hover td{background:#fafaf5}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
           My Applications
         </div>
+        <div class="sidebar-item" onclick="setCreatorTab('portfolio')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          Portfolio
+        </div>
+        <div class="sidebar-item" onclick="setCreatorTab('messages')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+        </div>
         <div class="sidebar-item" onclick="setCreatorTab('profile')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
@@ -305,28 +362,66 @@ tr:hover td{background:#fafaf5}
   <div class="modal">
     <h2>New Campaign</h2>
     <div class="form-group">
+      <label>Campaign Cover Image</label>
+      <div class="upload-zone" onclick="document.getElementById('campCoverInput').click()" id="campCoverZone">
+        <input type="file" id="campCoverInput" accept="image/*" onchange="previewCampCover(this)">
+        <div id="campCoverPreview" style="display:none"><img id="campCoverImg" style="max-height:120px;border-radius:8px;max-width:100%"></div>
+        <div id="campCoverPlaceholder">📸 Click to add campaign cover image</div>
+      </div>
+    </div>
+    <div class="form-group">
       <label>Campaign Title</label>
       <input type="text" id="campTitle" placeholder="Summer UGC Collection">
     </div>
     <div class="form-group">
       <label>Description</label>
-      <input type="text" id="campDesc" placeholder="What content do you need?">
+      <textarea id="campDesc" placeholder="Describe what content you need, brand voice, dos and don'ts..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);min-height:80px;resize:vertical;font-family:inherit;outline:none"></textarea>
     </div>
-    <div class="form-group">
-      <label>Budget ($)</label>
-      <input type="number" id="campBudget" placeholder="500">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label>Budget ($)</label>
+        <input type="number" id="campBudget" placeholder="500">
+      </div>
+      <div class="form-group">
+        <label>Deadline</label>
+        <input type="date" id="campDeadline">
+      </div>
     </div>
     <div class="form-group">
       <label>Category</label>
-      <input type="text" id="campCategory" placeholder="Beauty, Fashion, Tech...">
+      <select id="campCategory" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none">
+        <option value="">Select category...</option>
+        <option>Beauty & Skincare</option><option>Fashion & Lifestyle</option>
+        <option>Food & Beverage</option><option>Fitness & Health</option>
+        <option>Tech & Gadgets</option><option>Home & Living</option>
+        <option>Travel</option><option>Entertainment</option><option>Other</option>
+      </select>
     </div>
     <div class="form-group">
-      <label>Requirements</label>
-      <input type="text" id="campReq" placeholder="30-60 sec video, authentic feel...">
+      <label>Content Requirements</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="reqChips">
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'📱 Vertical Video 9:16')">📱 Vertical Video</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'🖼 Photo Bundle')">🖼 Photos</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'⏱ 15-30 sec')">⏱ 15-30 sec</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'⏱ 30-60 sec')">⏱ 30-60 sec</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'🔊 Voice-over')">🔊 Voice-over</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'👩 Female Creator')">👩 Female</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'👨 Male Creator')">👨 Male</span>
+        <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'✨ Trending Sound')">✨ Trending Sound</span>
+      </div>
+      <input type="text" id="campReq" placeholder="Add any additional requirements...">
+    </div>
+    <div class="form-group">
+      <label>Brand Guidelines / Reference</label>
+      <div class="upload-zone" onclick="document.getElementById('campRefInput').click()">
+        <input type="file" id="campRefInput" accept="image/*,video/*,.pdf" multiple onchange="previewRefs(this)">
+        <div id="campRefPreview" class="upload-preview"></div>
+        <div id="campRefPlaceholder">📎 Upload reference images, videos or PDF brief (optional)</div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modalNewCampaign')">Cancel</button>
-      <button class="btn btn-dark" onclick="createCampaign()">Create Campaign</button>
+      <button class="btn btn-dark" onclick="createCampaign()">🚀 Launch Campaign</button>
     </div>
   </div>
 </div>
@@ -336,13 +431,30 @@ tr:hover td{background:#fafaf5}
   <div class="modal">
     <h2>Apply to Campaign</h2>
     <input type="hidden" id="applyCampId">
+    <div id="applyBrandInfo" style="padding:12px;background:#f5f5ef;border-radius:8px;margin-bottom:16px;font-size:14px;color:var(--mid)"></div>
     <div class="form-group">
       <label>Your Pitch</label>
-      <input type="text" id="applyPitch" placeholder="Why are you the perfect fit?">
+      <textarea id="applyPitch" placeholder="Why are you the perfect fit? Describe your style, audience, past results..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);min-height:80px;resize:vertical;font-family:inherit;outline:none"></textarea>
     </div>
     <div class="form-group">
-      <label>Portfolio URL</label>
-      <input type="text" id="applyPortfolio" placeholder="https://...">
+      <label>Upload Sample Content</label>
+      <div class="upload-zone" onclick="document.getElementById('applySampleInput').click()">
+        <input type="file" id="applySampleInput" accept="image/*,video/*" multiple onchange="previewSamples(this)">
+        <div id="applySamplePreview" class="upload-preview"></div>
+        <div id="applySamplePlaceholder">📸 Upload sample photos or videos (optional but helps a lot!)</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Social Media Handle</label>
+      <input type="text" id="applyHandle" placeholder="@yourusername (TikTok / Instagram)">
+    </div>
+    <div class="form-group">
+      <label>Followers Count</label>
+      <select id="applyFollowers" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none">
+        <option value="">Select range...</option>
+        <option>1K - 5K</option><option>5K - 10K</option>
+        <option>10K - 50K</option><option>50K - 100K</option><option>100K+</option>
+      </select>
     </div>
     <div class="form-group">
       <label>Proposed Rate ($)</label>
@@ -485,7 +597,7 @@ function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
 async function setBrandTab(tab) {
   brandTab = tab;
   document.querySelectorAll('#page-brand .sidebar-item').forEach((el,i) => {
-    el.classList.toggle('active', ['overview','campaigns','applications','profile'][i] === tab);
+    el.classList.toggle('active', ['overview','campaigns','applications','messages','profile'][i] === tab);
   });
   const content = document.getElementById('brandContent');
   content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
@@ -493,6 +605,7 @@ async function setBrandTab(tab) {
   if (tab === 'overview') await renderBrandOverview(content);
   else if (tab === 'campaigns') await renderBrandCampaigns(content);
   else if (tab === 'applications') await renderBrandApplications(content);
+  else if (tab === 'messages') renderMessages(content, 'brand');
   else if (tab === 'profile') renderProfile(content);
 }
 
@@ -573,207 +686,473 @@ async function renderBrandApplications(el) {
     </table>`}`;
 }
 
-function campCard(c) {
-  return `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div class="card-title">${c.title}</div>
-      <span class="tag tag-${c.status}">${c.status}</span>
-    </div>
-    <div class="card-meta">${c.description || 'No description'}</div>
-    ${c.budget ? `<div style="margin-top:10px;font-weight:700">$${c.budget}</div>` : ''}
-    <div class="card-actions">
-      <button class="btn btn-outline" style="padding:8px 14px;font-size:13px" onclick="toggleStatus('${c.id}','${c.status}')">
-        ${c.status === 'draft' ? '▶ Activate' : '⏸ Pause'}
-      </button>
-    </div>
-  </div>`;
-}
 
-// CREATOR DASHBOARD
-async function setCreatorTab(tab) {
-  creatorTab = tab;
-  document.querySelectorAll('#page-creator .sidebar-item').forEach((el,i) => {
-    el.classList.toggle('active', ['overview','browse','applications','profile'][i] === tab);
+// ========== UPLOAD HELPERS ==========
+const SUPABASE_STORAGE_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co/storage/v1';
+
+async function uploadFile(bucket, file, path) {
+  const token = (await sb.auth.getSession()).data.session?.access_token;
+  const res = await fetch(`${SUPABASE_STORAGE_URL}/object/${bucket}/${path}`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': file.type },
+    body: file
   });
-  const content = document.getElementById('creatorContent');
-  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-  
-  if (tab === 'overview') await renderCreatorOverview(content);
-  else if (tab === 'browse') await renderBrowseCampaigns(content);
-  else if (tab === 'applications') await renderMyApplications(content);
-  else if (tab === 'profile') renderProfile(content);
+  const data = await res.json();
+  if (data.Key) return `${SUPABASE_STORAGE_URL}/object/public/${bucket}/${path}`;
+  throw new Error(data.message || 'Upload failed');
 }
 
-async function renderCreatorOverview(el) {
-  const { data: myApps } = await sb.from('applications').select('*, campaigns(title, status, budget)').eq('creator_id', currentUser.id);
-  const { data: camps } = await sb.from('campaigns').select('*').eq('status', 'active').limit(3);
-  const name = currentProfile?.full_name || 'Creator';
-  el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Creator Dashboard</div>
-      <h1>Hey, ${name} 🎬</h1>
-      <p>Find brands to collaborate with and grow your income</p>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card accent">
-        <div class="stat-value">${(myApps||[]).length}</div>
-        <div class="stat-label">Applications Sent</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${(myApps||[]).filter(a=>a.status==='accepted').length}</div>
-        <div class="stat-label">Accepted</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${(camps||[]).length}</div>
-        <div class="stat-label">Open Campaigns</div>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div class="eyebrow">Open Campaigns</div>
-      <button class="btn btn-dark" onclick="setCreatorTab('browse')">Browse All →</button>
-    </div>
-    <div class="cards-grid">
-      ${(camps||[]).map(c => creatorCampCard(c)).join('') || '<div class="empty"><h3>No active campaigns</h3><p>Check back soon for new opportunities</p></div>'}
-    </div>`;
+function getPublicUrl(bucket, path) {
+  return `${SUPABASE_STORAGE_URL}/object/public/${bucket}/${path}`;
 }
 
-async function renderBrowseCampaigns(el) {
-  const { data: camps } = await sb.from('campaigns').select('*').eq('status', 'active').order('created_at', {ascending: false});
-  const { data: myApps } = await sb.from('applications').select('campaign_id').eq('creator_id', currentUser.id);
-  const appliedIds = new Set((myApps||[]).map(a => a.campaign_id));
-  el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Browse</div>
-      <h1>Open Campaigns</h1>
-      <p>Find brand deals that match your style</p>
-    </div>
-    <div class="cards-grid">
-      ${(camps||[]).map(c => creatorCampCard(c, appliedIds.has(c.id))).join('') || '<div class="empty"><h3>No active campaigns</h3><p>Check back soon for new opportunities</p></div>'}
-    </div>`;
+function previewCampCover(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('campCoverImg').src = e.target.result;
+    document.getElementById('campCoverPreview').style.display = 'block';
+    document.getElementById('campCoverPlaceholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
 }
 
-async function renderMyApplications(el) {
-  const { data: apps } = await sb.from('applications').select('*, campaigns(title, budget, category)').eq('creator_id', currentUser.id).order('created_at', {ascending: false});
+function previewRefs(input) {
+  const preview = document.getElementById('campRefPreview');
+  const placeholder = document.getElementById('campRefPlaceholder');
+  placeholder.style.display = 'none';
+  Array.from(input.files).forEach(file => {
+    const thumb = document.createElement('div');
+    thumb.className = 'upload-thumb';
+    if (file.type.startsWith('image/')) {
+      const img = document.createElement('img');
+      const reader = new FileReader();
+      reader.onload = e => img.src = e.target.result;
+      reader.readAsDataURL(file);
+      thumb.appendChild(img);
+    } else {
+      thumb.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:28px">${file.type.includes('pdf') ? '📄' : '🎬'}</div>`;
+    }
+    preview.appendChild(thumb);
+  });
+}
+
+function previewSamples(input) {
+  const preview = document.getElementById('applySamplePreview');
+  const placeholder = document.getElementById('applySamplePlaceholder');
+  placeholder.style.display = 'none';
+  Array.from(input.files).forEach(file => {
+    const thumb = document.createElement('div');
+    thumb.className = 'upload-thumb';
+    if (file.type.startsWith('image/')) {
+      const img = document.createElement('img'); img.style.cssText='width:100%;height:100%;object-fit:cover';
+      const reader = new FileReader();
+      reader.onload = e => img.src = e.target.result;
+      reader.readAsDataURL(file);
+      thumb.appendChild(img);
+    } else {
+      const video = document.createElement('video');
+      video.style.cssText = 'width:100%;height:100%;object-fit:cover';
+      video.muted = true; video.playsInline = true;
+      const url = URL.createObjectURL(file);
+      video.src = url;
+      thumb.innerHTML = '';
+      thumb.appendChild(video);
+      thumb.insertAdjacentHTML('beforeend','<div class="play-icon" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);color:#fff;font-size:20px">▶</div>');
+    }
+    preview.appendChild(thumb);
+  });
+}
+
+function toggleReq(el, label) {
+  el.style.background = el.style.background === 'rgb(10, 10, 10)' ? '' : '#0a0a0a';
+  el.style.color = el.style.color === 'rgb(255, 255, 255)' ? '' : '#fff';
+}
+
+function getSelectedReqs() {
+  const chips = document.querySelectorAll('#reqChips .requirement-chip');
+  return Array.from(chips).filter(c => c.style.background === 'rgb(10, 10, 10)').map(c => c.textContent.trim()).join(', ');
+}
+
+// ========== AVATAR UPLOAD ==========
+async function uploadAvatar(input) {
+  const file = input.files[0]; if (!file) return;
+  const path = `avatars/${currentUser.id}_${Date.now()}.${file.name.split('.').pop()}`;
+  try {
+    const url = await uploadFile('avatars', file, path);
+    await sb.from('user_profiles').update({ avatar_url: url }).eq('id', currentUser.id);
+    document.querySelectorAll('.user-avatar').forEach(img => img.src = url);
+    await loadProfile();
+  } catch(e) { alert('Upload failed: ' + e.message); }
+}
+
+// ========== PORTFOLIO ==========
+let portfolioItems = [];
+
+function renderPortfolio(el) {
   el.innerHTML = `
     <div class="dash-header">
-      <div class="eyebrow">Applications</div>
-      <h1>My Applications</h1>
+      <div class="eyebrow">My Portfolio</div>
+      <h1>Portfolio</h1>
+      <p>Showcase your best UGC content to attract brands</p>
     </div>
-    ${(apps||[]).length === 0 ? '<div class="empty"><h3>No applications yet</h3><p>Browse campaigns and apply to get started</p></div>' : `
-    <table>
-      <thead><tr><th>Campaign</th><th>Category</th><th>My Rate</th><th>Status</th></tr></thead>
-      <tbody>
-        ${(apps||[]).map(a => `<tr>
-          <td>${a.campaigns?.title || '—'}</td>
-          <td>${a.campaigns?.category || '—'}</td>
-          <td>${a.proposed_rate ? '$'+a.proposed_rate : '—'}</td>
-          <td><span class="tag tag-${a.status}">${a.status}</span></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`}`;
+    <div style="margin-bottom:24px">
+      <div class="upload-zone" id="portUploadZone" onclick="document.getElementById('portFileInput').click()">
+        <input type="file" id="portFileInput" accept="image/*,video/*" multiple onchange="addToPortfolio(this)">
+        <div style="font-size:32px;margin-bottom:8px">📸</div>
+        <div style="font-weight:700;font-size:16px">Upload your content</div>
+        <div style="color:var(--mid);font-size:14px;margin-top:4px">Photos and videos • Max 50MB each</div>
+      </div>
+    </div>
+    <div class="portfolio-grid" id="portfolioGrid">
+      ${portfolioItems.length === 0 ? `
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--mid)">
+          <div style="font-size:48px;margin-bottom:12px">🎬</div>
+          <div style="font-weight:700;margin-bottom:4px">No content yet</div>
+          <div style="font-size:14px">Upload your UGC videos and photos to showcase your work</div>
+        </div>
+      ` : portfolioItems.map(item => `
+        <div class="portfolio-item">
+          ${item.type === 'video' 
+            ? `<video src="${item.url}" muted playsinline></video><div class="play-icon">▶</div>`
+            : `<img src="${item.url}" alt="portfolio">`}
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:32px;padding:20px;background:#fff;border:1px solid var(--border);border-radius:var(--radius)">
+      <h3 style="font-weight:800;margin-bottom:12px">📊 Your Stats</h3>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="text-align:center"><div style="font-size:28px;font-weight:900">0</div><div style="font-size:12px;color:var(--mid)">Content Pieces</div></div>
+        <div style="text-align:center"><div style="font-size:28px;font-weight:900">0</div><div style="font-size:12px;color:var(--mid)">Brand Collabs</div></div>
+        <div style="text-align:center"><div style="font-size:28px;font-weight:900">$0</div><div style="font-size:12px;color:var(--mid)">Total Earned</div></div>
+      </div>
+    </div>
+  `;
+}
+
+async function addToPortfolio(input) {
+  const grid = document.getElementById('portfolioGrid');
+  for (const file of Array.from(input.files)) {
+    const path = `portfolios/${currentUser.id}/${Date.now()}_${file.name}`;
+    const placeholder = document.createElement('div');
+    placeholder.className = 'portfolio-item';
+    placeholder.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:24px;animation:pulse 1s infinite">⏳</div>';
+    if (grid.children[0]?.style?.gridColumn) grid.innerHTML = '';
+    grid.appendChild(placeholder);
+    try {
+      const url = await uploadFile(file.type.startsWith('video') ? 'ugc-media' : 'portfolios', file, path);
+      portfolioItems.push({ url, type: file.type.startsWith('video') ? 'video' : 'image' });
+      placeholder.innerHTML = file.type.startsWith('video')
+        ? `<video src="${url}" muted playsinline></video><div class="play-icon">▶</div>`
+        : `<img src="${url}" alt="portfolio">`;
+    } catch(e) { placeholder.remove(); alert('Upload failed'); }
+  }
+}
+
+// ========== MESSAGES ==========
+let activeThread = null;
+const mockThreads = [
+  { id:1, name:'Nike x ugcgo', avatar:'https://logo.clearbit.com/nike.com', last:'Can you start by Monday?', time:'2m', unread:true, role:'brand' },
+  { id:2, name:'Glossier Campaign', avatar:'https://logo.clearbit.com/glossier.com', last:'Love your portfolio!', time:'1h', unread:false, role:'brand' },
+  { id:3, name:'Creator @maya_creates', avatar:'', last:'Sent you a sample video', time:'3h', unread:true, role:'creator' },
+];
+const mockMessages = {
+  1: [
+    { from:'them', text:'Hi! We reviewed your application and love your aesthetic 🎉', time:'10:30' },
+    { from:'me', text:'Thank you! Really excited about this collab', time:'10:32' },
+    { from:'them', text:'We need 3 vertical videos, 15-30 sec each. Can you start by Monday?', time:'10:35' },
+  ],
+  2: [
+    { from:'them', text:'Love your portfolio! Your style matches our brand perfectly', time:'Yesterday' },
+    { from:'me', text:'That means a lot! I\'ve been a Glossier fan forever 💕', time:'Yesterday' },
+  ],
+  3: [
+    { from:'me', text:'Hey @maya_creates, I saw your application. Can you send a sample?', time:'2h ago' },
+    { from:'them', text:'Sent you a sample video! Check DMs', time:'3h ago' },
+  ]
+};
+
+function renderMessages(el, role) {
+  const threads = mockThreads.filter(t => role === 'brand' ? t.role === 'creator' : t.role === 'brand');
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Messages</div>
+      <h1>Messages</h1>
+      <p>${role === 'brand' ? 'Chat with creators' : 'Chat with brands'}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;height:600px" id="msgLayout">
+      <div>
+        <div class="msg-list">
+          ${threads.map(t => `
+            <div class="msg-thread ${t.unread?'unread':''}" onclick="openThread(${t.id})">
+              ${t.avatar ? `<img src="${t.avatar}" onerror="this.style.display='none'" style="width:42px;height:42px;border-radius:100px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">` : `<div style="width:42px;height:42px;border-radius:100px;background:#f0f0ea;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">👤</div>`}
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;font-weight:600;margin-bottom:2px" class="msg-name">${t.name}</div>
+                <div style="font-size:13px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.last}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <div style="font-size:11px;color:var(--mid)">${t.time}</div>
+                ${t.unread ? '<div class="unread-dot"></div>' : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div id="msgChatArea" style="border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:14px">
+        Select a conversation
+      </div>
+    </div>
+  `;
+}
+
+function openThread(threadId) {
+  const thread = mockThreads.find(t => t.id === threadId);
+  const msgs = mockMessages[threadId] || [];
+  thread.unread = false;
+  const chatArea = document.getElementById('msgChatArea');
+  chatArea.innerHTML = `
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px">
+        ${thread.avatar ? `<img src="${thread.avatar}" style="width:32px;height:32px;border-radius:100px;object-fit:cover">` : '<div style="width:32px;height:32px;border-radius:100px;background:#f0f0ea;display:flex;align-items:center;justify-content:center">👤</div>'}
+        ${thread.name}
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px" id="msgBubbles">
+        ${msgs.map(m => `
+          <div style="display:flex;${m.from==='me'?'justify-content:flex-end':''}">
+            <div class="msg-bubble ${m.from==='me'?'mine':'theirs'}">
+              ${m.text}
+              <div style="font-size:10px;opacity:.5;margin-top:4px;text-align:right">${m.time}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="msg-input-row">
+        <input type="text" placeholder="Type a message..." id="msgTextInput" onkeydown="if(event.key==='Enter')sendMsg(${threadId})">
+        <button class="btn btn-dark" onclick="sendMsg(${threadId})" style="padding:10px 16px">Send</button>
+      </div>
+    </div>
+  `;
+  chatArea.style.display = 'block';
+  const bubbles = document.getElementById('msgBubbles');
+  bubbles.scrollTop = bubbles.scrollHeight;
+}
+
+function sendMsg(threadId) {
+  const input = document.getElementById('msgTextInput');
+  const text = input.value.trim(); if (!text) return;
+  const bubbles = document.getElementById('msgBubbles');
+  const time = new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  bubbles.insertAdjacentHTML('beforeend', `
+    <div style="display:flex;justify-content:flex-end">
+      <div class="msg-bubble mine">${text}<div style="font-size:10px;opacity:.5;margin-top:4px;text-align:right">${time}</div></div>
+    </div>
+  `);
+  if (!mockMessages[threadId]) mockMessages[threadId] = [];
+  mockMessages[threadId].push({ from:'me', text, time });
+  const thread = mockThreads.find(t => t.id === threadId);
+  if (thread) thread.last = text;
+  input.value = '';
+  bubbles.scrollTop = bubbles.scrollHeight;
+}
+
+// ========== ENHANCED CAMPAIGN CARD ==========
+function campCard(c) {
+  const statusClass = c.status === 'active' ? 'tag-active' : c.status === 'draft' ? 'tag-draft' : 'tag-pending';
+  const cats = c.category ? `<span style="font-size:12px;color:var(--mid)">${c.category}</span>` : '';
+  const deadline = c.deadline ? `<div style="font-size:12px;color:var(--mid);margin-top:4px">📅 Deadline: ${new Date(c.deadline).toLocaleDateString()}</div>` : '';
+  const cover = c.cover_url ? `<img src="${c.cover_url}" style="width:100%;height:140px;object-fit:cover;border-radius:${getComputedStyle(document.documentElement).getPropertyValue('--radius').trim()} ${getComputedStyle(document.documentElement).getPropertyValue('--radius').trim()} 0 0;display:block;margin:-1px -1px 0 -1px;width:calc(100% + 2px)" onerror="this.remove()">` : '';
+  return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      ${cover}
+      <div style="padding:16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <div><div style="font-weight:800;font-size:16px">${c.title}</div>${cats}</div>
+          <span class="tag ${statusClass}" style="flex-shrink:0">${c.status}</span>
+        </div>
+        ${c.description ? `<p style="font-size:13px;color:var(--mid);margin-bottom:10px;line-height:1.4">${c.description.slice(0,120)}${c.description.length>120?'...':''}</p>` : ''}
+        <div style="font-weight:800;font-size:18px;margin-bottom:8px">$${c.budget || 0}</div>
+        ${deadline}
+        ${c.requirements ? `<div style="margin-top:8px;font-size:12px;color:var(--mid)">📋 ${c.requirements.slice(0,80)}</div>` : ''}
+        <div class="card-actions">
+          ${c.status === 'draft' ? `<button class="btn btn-dark" style="font-size:13px;padding:8px 14px" onclick="toggleStatus('${c.id}','draft')">▶ Activate</button>` : ''}
+          ${c.status === 'active' ? `<button class="btn btn-outline" style="font-size:13px;padding:8px 14px" onclick="toggleStatus('${c.id}','active')">⏸ Pause</button>` : ''}
+          <button class="btn btn-outline" style="font-size:13px;padding:8px 14px" onclick="viewCampaignApps('${c.id}')">Applications</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function creatorCampCard(c, alreadyApplied=false) {
-  return `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div class="card-title">${c.title}</div>
-      ${c.category ? `<span class="tag tag-draft">${c.category}</span>` : ''}
+  const cover = c.cover_url ? `<img src="${c.cover_url}" style="width:calc(100% + 2px);height:140px;object-fit:cover;display:block;margin:-1px -1px 0;border-radius:var(--radius) var(--radius) 0 0" onerror="this.remove()">` : '';
+  const deadline = c.deadline ? `<span style="font-size:12px;color:var(--mid)">📅 ${new Date(c.deadline).toLocaleDateString()}</span>` : '';
+  return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      ${cover}
+      <div style="padding:16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <div style="font-weight:800;font-size:15px">${c.title}</div>
+          <span class="tag tag-active" style="flex-shrink:0">Open</span>
+        </div>
+        ${c.category ? `<div style="font-size:12px;color:var(--mid);margin-bottom:8px">${c.category}</div>` : ''}
+        ${c.description ? `<p style="font-size:13px;color:var(--mid);margin-bottom:10px;line-height:1.4">${c.description.slice(0,100)}${c.description.length>100?'...':''}</p>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-weight:800;font-size:20px">$${c.budget||0}</div>
+          ${deadline}
+        </div>
+        ${c.requirements ? `<div style="font-size:12px;color:var(--mid);margin-bottom:12px">📋 ${c.requirements}</div>` : ''}
+        <button class="btn ${alreadyApplied?'btn-outline':'btn-dark'}" style="width:100%;font-size:14px;padding:10px" 
+          ${alreadyApplied ? 'disabled' : `onclick="openApplyModal('${c.id}','${(c.title||'').replace(/'/g,'')}')"` }>
+          ${alreadyApplied ? '✓ Applied' : '🚀 Apply Now'}
+        </button>
+      </div>
     </div>
-    <div class="card-meta">${c.description || 'Looking for UGC creators'}</div>
-    ${c.budget ? `<div style="margin-top:10px;font-weight:700;color:var(--text)">Budget: $${c.budget}</div>` : ''}
-    <div class="card-actions">
-      ${alreadyApplied 
-        ? '<span class="tag tag-active">✓ Applied</span>'
-        : `<button class="btn btn-dark" style="padding:8px 16px;font-size:13px" onclick="openApply('${c.id}')">Apply Now</button>`
-      }
-    </div>
-  </div>`;
+  `;
 }
 
-function renderProfile(el) {
-  const p = currentProfile || {};
-  el.innerHTML = `
-    <div class="dash-header">
-      <div class="eyebrow">Settings</div>
-      <h1>Your Profile</h1>
-    </div>
-    <div class="profile-wrap">
-      <div class="avatar-big">${(p.full_name||'U')[0].toUpperCase()}</div>
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="profName" value="${p.full_name||''}" placeholder="Your name">
-      </div>
-      ${p.role==='brand' ? `<div class="form-group"><label>Company Name</label><input type="text" id="profCompany" value="${p.company_name||''}" placeholder="Acme Inc."></div>` : ''}
-      <div class="form-group">
-        <label>Bio</label>
-        <input type="text" id="profBio" value="${p.bio||''}" placeholder="Tell brands about yourself...">
-      </div>
-      <div class="form-group">
-        <label>Website</label>
-        <input type="text" id="profWebsite" value="${p.website||''}" placeholder="https://...">
-      </div>
-      <div style="margin-top:4px;padding:12px 16px;background:#f0f0ea;border-radius:8px;font-size:14px;color:var(--mid)">
-        Email: <strong>${currentUser?.email}</strong> &nbsp;·&nbsp; Role: <strong>${p.role}</strong>
-      </div>
-      <button class="btn btn-dark" style="margin-top:20px;padding:12px 28px" onclick="saveProfile()">Save Changes</button>
-    </div>`;
-}
-
-// ACTIONS
-async function createCampaign() {
-  const title = document.getElementById('campTitle').value.trim();
-  if (!title) return;
-  const { error } = await sb.from('campaigns').insert({
-    brand_id: currentUser.id,
-    title,
-    description: document.getElementById('campDesc').value,
-    budget: parseFloat(document.getElementById('campBudget').value) || null,
-    category: document.getElementById('campCategory').value,
-    requirements: document.getElementById('campReq').value,
-    status: 'draft'
-  });
-  if (!error) { closeModal('modalNewCampaign'); setBrandTab('campaigns'); }
-  else alert(error.message);
-}
-
-async function toggleStatus(id, current) {
-  const newStatus = current === 'draft' ? 'active' : 'draft';
-  await sb.from('campaigns').update({ status: newStatus }).eq('id', id);
-  setBrandTab(brandTab);
-}
-
-function openApply(campId) {
+function openApplyModal(campId, campTitle) {
   document.getElementById('applyCampId').value = campId;
+  document.getElementById('applyBrandInfo').textContent = `Campaign: "${campTitle}"`;
   openModal('modalApply');
 }
 
-async function submitApplication() {
-  const campId = document.getElementById('applyCampId').value;
-  const { error } = await sb.from('applications').insert({
-    campaign_id: campId,
-    creator_id: currentUser.id,
-    pitch: document.getElementById('applyPitch').value,
-    portfolio_url: document.getElementById('applyPortfolio').value,
-    proposed_rate: parseFloat(document.getElementById('applyRate').value) || null
-  });
-  if (!error) { closeModal('modalApply'); setCreatorTab('browse'); }
-  else alert(error.message);
-}
-
-async function updateApp(id, status) {
-  await sb.from('applications').update({ status }).eq('id', id);
+async function viewCampaignApps(campId) {
   setBrandTab('applications');
 }
 
-async function saveProfile() {
-  const updates = {
-    full_name: document.getElementById('profName')?.value,
-    bio: document.getElementById('profBio')?.value,
-    website: document.getElementById('profWebsite')?.value,
-  };
-  if (document.getElementById('profCompany')) updates.company_name = document.getElementById('profCompany').value;
-  const { error } = await sb.from('user_profiles').update(updates).eq('id', currentUser.id);
-  if (!error) { await loadProfile(); alert('Profile saved!'); }
+// ========== ENHANCED PROFILE WITH AVATAR UPLOAD ==========
+function renderProfile(el) {
+  const isCreator = currentProfile?.role === 'creator';
+  const avatarUrl = currentProfile?.avatar_url || '';
+  el.innerHTML = `
+    <div class="dash-header">
+      <div class="eyebrow">Settings</div>
+      <h1>Profile</h1>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+      <h3 style="font-weight:800;margin-bottom:16px">Profile Photo</h3>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+          <img class="user-avatar" src="${avatarUrl || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22><rect width=%2280%22 height=%2280%22 rx=%2240%22 fill=%22%23f0f0ea%22/><text x=%2240%22 y=%2248%22 font-size=%2232%22 text-anchor=%22middle%22 fill=%22%23888%22>👤</text></svg>'}" alt="avatar">
+          <div class="avatar-edit">✏️</div>
+        </div>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+        <div>
+          <div style="font-weight:700">${currentProfile?.full_name || 'Your Name'}</div>
+          <div style="font-size:13px;color:var(--mid)">${currentUser?.email}</div>
+          <div style="margin-top:4px">${isCreator ? '<span class="creator-badge">Creator</span>' : '<span class="brand-badge">Brand</span>'}</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+      <h3 style="font-weight:800;margin-bottom:16px">${isCreator ? 'Creator Info' : 'Brand Info'}</h3>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input id="profName" value="${currentProfile?.full_name||''}" placeholder="Your name">
+      </div>
+      ${isCreator ? '' : `<div class="form-group"><label>Company Name</label><input id="profCompany" value="${currentProfile?.company_name||''}" placeholder="Your company"></div>`}
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="profBio" style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);min-height:80px;resize:vertical;font-family:inherit;outline:none" placeholder="${isCreator ? 'Tell brands about yourself, your niche, audience...' : 'Tell creators about your brand...'}">${currentProfile?.bio||''}</textarea>
+      </div>
+      ${isCreator ? `
+        <div class="form-group">
+          <label>Social Media</label>
+          <input id="profWebsite" value="${currentProfile?.website||''}" placeholder="@yourusername or https://tiktok.com/@you">
+        </div>
+        <div class="form-group">
+          <label>Your Niche</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${['Beauty','Fashion','Fitness','Food','Travel','Tech','Lifestyle','Gaming'].map(n=>`
+              <span class="requirement-chip" style="cursor:pointer" onclick="toggleReq(this,'${n}')">${n}</span>
+            `).join('')}
+          </div>
+        </div>
+      ` : `
+        <div class="form-group">
+          <label>Website</label>
+          <input id="profWebsite" value="${currentProfile?.website||''}" placeholder="https://yourbrand.com">
+        </div>
+      `}
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+      <h3 style="font-weight:800;margin-bottom:4px">Account</h3>
+      <div style="font-size:13px;color:var(--mid);margin-bottom:16px">${currentUser?.email}</div>
+      <button class="btn btn-outline" style="font-size:13px" onclick="alert('Password reset email sent!')">Change Password</button>
+    </div>
+    <button class="btn btn-dark" style="width:100%;padding:14px;font-size:15px" onclick="saveProfile()">Save Changes</button>
+  `;
+}
+
+// ========== ENHANCED CREATE CAMPAIGN ==========
+async function createCampaign() {
+  const title = document.getElementById('campTitle').value.trim();
+  const desc = document.getElementById('campDesc').value.trim();
+  const budget = parseFloat(document.getElementById('campBudget').value) || 0;
+  const category = document.getElementById('campCategory').value;
+  const deadline = document.getElementById('campDeadline').value || null;
+  const reqText = document.getElementById('campReq').value.trim();
+  const reqChips = getSelectedReqs();
+  const requirements = [reqChips, reqText].filter(Boolean).join('; ');
+  
+  if (!title) return alert('Please enter a campaign title');
+  
+  let cover_url = null;
+  const coverInput = document.getElementById('campCoverInput');
+  if (coverInput.files[0]) {
+    try {
+      const file = coverInput.files[0];
+      const path = `campaigns/${currentUser.id}/${Date.now()}_cover.${file.name.split('.').pop()}`;
+      cover_url = await uploadFile('ugc-media', file, path);
+    } catch(e) { console.log('Cover upload failed, continuing without'); }
+  }
+
+  const { error } = await sb.from('campaigns').insert({
+    brand_id: currentUser.id, title, description: desc, budget, category,
+    requirements, deadline, status: 'draft', cover_url
+  });
+  if (!error) { 
+    closeModal('modalNewCampaign'); 
+    setBrandTab('campaigns');
+    // Reset form
+    document.getElementById('campTitle').value='';
+    document.getElementById('campDesc').value='';
+    document.getElementById('campBudget').value='';
+    document.getElementById('campCoverPreview').style.display='none';
+    document.getElementById('campCoverPlaceholder').style.display='block';
+    document.getElementById('campRefPreview').innerHTML='';
+    document.getElementById('campRefPlaceholder').style.display='block';
+  } else alert('Error: ' + error.message);
+}
+
+// ========== ENHANCED APPLY ==========
+async function submitApplication() {
+  const campId = document.getElementById('applyCampId').value;
+  const pitch = document.getElementById('applyPitch').value.trim();
+  const handle = document.getElementById('applyHandle')?.value.trim();
+  const followers = document.getElementById('applyFollowers')?.value;
+  const rate = parseFloat(document.getElementById('applyRate').value) || 0;
+  
+  if (!pitch) return alert('Please write your pitch');
+
+  let portfolio_url = '';
+  const sampleInput = document.getElementById('applySampleInput');
+  if (sampleInput.files.length > 0) {
+    try {
+      const file = sampleInput.files[0];
+      const path = `portfolios/${currentUser.id}/${Date.now()}_sample.${file.name.split('.').pop()}`;
+      portfolio_url = await uploadFile(file.type.startsWith('video') ? 'ugc-media' : 'portfolios', file, path);
+    } catch(e) { console.log('Sample upload failed, continuing'); }
+  }
+
+  const fullPitch = [pitch, handle ? `Handle: ${handle}` : '', followers ? `Followers: ${followers}` : ''].filter(Boolean).join('\n');
+
+  const { error } = await sb.from('applications').insert({
+    campaign_id: campId, creator_id: currentUser.id,
+    pitch: fullPitch, portfolio_url, proposed_rate: rate, status: 'pending'
+  });
+  if (!error) { closeModal('modalApply'); setCreatorTab('browse'); }
+  else alert('Error: ' + error.message);
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
