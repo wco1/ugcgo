@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ugcgo.ai — Войти</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Inter",-apple-system,sans-serif;background:#0a0a0a;color:#f0f0e8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.wrap{width:100%;max-width:420px}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:40px;justify-content:center}
+.logo-mark{background:#c8ff00;color:#0a0a0a;font-size:13px;font-weight:900;letter-spacing:-0.5px;padding:5px 10px;border-radius:6px}
+.logo-name{font-size:20px;font-weight:900;letter-spacing:-0.8px}
+.logo-name em{color:#c8ff00;font-style:normal}.ai{font-size:13px;color:rgba(240,240,232,.4);font-weight:600}
+h1{font-size:28px;font-weight:900;letter-spacing:-1.2px;margin-bottom:6px;text-align:center}
+.sub{font-size:14px;color:rgba(240,240,232,.5);text-align:center;margin-bottom:32px;line-height:1.5}
+/* ROLE SELECTOR */
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px}
+.role-btn{padding:16px 12px;background:#111;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;transition:.15s;text-align:center}
+.role-btn:hover{border-color:rgba(200,255,0,.3);background:#141414}
+.role-btn.active{border-color:#c8ff00;background:rgba(200,255,0,.08)}
+.role-ico{font-size:28px;margin-bottom:8px}
+.role-name{font-size:13px;font-weight:800;letter-spacing:-.2px}
+.role-desc{font-size:11px;color:rgba(240,240,232,.4);margin-top:3px;line-height:1.4}
+/* TABS */
+.tabs{display:flex;background:#111;border-radius:10px;padding:3px;margin-bottom:24px;border:1px solid rgba(255,255,255,.07)}
+.tab{flex:1;padding:9px;text-align:center;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;color:rgba(240,240,232,.4)}
+.tab.active{background:#c8ff00;color:#0a0a0a}
+/* FORM */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(240,240,232,.4);margin-bottom:6px}
+.field input{width:100%;background:#111;border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#f0f0e8;font-family:inherit;outline:none;transition:.15s}
+.field input:focus{border-color:#c8ff00}
+.btn{width:100%;padding:14px;background:#c8ff00;color:#0a0a0a;font-size:15px;font-weight:900;border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:.12s;letter-spacing:-.3px}
+.btn:hover{background:#d4ff1a}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.err{color:#ff5252;font-size:12px;margin-top:8px;display:none;text-align:center}
+.divider{text-align:center;color:rgba(240,240,232,.25);font-size:12px;margin:16px 0;position:relative}
+.divider::before,.divider::after{content:"";position:absolute;top:50%;width:44%;height:1px;background:rgba(255,255,255,.08)}
+.divider::before{left:0}.divider::after{right:0}
+.footer{text-align:center;margin-top:20px;font-size:12px;color:rgba(240,240,232,.35)}
+.footer a{color:#c8ff00;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-mark">UGC</div>
+    <div class="logo-name">ugcgo<em>.</em><span class="ai">ai</span></div>
+  </div>
+
+  <h1 id="pageTitle">Выбери роль</h1>
+  <div class="sub" id="pageSub">Ты заходишь как бренд или UGC-креатор?</div>
+
+  <!-- STEP 1: Role selection -->
+  <div id="stepRole">
+    <div class="roles">
+      <div class="role-btn" id="btnBrand" onclick="selectRole('brand')">
+        <div class="role-ico">🏢</div>
+        <div class="role-name">Бренд</div>
+        <div class="role-desc">Запускаю UGC-кампании и ищу креаторов</div>
+      </div>
+      <div class="role-btn" id="btnCreator" onclick="selectRole('creator')">
+        <div class="role-ico">🎬</div>
+        <div class="role-name">Креатор</div>
+        <div class="role-desc">Создаю контент и монетизирую аудиторию</div>
+      </div>
+    </div>
+    <button class="btn" id="roleNextBtn" onclick="showAuthForm()" style="opacity:.4;pointer-events:none">Продолжить →</button>
+  </div>
+
+  <!-- STEP 2: Auth form -->
+  <div id="stepAuth" style="display:none">
+    <div class="tabs">
+      <div class="tab active" id="tabLogin" onclick="switchTab('login')">Войти</div>
+      <div class="tab" id="tabReg" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <div id="formLogin">
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@company.com"></div>
+      <div class="field"><label>Пароль</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+      <div class="err" id="loginErr"></div>
+      <button class="btn" id="loginBtn" onclick="doLogin()">Войти</button>
+    </div>
+    <div id="formReg" style="display:none">
+      <div class="field"><label>Имя / Название</label><input type="text" id="regName" placeholder="Moody Brand / Anna K"></div>
+      <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="you@company.com"></div>
+      <div class="field"><label>Пароль</label><input type="password" id="regPass" placeholder="минимум 6 символов"></div>
+      <div class="err" id="regErr"></div>
+      <button class="btn" id="regBtn" onclick="doRegister()">Создать аккаунт</button>
+    </div>
+    <div class="divider">или</div>
+    <div style="text-align:center;font-size:12px;color:rgba(240,240,232,.4);cursor:pointer" onclick="backToRole()">← Сменить роль</div>
+  </div>
+
+  <div class="footer">Регистрируясь, ты соглашаешься с <a href="#">условиями</a></div>
+</div>
+
+<script>
+const sb = supabase.createClient('https://vhcwsbeqphytmdjrsgvb.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoY3dzYmVxcGh5dG1kanJzZ3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MjgzODUsImV4cCI6MjA4NzQwNDM4NX0.i6y2f0ON6Gwsy9jSNKjwPA5S--odGznbC3R5ROwgkQI');
+let selectedRole = null;
+let curTab = 'login';
+
+// Check existing session
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) redirectByRole(data.session.user);
+});
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('btnBrand').classList.toggle('active', role === 'brand');
+  document.getElementById('btnCreator').classList.toggle('active', role === 'creator');
+  const btn = document.getElementById('roleNextBtn');
+  btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+}
+
+function showAuthForm() {
+  if (!selectedRole) return;
+  document.getElementById('stepRole').style.display = 'none';
+  document.getElementById('stepAuth').style.display = 'block';
+  const title = document.getElementById('pageTitle');
+  const sub = document.getElementById('pageSub');
+  if (selectedRole === 'brand') { title.textContent = 'Войти как Бренд'; sub.textContent = 'Управляй кампаниями и находи лучших креаторов'; }
+  else { title.textContent = 'Войти как Креатор'; sub.textContent = 'Находи кампании и монетизируй свой контент'; }
+}
+
+function backToRole() {
+  document.getElementById('stepAuth').style.display = 'none';
+  document.getElementById('stepRole').style.display = 'block';
+  document.getElementById('pageTitle').textContent = 'Выбери роль';
+  document.getElementById('pageSub').textContent = 'Ты заходишь как бренд или UGC-креатор?';
+}
+
+function switchTab(tab) {
+  curTab = tab;
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabReg').classList.toggle('active', tab === 'register');
+  document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('formReg').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtn');
+  if (!email || !pass) { showErr(errEl, 'Заполни все поля'); return; }
+  btn.disabled = true; btn.textContent = 'Входим...';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Войти';
+  if (error) { showErr(errEl, error.message); return; }
+  redirectByRole(data.user);
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const errEl = document.getElementById('regErr');
+  const btn = document.getElementById('regBtn');
+  if (!name || !email || !pass) { showErr(errEl, 'Заполни все поля'); return; }
+  if (pass.length < 6) { showErr(errEl, 'Пароль минимум 6 символов'); return; }
+  btn.disabled = true; btn.textContent = 'Создаём...';
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { name, role: selectedRole } }
+  });
+  btn.disabled = false; btn.textContent = 'Создать аккаунт';
+  if (error) { showErr(errEl, error.message === 'User already registered' ? 'Этот email уже зарегистрирован' : error.message); return; }
+  // Save to user_profiles (ignore errors if table doesn't exist yet)
+  if (data.user) {
+    await sb.from('user_profiles').upsert({ id: data.user.id, email, name, role: selectedRole }).catch(() => {});
+    redirectByRole(data.user, true);
+  }
+}
+
+function redirectByRole(user, isNew) {
+  const role = user.user_metadata?.role || selectedRole || 'creator';
+  const base = 'https://trend-give-concept-utilize.trycloudflare.com';
+  if (role === 'brand') window.location.href = base + '/ugcgo-brand.html';
+  else window.location.href = base + '/ugcgo-creator.html';
+}
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
+</script>
+</body>
+</html>
