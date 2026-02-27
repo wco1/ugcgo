@@ -206,6 +206,46 @@ tr:hover td{background:#fafaf5}
   .modal-overlay{align-items:flex-end;padding:0}
   .modal{width:100%;max-width:100%;border-radius:20px 20px 0 0;padding:28px 20px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow-y:auto}
 }
+
+/* MARKETPLACE PAGE */
+.mkt-hero{padding:60px 5% 40px;background:var(--bg);text-align:center;border-bottom:1px solid var(--border)}
+.mkt-hero h1{font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;margin-bottom:12px}
+.mkt-hero h1 span{background:#c8ff00;color:#0a0a0a;padding:0 8px;border-radius:4px}
+.mkt-hero p{color:var(--mid);font-size:17px;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
+.mkt-tabs{display:flex;gap:0;background:var(--bg);border-bottom:2px solid var(--border);padding:0 5%}
+.mkt-tab{padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--mid);transition:.2s}
+.mkt-tab.active{color:var(--text);border-bottom-color:#c8ff00}
+.mkt-section{padding:32px 5%;max-width:1200px;margin:0 auto}
+.mkt-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.mkt-filter-btn{padding:7px 18px;border:1.5px solid var(--border);border-radius:100px;background:none;font-size:13px;font-weight:600;cursor:pointer;color:var(--mid);transition:.2s}
+.mkt-filter-btn.active,.mkt-filter-btn:hover{background:#c8ff00;border-color:#c8ff00;color:#0a0a0a}
+.mkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.mkt-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.2s;cursor:pointer}
+.mkt-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.mkt-card-img{width:100%;height:180px;object-fit:cover;background:linear-gradient(135deg,#f0f0ea,#e0e0d8)}
+.mkt-card-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,#f8f8f2,#f0f0ea)}
+.mkt-card-body{padding:20px}
+.mkt-card-brand{font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.mkt-card-title{font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.4px}
+.mkt-card-desc{font-size:13px;color:var(--mid);margin-bottom:16px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mkt-card-footer{display:flex;justify-content:space-between;align-items:center}
+.mkt-card-budget{font-size:18px;font-weight:900;letter-spacing:-.5px}
+.mkt-card-category{font-size:11px;padding:4px 10px;background:#f0f0ea;border-radius:100px;font-weight:600;color:#666}
+.mkt-card-apply{padding:8px 20px;background:#0a0a0a;color:#fff;border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+.mkt-card-apply:hover{background:#333}
+/* Creator cards */
+.creator-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.creator-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:.2s}
+.creator-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.creator-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;background:#e0e0d8}
+.creator-name{font-size:16px;font-weight:800;margin-bottom:4px}
+.creator-handle{font-size:13px;color:#888;margin-bottom:12px}
+.creator-niche{display:inline-block;padding:4px 12px;background:#c8ff00;color:#0a0a0a;border-radius:100px;font-size:12px;font-weight:700;margin-bottom:12px}
+.creator-stats{display:flex;gap:16px;justify-content:center;font-size:12px;color:var(--mid)}
+.creator-stats strong{color:var(--text);font-weight:800}
+.mkt-empty{text-align:center;padding:60px;color:var(--mid)}
+.mkt-badge-new{background:#c8ff00;color:#0a0a0a;font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px}
+@media(max-width:768px){.mkt-grid{grid-template-columns:1fr}.creator-grid{grid-template-columns:1fr 1fr}.mkt-hero{padding:40px 5% 28px}}
 </style>
 </head>
 <body>
@@ -213,14 +253,51 @@ tr:hover td{background:#fafaf5}
 <!-- NAV -->
 <nav>
   <div class="logo" onclick="goHome()">ugc<span>go</span></div>
+  <div style="display:flex;align-items:center;gap:20px">
+    <a onclick="showPage('marketplace')" style="font-size:13px;font-weight:700;cursor:pointer;color:inherit;text-decoration:none">Marketplace</a>
+  </div>
   <div class="nav-actions" id="navActions">
     <button class="btn btn-outline" onclick="showPage('login')">Sign In</button>
     <button class="btn btn-lime" onclick="showPage('register')">Get Started</button>
   </div>
 </nav>
 
+<!-- MARKETPLACE PAGE (PUBLIC) -->
+<div class="page active" id="page-marketplace">
+  <div class="mkt-hero">
+    <h1>Find <span>UGC Creators</span><br>that convert</h1>
+    <p>Browse active campaigns and top creators. No account needed to explore.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-lime" onclick="showPage('register')" style="padding:12px 28px;font-size:15px">Start for Free →</button>
+      <button class="btn btn-outline" onclick="showPage('login')" style="padding:12px 28px;font-size:15px">Sign In</button>
+    </div>
+  </div>
+  <div class="mkt-tabs">
+    <div class="mkt-tab active" onclick="switchMktTab('campaigns',this)">🎯 Campaigns</div>
+    <div class="mkt-tab" onclick="switchMktTab('creators',this)">✨ Creators</div>
+  </div>
+  <div id="mkt-campaigns-section" class="mkt-section">
+    <div class="mkt-filters" id="mktFilters">
+      <button class="mkt-filter-btn active" onclick="filterMkt('all',this)">All</button>
+      <button class="mkt-filter-btn" onclick="filterMkt('Beauty',this)">Beauty</button>
+      <button class="mkt-filter-btn" onclick="filterMkt('Fitness',this)">Fitness</button>
+      <button class="mkt-filter-btn" onclick="filterMkt('Tech',this)">Tech</button>
+      <button class="mkt-filter-btn" onclick="filterMkt('Lifestyle',this)">Lifestyle</button>
+      <button class="mkt-filter-btn" onclick="filterMkt('Food',this)">Food</button>
+    </div>
+    <div class="mkt-grid" id="mktCampaignsGrid">
+      <div class="mkt-empty">Loading campaigns...</div>
+    </div>
+  </div>
+  <div id="mkt-creators-section" class="mkt-section" style="display:none">
+    <div class="creator-grid" id="mktCreatorsGrid">
+      <div class="mkt-empty">Loading creators...</div>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN PAGE -->
-<div class="page active" id="page-login">
+<div class="page" id="page-login">
   <div class="auth-wrap">
     <div class="auth-card">
       <h1>Welcome back</h1>
@@ -479,15 +556,113 @@ let currentRole = 'brand';
 let brandTab = 'overview';
 let creatorTab = 'overview';
 
+// MARKETPLACE
+let mktAllCampaigns = [];
+async function loadMarketplace() {
+  try {
+    // Load brand profiles for name lookup
+    const rb = await fetch(`${SB_URL}/rest/v1/user_profiles?role=eq.brand&select=id,full_name,company_name,avatar_url`, {
+      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
+    });
+    const brands = await rb.json();
+    window._brandMap = {};
+    (brands||[]).forEach(b => { window._brandMap[b.id] = b.company_name||b.full_name||'Brand'; });
+    // Load campaigns
+    const r = await fetch(`${SB_URL}/rest/v1/campaigns?status=eq.active&order=created_at.desc`, {
+      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
+    });
+    const camps = await r.json();
+    mktAllCampaigns = camps || [];
+    renderMktCampaigns(mktAllCampaigns);
+    // Load creators
+    const r2 = await fetch(`${SB_URL}/rest/v1/user_profiles?role=eq.creator&limit=20`, {
+      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
+    });
+    const creators = await r2.json();
+    renderMktCreators(creators || []);
+  } catch(e) { console.error('loadMarketplace error', e); }
+}
+
+function renderMktCampaigns(list) {
+  const grid = document.getElementById('mktCampaignsGrid');
+  if (!list.length) { grid.innerHTML='<div class="mkt-empty">No active campaigns yet</div>'; return; }
+  const bmap = window._brandMap || {};
+  grid.innerHTML = list.map(camp => {
+    const img = camp.cover_url ? `<img class="mkt-card-img" src="${camp.cover_url}" alt="">` : `<div class="mkt-card-img-placeholder">🎯</div>`;
+    const deadline = camp.deadline ? `<span style="font-size:12px;color:#888">Due ${new Date(camp.deadline).toLocaleDateString('en',{month:'short',day:'numeric'})}</span>` : '';
+    const brandName = bmap[camp.brand_id] || 'Brand';
+    const budget = camp.budget_max || camp.budget || '?';
+    return `<div class="mkt-card">
+      ${img}
+      <div class="mkt-card-body">
+        <div class="mkt-card-brand">${brandName}</div>
+        <div class="mkt-card-title">${camp.title||'Campaign'}</div>
+        <div class="mkt-card-desc">${camp.description||''}</div>
+        <div class="mkt-card-footer">
+          <div>
+            <div class="mkt-card-budget">$${budget}</div>
+            ${deadline}
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="mkt-card-category">${camp.category||'UGC'}</span>
+            <button class="mkt-card-apply" onclick="requireAuth()">Apply →</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMktCreators(list) {
+  const grid = document.getElementById('mktCreatorsGrid');
+  // Filter out test/unnamed creators
+  const real = list.filter(c => c.full_name && c.full_name !== 'Test Creator');
+  if (!real.length) { grid.innerHTML='<div class="mkt-empty">No creators yet</div>'; return; }
+  grid.innerHTML = real.map(cr => {
+    const avatar = cr.avatar_url ? `<img class="creator-avatar" src="${cr.avatar_url}" alt="">` : `<div class="creator-avatar" style="background:#e0e0d8;display:flex;align-items:center;justify-content:center;font-size:28px">👤</div>`;
+    const handle = cr.website || cr.full_name || 'creator';
+    const niche = cr.bio ? cr.bio.split('.')[0].split('&')[0].trim() : 'Lifestyle';
+    return `<div class="creator-card">
+      ${avatar}
+      <div class="creator-name">${cr.full_name||'Creator'}</div>
+      <div class="creator-handle">${handle}</div>
+      <div class="creator-niche">${niche.length > 20 ? 'Content Creator' : niche}</div>
+      <div class="creator-stats">
+        <div><strong>50K+</strong><br>followers</div>
+        <div><strong>200+</strong><br>videos</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterMkt(cat, btn) {
+  document.querySelectorAll('.mkt-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat==='all' ? mktAllCampaigns : mktAllCampaigns.filter(c=>(c.category||'').toLowerCase()===cat.toLowerCase());
+  renderMktCampaigns(filtered);
+}
+
+function switchMktTab(tab, btn) {
+  document.querySelectorAll('.mkt-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mkt-campaigns-section').style.display = tab==='campaigns'?'':'none';
+  document.getElementById('mkt-creators-section').style.display = tab==='creators'?'':'none';
+}
+
+function requireAuth() {
+  showPage('register');
+}
+
 // INIT
 async function init() {
+  loadMarketplace(); // always load public marketplace data
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     currentUser = session.user;
     await loadProfile();
     goToDashboard();
   } else {
-    showPage('login');
+    showPage('marketplace');
   }
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
@@ -496,7 +671,7 @@ async function init() {
       goToDashboard();
     } else if (event === 'SIGNED_OUT') {
       currentUser = null; currentProfile = null;
-      showPage('login');
+      showPage('marketplace');
     }
   });
 }
@@ -508,7 +683,7 @@ async function loadProfile() {
 
 function goHome() {
   if (currentUser) goToDashboard();
-  else showPage('login');
+  else showPage('marketplace');
 }
 
 function goToDashboard() {
@@ -532,6 +707,12 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const el = document.getElementById('page-' + id);
   if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  // Update nav based on page
+  const nav = document.getElementById('navActions');
+  if (id === 'marketplace' || id === 'login' || id === 'register') {
+    nav.innerHTML = `<button class="btn btn-outline" onclick="showPage('login')">Sign In</button><button class="btn btn-lime" onclick="showPage('register')">Get Started</button>`;
+  }
 }
 
 function setRole(role) {
