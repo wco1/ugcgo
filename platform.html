@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ugcgo.ai — Platform</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -14,7 +14,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:var(--bg)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 12px) max(20px,env(safe-area-inset-right)) 12px max(20px,env(safe-area-inset-left));border-bottom:1px solid var(--border);background:var(--bg)}
 .logo{font-size:22px;font-weight:900;letter-spacing:-1px;cursor:pointer}
 .logo span{color:var(--lime);background:#0a0a0a;padding:2px 6px;border-radius:4px}
 .nav-actions{display:flex;gap:12px;align-items:center}
@@ -117,14 +117,49 @@ tr:hover td{background:#fafaf5}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 @media(max-width:768px){
-  nav{padding:16px 20px}
-  .dash-wrap{flex-direction:column}
-  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:12px;display:flex;gap:4px;overflow-x:auto}
-  .sidebar-section{margin:0}
+  nav{padding:calc(env(safe-area-inset-top) + 10px) max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left))}
+  .logo{font-size:20px}
+  .btn{padding:8px 16px;font-size:13px}
+  .dash-wrap{flex-direction:column;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  /* Sidebar becomes fixed bottom nav on mobile */
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    width:100%;height:auto;
+    border-right:none;border-top:1px solid var(--border);
+    background:rgba(248,248,242,0.95);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    padding:8px max(16px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+    display:flex;gap:0;overflow-x:auto;
+    flex-direction:row;align-items:center;justify-content:space-around;
+  }
+  .sidebar-section{margin:0;display:flex;gap:0;flex:1;justify-content:space-around}
+  .sidebar-section:last-child{flex:none}
   .sidebar-label{display:none}
-  .sidebar-item{white-space:nowrap;flex-shrink:0}
-  .dash-content{padding:20px}
-  .auth-card{padding:32px 24px}
+  .sidebar-item{
+    flex-direction:column;align-items:center;gap:2px;
+    padding:6px 10px;border-radius:8px;
+    white-space:nowrap;flex-shrink:0;
+    font-size:10px;font-weight:600;
+  }
+  .sidebar-item svg{width:20px;height:20px}
+  .sidebar-item.active{background:transparent;color:#0a0a0a}
+  .sidebar-item.active svg{stroke:#0a0a0a}
+  /* Logout button smaller on mobile */
+  .sidebar-item[onclick*="Logout"]{color:#ff4444!important;font-size:10px}
+  .dash-content{padding:20px 16px}
+  .dash-header h1{font-size:24px;letter-spacing:-1px}
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-card{padding:16px}
+  .stat-value{font-size:28px}
+  .auth-card{padding:28px 20px;border-radius:16px}
+  .auth-card h1{font-size:24px}
+  .auth-wrap{padding:20px 16px;align-items:flex-start;padding-top:40px}
+  /* Campaign cards full width */
+  .cards-grid{grid-template-columns:1fr!important}
+  .camp-card{padding:16px}
+  /* Modal as bottom sheet on mobile */
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{width:100%;max-width:100%;border-radius:20px 20px 0 0;padding:28px 20px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow-y:auto}
 }
 </style>
 </head>
@@ -545,7 +580,7 @@ function campCard(c) {
       <span class="tag tag-${c.status}">${c.status}</span>
     </div>
     <div class="card-meta">${c.description || 'No description'}</div>
-    ${c.budget ? `<div style="margin-top:10px;font-weight:700">$$${c.budget}</div>` : ''}
+    ${c.budget ? `<div style="margin-top:10px;font-weight:700">$${c.budget}</div>` : ''}
     <div class="card-actions">
       <button class="btn btn-outline" style="padding:8px 14px;font-size:13px" onclick="toggleStatus('${c.id}','${c.status}')">
         ${c.status === 'draft' ? '▶ Activate' : '⏸ Pause'}
@@ -645,7 +680,7 @@ function creatorCampCard(c, alreadyApplied=false) {
       ${c.category ? `<span class="tag tag-draft">${c.category}</span>` : ''}
     </div>
     <div class="card-meta">${c.description || 'Looking for UGC creators'}</div>
-    ${c.budget ? `<div style="margin-top:10px;font-weight:700;color:var(--text)">Budget: $$${c.budget}</div>` : ''}
+    ${c.budget ? `<div style="margin-top:10px;font-weight:700;color:var(--text)">Budget: $${c.budget}</div>` : ''}
     <div class="card-actions">
       ${alreadyApplied 
         ? '<span class="tag tag-active">✓ Applied</span>'
