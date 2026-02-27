@@ -574,7 +574,12 @@ function animateCounter(el) {
 const counterObserver = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); counterObserver.unobserve(e.target); } });
 }, { threshold: .5 });
-document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+document.querySelectorAll('[data-count]').forEach(el => {
+  counterObserver.observe(el);
+  // Also trigger immediately if already visible
+  const rect = el.getBoundingClientRect();
+  if (rect.top < window.innerHeight) animateCounter(el);
+});
 </script>
 </body>
 </html>
