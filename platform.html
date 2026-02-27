@@ -264,15 +264,8 @@ tr:hover td{background:#fafaf5}
 
 <!-- MARKETPLACE PAGE (PUBLIC) -->
 <div class="page active" id="page-marketplace">
-  <div class="mkt-hero">
-    <h1>Find <span>UGC Creators</span><br>that convert</h1>
-    <p>Browse active campaigns and top creators. No account needed to explore.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-lime" onclick="showPage('register')" style="padding:12px 28px;font-size:15px">Start for Free →</button>
-      <button class="btn btn-outline" onclick="showPage('login')" style="padding:12px 28px;font-size:15px">Sign In</button>
-    </div>
-  </div>
-  <div class="mkt-tabs">
+
+  <div style="padding-top:24px"><h2 style="padding:0 5%;font-size:clamp(24px,3vw,36px);font-weight:900;letter-spacing:-1px;margin-bottom:16px">Marketplace</h2></div><div class="mkt-tabs">
     <div class="mkt-tab active" onclick="switchMktTab('campaigns',this)">🎯 Campaigns</div>
     <div class="mkt-tab" onclick="switchMktTab('creators',this)">✨ Creators</div>
   </div>
@@ -656,11 +649,14 @@ function requireAuth() {
 // INIT
 async function init() {
   loadMarketplace(); // always load public marketplace data
+  const authParam = new URLSearchParams(window.location.search).get('auth');
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     currentUser = session.user;
     await loadProfile();
     goToDashboard();
+  } else if (authParam === '1') {
+    showPage('register');
   } else {
     showPage('marketplace');
   }
