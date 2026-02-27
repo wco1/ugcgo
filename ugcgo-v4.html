@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ugcgo.ai — AI UGC That Actually Converts</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#000;--s:#080808;--c:#111;--lime:#e8ff59;--t:#fff;--m:#777;--b:#1a1a1a;--r:14px}
+[data-theme=light]{--bg:#fafaf5;--s:#fff;--c:#f5f5f0;--t:#000;--m:#666;--b:#e5e5df}
+*{transition:background-color .3s,color .3s,border-color .3s}
+html,body{overflow-x:hidden;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t)}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:0 6%;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.85);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06)}
+[data-theme=light] nav{background:rgba(250,250,245,.9)}
+.logo{font-weight:900;font-size:18px;letter-spacing:-.5px}.logo em{color:var(--lime);font-style:normal}
+.nav-r{display:flex;align-items:center;gap:12px}
+.t-toggle{background:none;border:none;cursor:pointer;font-size:16px;opacity:.7;padding:4px 8px}
+.t-toggle:hover{opacity:1}
+.n-link{font-size:13px;color:var(--m);padding:6px 12px;border-radius:6px;transition:.15s}
+.n-link:hover{color:var(--t)}
+.btn-pill{background:var(--lime);color:#000;font-weight:800;font-size:13px;padding:8px 20px;border-radius:100px;border:none;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn-pill:hover{transform:scale(1.04);box-shadow:0 0 20px rgba(232,255,89,.4)}
+.nav-links{display:flex;gap:4px}
+
+/* HERO — SPLIT LAYOUT */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:64px 6% 0;gap:60px;overflow:hidden}
+.hero-left{padding-top:40px}
+.badge{display:inline-block;background:rgba(232,255,89,.12);border:1px solid rgba(232,255,89,.25);color:var(--lime);font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px}
+h1{font-size:clamp(40px,5vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2.5px;margin-bottom:20px}
+h1 .hl{color:var(--lime);display:block}
+.hero-p{font-size:16px;color:var(--m);line-height:1.7;max-width:440px;margin-bottom:36px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px}
+.hero-btns .outline{background:none;border:1px solid var(--b);color:var(--t);font-size:14px;padding:10px 24px;border-radius:100px;cursor:pointer;transition:.2s}
+.hero-btns .outline:hover{border-color:var(--lime);color:var(--lime)}
+.trust-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.trust-avatars{display:flex}.trust-avatars img{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg);margin-right:-8px;object-fit:cover}
+.trust-text{font-size:12px;color:var(--m)}.trust-text strong{color:var(--lime)}
+
+/* HERO RIGHT — VIDEO MOSAIC */
+.hero-right{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;gap:12px;height:calc(100vh - 100px);padding-top:80px;padding-bottom:40px}
+.mosaic-item{border-radius:12px;overflow:hidden;position:relative;background:var(--c)}
+.mosaic-item.tall{grid-row:span 2}
+.mosaic-item img,.mosaic-item video{width:100%;height:100%;object-fit:cover;display:block}
+.mosaic-item .badge-overlay{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;letter-spacing:.5px}
+.mosaic-item .badge-overlay span{color:var(--lime)}
+
+/* MARQUEE */
+.marquee-wrap{overflow:hidden;border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:16px 0;background:var(--s)}
+.marquee-track{display:flex;gap:48px;animation:marquee 20s linear infinite;white-space:nowrap;width:max-content}
+.marquee-track span{font-size:13px;color:var(--m);display:flex;align-items:center;gap:8px}
+.marquee-track span::before{content:"✦";color:var(--lime)}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
+.stat-cell{background:var(--s);padding:32px 24px;text-align:center}
+.stat-n{font-size:clamp(28px,3vw,44px);font-weight:900;color:var(--lime);letter-spacing:-1px}
+.stat-l{font-size:11px;color:var(--m);margin-top:4px;letter-spacing:.5px;text-transform:uppercase}
+
+/* HOW IT WORKS */
+.how{padding:100px 6%;background:var(--bg)}
+.label{font-size:11px;letter-spacing:2px;color:var(--lime);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+.section-h{font-size:clamp(32px,5vw,54px);font-weight:900;letter-spacing:-1.5px;margin-bottom:48px;line-height:1.1}
+.section-h .hl{color:var(--lime)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.step{position:relative}
+.step-num{font-size:72px;font-weight:900;color:rgba(232,255,89,.08);line-height:1;margin-bottom:8px;font-variant-numeric:tabular-nums}
+.step-title{font-size:18px;font-weight:700;margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--m);line-height:1.7}
+.step-line{position:absolute;top:36px;right:0;width:60%;height:1px;background:linear-gradient(90deg,var(--lime),transparent)}
+
+/* COMPARISON */
+.vs-section{padding:100px 6%;background:var(--s);border-top:1px solid var(--b)}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.vs-card{border-radius:var(--r);padding:36px;border:1px solid var(--b)}
+.vs-card.them{opacity:.6}
+.vs-card.us{border-color:var(--lime)}
+.vs-header{font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.vs-header .dot{width:8px;height:8px;border-radius:50%}
+.vs-card.them .dot{background:#ff4444}
+.vs-card.us .dot{background:var(--lime)}
+.vs-item{padding:10px 0;border-bottom:1px solid var(--b);font-size:14px;color:var(--m);display:flex;align-items:center;gap:10px}
+.vs-item .icon{font-size:16px}
+.vs-card.us .vs-item{color:var(--t)}
+
+/* CREATORS */
+.creators{padding:100px 6%}
+.creator-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:20px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.creator-scroll::-webkit-scrollbar{display:none}
+.creator-chip{flex:0 0 200px;background:var(--c);border-radius:12px;padding:20px;text-align:center;border:1px solid var(--b);scroll-snap-align:start;transition:.2s}
+.creator-chip:hover{border-color:var(--lime);transform:translateY(-3px)}
+.creator-chip img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--lime);margin:0 auto 12px;display:block}
+.c-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.c-niche{font-size:12px;color:var(--m);margin-bottom:6px}
+.c-views{font-size:13px;font-weight:700;color:var(--lime)}
+
+/* PRICING */
+.pricing{padding:100px 6%;background:var(--s);border-top:1px solid var(--b)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.plan{background:var(--c);border-radius:var(--r);padding:32px;border:1px solid var(--b);position:relative;transition:.2s}
+.plan:hover{transform:translateY(-4px)}
+.plan.hot{border-color:var(--lime);background:linear-gradient(135deg,rgba(232,255,89,.05),var(--c))}
+.hot-tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--lime);color:#000;font-size:10px;font-weight:800;padding:3px 12px;border-radius:100px;letter-spacing:1px;white-space:nowrap}
+.plan-n{font-size:12px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.plan-p{font-size:42px;font-weight:900;letter-spacing:-2px;margin-bottom:4px}
+.plan-p sub{font-size:16px;font-weight:400;color:var(--m)}
+.plan-p2{font-size:12px;color:var(--m);margin-bottom:24px}
+.plan-list{list-style:none;margin-bottom:28px}
+.plan-list li{font-size:13px;color:var(--m);padding:7px 0;border-bottom:1px solid var(--b);display:flex;gap:8px;align-items:center}
+.plan-list li::before{content:"→";color:var(--lime);font-weight:700}
+.plan-list li.highlight{color:var(--t);font-weight:600}
+.plan-btn{width:100%;padding:11px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;border:none}
+.plan-btn.outline{background:none;border:1px solid var(--b);color:var(--t)}
+.plan-btn.outline:hover{border-color:var(--lime);color:var(--lime)}
+.plan-btn.lime{background:var(--lime);color:#000}
+.plan-btn.lime:hover{box-shadow:0 4px 20px rgba(232,255,89,.35);transform:translateY(-1px)}
+
+/* CTA BANNER */
+.cta{padding:100px 6%;text-align:center}
+.cta-h{font-size:clamp(36px,6vw,80px);font-weight:900;letter-spacing:-2.5px;margin-bottom:20px;line-height:1.05}
+.cta-h .hl{color:var(--lime)}
+.cta-sub{font-size:16px;color:var(--m);margin-bottom:40px}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.cta-btns .big{font-size:16px;padding:14px 40px;border-radius:100px}
+.cta-btns .ghost{background:none;border:1px solid var(--b);color:var(--t);font-size:16px;padding:14px 40px;border-radius:100px;cursor:pointer;transition:.2s}
+.cta-btns .ghost:hover{border-color:var(--lime);color:var(--lime)}
+
+/* FOOTER */
+footer{padding:40px 6%;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;background:var(--s)}
+.foot-links{display:flex;gap:20px;font-size:12px;color:var(--m)}
+.foot-links a:hover{color:var(--lime)}
+.foot-c{font-size:12px;color:var(--m)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:100px;padding-bottom:40px;gap:40px}
+  .hero-right{grid-template-columns:1fr 1fr;height:360px;padding-top:0}
+  .mosaic-item.tall{grid-row:span 1}
+  .nav-links{display:none}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .step-line{display:none}
+  .vs-grid{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr;max-width:420px}
+  footer{flex-direction:column;text-align:center}
+  .cta-btns{flex-direction:column;align-items:center}
+}
+@media(max-width:480px){
+  h1{letter-spacing:-1.5px}
+  .hero-right{grid-template-columns:1fr;height:280px}
+  .creator-chip{flex:0 0 160px}
+}
+
+/* ANIMATIONS */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.fade-up.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">ugcgo<em>.</em>ai</div>
+  <div class="nav-links">
+    <a class="n-link" href="#">For Brands</a>
+    <a class="n-link" href="#">Creators</a>
+    <a class="n-link" href="#">AI Studio</a>
+    <a class="n-link" href="#">Pricing</a>
+  </div>
+  <div class="nav-r">
+    <button class="t-toggle" id="themeBtn">🌙</button>
+    <button class="btn-pill" onclick="location.href='ugcgo-auth.html'">Get Started →</button>
+  </div>
+</nav>
+
+<!-- HERO SPLIT -->
+<div class="hero">
+  <div class="hero-left fade-up">
+    <div class="badge">✦ Performance UGC Platform</div>
+    <h1>UGC content<br><span class="hl">that sells.</span><br>Powered by AI.</h1>
+    <p class="hero-p">Brief in Monday. 30 TikTok-ready videos by Tuesday. Pay only for content that performs. No agencies. No BS.</p>
+    <div class="hero-btns">
+      <button class="btn-pill big" style="font-size:15px;padding:12px 28px" onclick="location.href='ugcgo-auth.html'">Start free — no card needed</button>
+      <button class="outline">See how it works ↓</button>
+    </div>
+    <div class="trust-row">
+      <div class="trust-avatars">
+        <img src="img/creators_new/creator_sofia.png" loading="lazy" alt="">
+        <img src="img/creators_new/creator_aisha.png" loading="lazy" alt="">
+        <img src="img/creators_new/creator_emma.png" loading="lazy" alt="">
+        <img src="img/creators_new/creator_yuki.png" loading="lazy" alt="">
+      </div>
+      <div class="trust-text">Trusted by <strong>12,000+</strong> brands worldwide</div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="mosaic-item tall">
+      <video src="video/creator-1.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="badge-overlay">Beauty <span>↑ 4.2M</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="img/demo/premium_skincare.png" loading="lazy" alt="">
+      <div class="badge-overlay">Skincare <span>↑ 1.8M</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="img/demo/fashion_ugc.png" loading="lazy" alt="">
+      <div class="badge-overlay">Fashion <span>↑ 3.1M</span></div>
+    </div>
+    <div class="mosaic-item tall">
+      <video src="video/creator-3.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="badge-overlay">Tech <span>↑ 2.8M</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="img/demo/food_ugc.png" loading="lazy" alt="">
+      <div class="badge-overlay">Food <span>↑ 2.4M</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="img/demo/tech_ugc.png" loading="lazy" alt="">
+      <div class="badge-overlay">Tech <span>↑ 1.9M</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>TikTok-Ready Videos</span><span>Reels Optimized</span><span>AI Script Writing</span>
+    <span>Kling Video Generation</span><span>HeyGen Avatars</span><span>Brand Brief Engine</span>
+    <span>Performance Tracking</span><span>Flat Fee + Bonuses</span><span>50K+ Videos Created</span>
+    <span>TikTok-Ready Videos</span><span>Reels Optimized</span><span>AI Script Writing</span>
+    <span>Kling Video Generation</span><span>HeyGen Avatars</span><span>Brand Brief Engine</span>
+    <span>Performance Tracking</span><span>Flat Fee + Bonuses</span><span>50K+ Videos Created</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-cell"><div class="stat-n" data-count="50" data-suffix="K+">0</div><div class="stat-l">Videos Generated</div></div>
+  <div class="stat-cell"><div class="stat-n" data-count="2.4" data-suffix="B+">0</div><div class="stat-l">Total Views</div></div>
+  <div class="stat-cell"><div class="stat-n" data-count="158" data-suffix="%">0</div><div class="stat-l">Avg ROI</div></div>
+  <div class="stat-cell"><div class="stat-n" data-count="12" data-suffix="K+">0</div><div class="stat-l">Active Brands</div></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="fade-up">
+    <div class="label">Process</div>
+    <h2 class="section-h">From brief to viral<br><span class="hl">in 24 hours</span></h2>
+  </div>
+  <div class="steps fade-up">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Submit your brief</div>
+      <div class="step-desc">Product name, tone, target audience. Takes 5 minutes. AI pre-fills 80% of the form.</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">AI creates + Creators polish</div>
+      <div class="step-desc">Our AI generates scripts, visuals, and videos. Top creators pick up the brief and add their magic.</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Approve &amp; deploy</div>
+      <div class="step-desc">Review, request tweaks, approve. Post directly to TikTok/Meta or download. You pay only for winners.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VS COMPARISON -->
+<section class="vs-section">
+  <div class="fade-up" style="text-align:center;margin-bottom:48px">
+    <div class="label" style="text-align:center">Why ugcgo</div>
+    <h2 class="section-h" style="text-align:center;margin-bottom:0">We're not an agency.<br><span class="hl">We're a platform.</span></h2>
+  </div>
+  <div class="vs-grid fade-up">
+    <div class="vs-card them">
+      <div class="vs-header"><div class="dot"></div> Traditional Agency</div>
+      <div class="vs-item"><span class="icon">⏳</span> 2-4 weeks per campaign</div>
+      <div class="vs-item"><span class="icon">💸</span> $5,000–$25,000/month</div>
+      <div class="vs-item"><span class="icon">📋</span> Fixed deliverables only</div>
+      <div class="vs-item"><span class="icon">🤷</span> No performance guarantee</div>
+      <div class="vs-item"><span class="icon">📞</span> Account manager bottleneck</div>
+    </div>
+    <div class="vs-card us">
+      <div class="vs-header"><div class="dot"></div> ugcgo.ai</div>
+      <div class="vs-item"><span class="icon">⚡</span> 24 hours from brief to video</div>
+      <div class="vs-item"><span class="icon">💰</span> From $199/month</div>
+      <div class="vs-item"><span class="icon">∞</span> Unlimited iterations</div>
+      <div class="vs-item"><span class="icon">📈</span> Pay only for top performers</div>
+      <div class="vs-item"><span class="icon">🤖</span> AI Studio always-on</div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATORS -->
+<section class="creators">
+  <div class="fade-up" style="margin-bottom:32px">
+    <div class="label">Community</div>
+    <h2 class="section-h" style="margin-bottom:0">Meet the <span class="hl">AI creators</span></h2>
+  </div>
+  <div class="creator-scroll fade-up">
+    <div class="creator-chip"><img src="img/creators_new/creator_sofia.png" loading="lazy" alt="Sofia"><div class="c-name">Sofia M.</div><div class="c-niche">Beauty & Skincare</div><div class="c-views">↑ 4.2M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_aisha.png" loading="lazy" alt="Aisha"><div class="c-name">Aisha J.</div><div class="c-niche">Fashion & Style</div><div class="c-views">↑ 6.1M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_daniel.png" loading="lazy" alt="Daniel"><div class="c-name">Daniel R.</div><div class="c-niche">Fitness</div><div class="c-views">↑ 3.5M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_yuki.png" loading="lazy" alt="Yuki"><div class="c-name">Yuki T.</div><div class="c-niche">Food & Lifestyle</div><div class="c-views">↑ 5.0M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_emma.png" loading="lazy" alt="Emma"><div class="c-name">Emma L.</div><div class="c-niche">Makeup</div><div class="c-views">↑ 7.3M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_alex.png" loading="lazy" alt="Lexi"><div class="c-name">Lexi R.</div><div class="c-niche">TikTok Trends</div><div class="c-views">↑ 9.1M/mo</div></div>
+    <div class="creator-chip"><img src="img/creators_new/creator_zara.png" loading="lazy" alt="Zara"><div class="c-name">Zara N.</div><div class="c-niche">Travel & Vlogs</div><div class="c-views">↑ 3.9M/mo</div></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="fade-up" style="text-align:center;margin-bottom:48px">
+    <div class="label" style="text-align:center">Pricing</div>
+    <h2 class="section-h" style="text-align:center;margin-bottom:0">Scale your <span class="hl">content budget</span></h2>
+  </div>
+  <div class="plans fade-up">
+    <div class="plan">
+      <div class="plan-n">Starter</div>
+      <div class="plan-p">$199<sub>/mo</sub></div>
+      <div class="plan-p2">Test the waters</div>
+      <ul class="plan-list">
+        <li>10 videos/month</li>
+        <li>5 creator matches</li>
+        <li>Basic AI tools</li>
+        <li>Email support</li>
+      </ul>
+      <button class="plan-btn outline">Get Started</button>
+    </div>
+    <div class="plan hot">
+      <div class="hot-tag">★ MOST POPULAR</div>
+      <div class="plan-n">Growth</div>
+      <div class="plan-p">$499<sub>/mo</sub></div>
+      <div class="plan-p2">For scaling brands</div>
+      <ul class="plan-list">
+        <li class="highlight">30 videos/month</li>
+        <li class="highlight">Full AI Studio</li>
+        <li>20 creator matches</li>
+        <li>Priority support</li>
+        <li>A/B testing</li>
+        <li class="highlight">Performance bonuses</li>
+      </ul>
+      <button class="plan-btn lime">Get Started →</button>
+    </div>
+    <div class="plan">
+      <div class="plan-n">Scale</div>
+      <div class="plan-p">$999<sub>/mo</sub></div>
+      <div class="plan-p2">Unlimited growth</div>
+      <ul class="plan-list">
+        <li>Unlimited videos</li>
+        <li>Custom AI models</li>
+        <li>Dedicated manager</li>
+        <li>White-label</li>
+        <li>API access</li>
+      </ul>
+      <button class="plan-btn outline">Contact Sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="cta-h fade-up">Ready to make <span class="hl">viral content</span><br>on autopilot?</h2>
+  <p class="cta-sub fade-up">50,000+ brands already use ugcgo.ai. Join them today.</p>
+  <div class="cta-btns fade-up">
+    <button class="btn-pill big" onclick="location.href='ugcgo-auth.html'">Start Free — No signup needed</button>
+    <button class="ghost">Book a demo</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">ugcgo<em>.</em>ai</div>
+  <div class="foot-links">
+    <a href="#">Brands</a><a href="#">Creators</a><a href="#">Studio</a><a href="#">Pricing</a><a href="#">Privacy</a><a href="#">Terms</a>
+  </div>
+  <div class="foot-c">© 2024 ugcgo.ai</div>
+</footer>
+
+<script>
+// Theme
+const btn=document.getElementById("themeBtn"),root=document.documentElement;
+const t=localStorage.getItem("theme")||"dark";root.setAttribute("data-theme",t);btn.textContent=t==="dark"?"☀️":"🌙";
+btn.onclick=()=>{const n=root.getAttribute("data-theme")==="dark"?"light":"dark";root.setAttribute("data-theme",n);localStorage.setItem("theme",n);btn.textContent=n==="dark"?"☀️":"🌙"};
+
+// Reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");obs.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll(".fade-up").forEach(el=>obs.observe(el));
+
+// Counters
+function count(el){
+  const v=parseFloat(el.dataset.count),s=el.dataset.suffix||"",pre=el.dataset.pre||"";
+  const dur=1400,st=performance.now();
+  (function t(now){
+    const p=Math.min((now-st)/dur,1),e=1-Math.pow(1-p,3),c=v*e;
+    el.textContent=pre+(v>=100?Math.round(c).toLocaleString():c.toFixed(v<10?1:0))+s;
+    if(p<1)requestAnimationFrame(t);
+  })(st);
+}
+const co=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){count(e.target);co.unobserve(e.target)}}),{threshold:.5});
+document.querySelectorAll("[data-count]").forEach(el=>co.observe(el));
+</script>
+</body>
+</html>
