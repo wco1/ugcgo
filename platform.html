@@ -613,25 +613,18 @@ let creatorTab = 'overview';
 let mktAllCampaigns = [];
 async function loadMarketplace() {
   try {
-    // Load brand profiles for name lookup
-    const rb = await fetch(`${SB_URL}/rest/v1/user_profiles?role=eq.brand&select=id,full_name,company_name,avatar_url`, {
-      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
-    });
-    const brands = await rb.json();
+    // Параллельная загрузка всех данных (вместо последовательной — экономия ~2с)
+    var headers = {'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON};
+    var [rb, r, r2] = await Promise.all([
+      fetch(SB_URL+'/rest/v1/user_profiles?role=eq.brand&select=id,full_name,company_name,avatar_url', {headers:headers}),
+      fetch(SB_URL+'/rest/v1/campaigns?status=eq.active&order=created_at.desc', {headers:headers}),
+      fetch(SB_URL+'/rest/v1/user_profiles?role=eq.creator&limit=20', {headers:headers})
+    ]);
+    var [brands, camps, creators] = await Promise.all([rb.json(), r.json(), r2.json()]);
     window._brandMap = {};
     (brands||[]).forEach(b => { window._brandMap[b.id] = b.company_name||b.full_name||'Brand'; });
-    // Load campaigns
-    const r = await fetch(`${SB_URL}/rest/v1/campaigns?status=eq.active&order=created_at.desc`, {
-      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
-    });
-    const camps = await r.json();
     mktAllCampaigns = camps || [];
     renderMktCampaigns(mktAllCampaigns);
-    // Load creators
-    const r2 = await fetch(`${SB_URL}/rest/v1/user_profiles?role=eq.creator&limit=20`, {
-      headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON}
-    });
-    const creators = await r2.json();
     renderMktCreators(creators || []);
   } catch(e) { console.error('loadMarketplace error', e); }
 }
