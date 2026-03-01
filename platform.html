@@ -7,24 +7,25 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#f8f8f2;--text:#0a0a0a;--mid:#4a4a4a;--border:#e0e0d8;
-  --lime:#c8ff00;--card:#fff;--radius:12px;
-}
+/* THEMES */
+body[data-theme="light"],body{--bg:#f8f8f2;--text:#0a0a0a;--mid:#4a4a4a;--border:#e0e0d8;--border-strong:#0a0a0a;--accent:#c8ff00;--accent-text:#0a0a0a;--card-bg:#fff;--section-alt:#f0f0ea;--inv-bg:#0a0a0a;--inv-text:#fff;--nav-bg:rgba(248,248,242,.96);--input-bg:#fff}
+body[data-theme="dark"]{--bg:#0a0a0a;--text:#f0f0f0;--mid:#aaa;--border:#2a2a2a;--border-strong:#f0f0f0;--accent:#c8ff00;--accent-text:#0a0a0a;--card-bg:#161616;--section-alt:#111;--inv-bg:#c8ff00;--inv-text:#0a0a0a;--nav-bg:rgba(10,10,10,.96);--input-bg:#1a1a1a}
+body[data-theme="oakley"]{--bg:#fdf4ec;--text:#1c0f00;--mid:#6b4c30;--border:#e8d0b8;--border-strong:#e8d0b8;--accent:#d4a017;--accent-text:#1c0f00;--card-bg:#fff8f0;--section-alt:#f5ead8;--inv-bg:#1c0f00;--inv-text:#fdf4ec;--nav-bg:rgba(253,244,236,.96);--input-bg:#fff8f0}
+:root{--lime:#c8ff00;--radius:12px;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 12px) max(20px,env(safe-area-inset-right)) 12px max(20px,env(safe-area-inset-left));border-bottom:1px solid var(--border);background:var(--bg)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 12px) max(20px,env(safe-area-inset-right)) 12px max(20px,env(safe-area-inset-left));border-bottom:1px solid var(--border);background:var(--nav-bg)}
 .logo{font-size:22px;font-weight:900;letter-spacing:-1px;cursor:pointer}
-.logo span{color:var(--lime);background:#0a0a0a;padding:2px 6px;border-radius:4px}
+.logo span{color:#c8ff00;background:#0a0a0a;padding:2px 6px;border-radius:4px}
 .nav-actions{display:flex;gap:12px;align-items:center}
 .btn{padding:10px 20px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}
 .btn-outline:hover{border-color:var(--text)}
-.btn-lime{background:var(--lime);color:#0a0a0a}
+.btn-lime{background:var(--accent);color:var(--accent-text)}
 .btn-lime:hover{opacity:.85}
-.btn-dark{background:#0a0a0a;color:#fff}
-.btn-dark:hover{background:#222}
+.btn-dark{background:var(--inv-bg);color:var(--inv-text)}
+.btn-dark:hover{opacity:.85}
 .btn-danger{background:#ff4444;color:#fff}
 
 /* PAGES */
@@ -38,18 +39,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:calc(e
 .auth-card p{color:var(--mid);font-size:15px;margin-bottom:32px}
 .role-tabs{display:flex;gap:8px;margin-bottom:28px;background:#f0f0ea;padding:4px;border-radius:100px}
 .role-tab{flex:1;padding:10px;text-align:center;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--mid)}
-.role-tab.active{background:#0a0a0a;color:#fff}
+.role-tab.active{background:var(--inv-bg);color:var(--inv-text)}
 .form-group{margin-bottom:18px}
 .form-group label{display:block;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px}
-.form-group input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none;transition:border .2s}
-.form-group input:focus{border-color:#0a0a0a}
-.auth-submit{width:100%;padding:14px;background:#0a0a0a;color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.form-group input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none;transition:border .2s}
+.form-group input:focus{border-color:var(--text)}
+.auth-submit{width:100%;padding:14px;background:var(--inv-bg);color:var(--inv-text);border:none;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
 .auth-submit:hover{opacity:.85}
 .auth-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--mid)}
 .auth-switch a{color:var(--text);font-weight:600;cursor:pointer;text-decoration:underline}
 .auth-error{background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;padding:12px 16px;border-radius:8px;font-size:14px;margin-bottom:16px;display:none}
 .brand-badge{display:inline-block;padding:4px 12px;background:var(--lime);color:#0a0a0a;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-.creator-badge{display:inline-block;padding:4px 12px;background:#0a0a0a;color:#fff;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.creator-badge{display:inline-block;padding:4px 12px;background:var(--inv-bg);color:var(--inv-text);border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 
 /* DASHBOARD */
 .dash-wrap{display:flex;min-height:calc(100vh - 65px)}
@@ -60,7 +61,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:calc(e
 .sidebar-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);padding:0 12px;margin-bottom:8px}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:var(--mid);transition:all .2s}
 .sidebar-item:hover{background:#f0f0ea;color:var(--text)}
-.sidebar-item.active{background:#0a0a0a;color:#fff}
+.sidebar-item.active{background:var(--inv-bg);color:var(--inv-text)}
 .sidebar-item svg{width:16px;height:16px;flex-shrink:0}
 
 /* MAIN CONTENT */
@@ -91,13 +92,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:calc(e
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
 .modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:var(--radius);padding:40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal{background:var(--card-bg);border-radius:var(--radius);padding:40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
 .modal h2{font-size:22px;font-weight:900;letter-spacing:-1px;margin-bottom:24px}
 .modal-footer{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
 
 /* FILE UPLOAD */
 .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
-.upload-zone:hover,.upload-zone.drag{border-color:#0a0a0a;background:#f0f0ea}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--text);background:var(--section-alt)}
 .upload-zone input[type=file]{display:none}
 .upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .upload-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
@@ -121,7 +122,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:calc(e
 .msg-bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.4}
 .msg-bubble.mine{background:#0a0a0a;color:#fff;align-self:flex-end;border-radius:16px 16px 4px 16px}
 .msg-bubble.theirs{background:#f0f0ea;color:#0a0a0a;align-self:flex-start;border-radius:16px 16px 16px 4px}
-.msg-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:#fff}
+.msg-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--card-bg)}
 .msg-input-row input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:100px;font-size:14px;background:var(--bg);outline:none}
 /* NOTIFICATIONS */
 .notif-dot{width:8px;height:8px;background:#ff4444;border-radius:100px;position:absolute;top:0;right:0}
@@ -171,24 +172,25 @@ tr:hover td{background:#fafaf5}
     position:fixed;bottom:0;left:0;right:0;z-index:100;
     width:100%;height:auto;
     border-right:none;border-top:1px solid var(--border);
-    background:rgba(248,248,242,0.95);
+    background:var(--nav-bg);
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    padding:8px max(16px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
-    display:flex;gap:0;overflow-x:auto;
-    flex-direction:row;align-items:center;justify-content:space-around;
+    padding:6px 0 calc(6px + env(safe-area-inset-bottom));
+    display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    flex-direction:row;align-items:center;justify-content:flex-start;
   }
-  .sidebar-section{margin:0;display:flex;gap:0;flex:1;justify-content:space-around}
+  .sidebar::-webkit-scrollbar{display:none}
+  .sidebar-section{margin:0;display:flex;gap:0;flex-shrink:0}
   .sidebar-section:last-child{flex:none}
   .sidebar-label{display:none}
   .sidebar-item{
     flex-direction:column;align-items:center;gap:2px;
-    padding:6px 10px;border-radius:8px;
+    padding:6px 12px;border-radius:8px;
     white-space:nowrap;flex-shrink:0;
     font-size:10px;font-weight:600;
   }
   .sidebar-item svg{width:20px;height:20px}
-  .sidebar-item.active{background:transparent;color:#0a0a0a}
-  .sidebar-item.active svg{stroke:#0a0a0a}
+  .sidebar-item.active{background:transparent;color:var(--accent)}
+  .sidebar-item.active svg{stroke:var(--accent)}
   /* Logout button smaller on mobile */
   .sidebar-item[onclick*="Logout"]{color:#ff4444!important;font-size:10px}
   .dash-content{padding:20px 16px}
@@ -219,20 +221,32 @@ tr:hover td{background:#fafaf5}
 .mkt-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
 .mkt-filter-btn{padding:7px 18px;border:1.5px solid var(--border);border-radius:100px;background:none;font-size:13px;font-weight:600;cursor:pointer;color:var(--mid);transition:.2s}
 .mkt-filter-btn.active,.mkt-filter-btn:hover{background:#c8ff00;border-color:#c8ff00;color:#0a0a0a}
-.mkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-.mkt-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.2s;cursor:pointer}
-.mkt-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
-.mkt-card-img{width:100%;height:180px;object-fit:cover;background:linear-gradient(135deg,#f0f0ea,#e0e0d8)}
-.mkt-card-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,#f8f8f2,#f0f0ea)}
-.mkt-card-body{padding:20px}
-.mkt-card-brand{font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.mkt-card-title{font-size:17px;font-weight:800;margin-bottom:8px;letter-spacing:-.4px}
-.mkt-card-desc{font-size:13px;color:var(--mid);margin-bottom:16px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mkt-card-footer{display:flex;justify-content:space-between;align-items:center}
-.mkt-card-budget{font-size:18px;font-weight:900;letter-spacing:-.5px}
-.mkt-card-category{font-size:11px;padding:4px 10px;background:#f0f0ea;border-radius:100px;font-weight:600;color:#666}
-.mkt-card-apply{padding:8px 20px;background:#0a0a0a;color:#fff;border:none;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-.mkt-card-apply:hover{background:#333}
+.mkt-grid{display:flex;flex-direction:column;gap:14px}
+.mkt-empty{text-align:center;padding:60px 20px;color:var(--mid)}
+/* Горизонтальная карточка */
+.mkt-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:.2s;cursor:pointer;display:flex;flex-direction:row;align-items:stretch}
+.mkt-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.15)}
+/* Квадратное фото слева */
+.mkt-card-thumb{width:140px;min-width:140px;height:140px;position:relative;overflow:hidden;flex-shrink:0;border-radius:16px;margin:10px 0 10px 10px}
+.mkt-card-thumb img,.mkt-card-thumb video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
+/* Brand badge top-left на фото */
+.mkt-badge{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:2;border:1px solid rgba(255,255,255,.15)}
+.mkt-badge img{width:100%;height:100%;object-fit:contain;padding:4px}
+.mkt-badge span{font-size:13px;font-weight:900;color:#fff}
+/* Контент справа */
+.mkt-card-body{padding:14px 16px;display:flex;flex-direction:column;justify-content:center;flex:1;min-width:0}
+.mkt-card-brand{font-size:11px;font-weight:700;color:#c8ff00;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.mkt-card-title{font-size:16px;font-weight:800;margin-bottom:3px;letter-spacing:-.4px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mkt-card-category{font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.mkt-card-desc{font-size:12px;color:var(--mid);margin-bottom:8px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mkt-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.mkt-chip{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-size:11px;font-weight:600;color:var(--mid)}
+.mkt-card-footer{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mkt-card-budget{font-size:22px;font-weight:900;letter-spacing:-.5px}
+.mkt-card-apply{padding:11px 22px;background:#c8ff00;color:#0a0a0a;border:none;border-radius:100px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;white-space:nowrap}
+.mkt-card-apply:hover{background:#b8ef00}
+@media(max-width:400px){.mkt-card-budget{font-size:16px}.mkt-card-apply{padding:7px 14px;font-size:11px}}
+@media(max-width:480px){.mkt-card-img,.mkt-card-img-placeholder{width:110px;min-width:110px}}
 /* Creator cards */
 .creator-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
 .creator-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:.2s}
@@ -246,15 +260,30 @@ tr:hover td{background:#fafaf5}
 .mkt-empty{text-align:center;padding:60px;color:var(--mid)}
 .mkt-badge-new{background:#c8ff00;color:#0a0a0a;font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px}
 @media(max-width:768px){.mkt-grid{grid-template-columns:1fr}.creator-grid{grid-template-columns:1fr 1fr}.mkt-hero{padding:40px 5% 28px}}
+  body[data-theme="dark"] .studio-wrap { background: #0a0a0a !important; }
+  body[data-theme="light"] .studio-wrap, body .studio-wrap { background: var(--bg); }
+  body[data-theme="oakley"] .studio-wrap { background: var(--bg); }
+
+
+
 </style>
 </head>
 <body>
+
+<div class="mkt-loader-bar-wrap"><div class="mkt-loader-bar" id="mktLoaderBar"></div></div>
+<div class="mkt-loader-text" id="mktLoaderText" style="display:none"></div>
+
 
 <!-- NAV -->
 <nav>
   <div class="logo" onclick="goHome()">ugc<span>go</span></div>
   <div style="display:flex;align-items:center;gap:20px">
-    <a onclick="showPage('marketplace')" style="font-size:13px;font-weight:700;cursor:pointer;color:inherit;text-decoration:none">Marketplace</a>
+    <a onclick="showPage('marketplace')" style="font-size:13px;font-weight:700;cursor:pointer;color:inherit;text-decoration:none;display:none"></a>
+  </div>
+  <div style="display:flex;gap:4px;align-items:center;background:var(--border);border-radius:8px;padding:3px" id="platform-theme-switcher">
+    <button style="width:22px;height:22px;border:none;border-radius:5px;cursor:pointer;background:#f8f8f2;border:1.5px solid #ccc" data-t="light" title="Light" onclick="setTheme('light')"></button>
+    <button style="width:22px;height:22px;border:none;border-radius:5px;cursor:pointer;background:#0a0a0a;border:1.5px solid #333" data-t="dark" title="Dark" onclick="setTheme('dark')"></button>
+    <button style="width:22px;height:22px;border:none;border-radius:5px;cursor:pointer;background:linear-gradient(135deg,#fdf4ec 50%,#d4a017 50%);border:1.5px solid #e8d0b8" data-t="oakley" title="Oakley" onclick="setTheme('oakley')"></button>
   </div>
   <div class="nav-actions" id="navActions">
     <button class="btn btn-outline" onclick="showPage('login')">Sign In</button>
@@ -349,27 +378,31 @@ tr:hover td{background:#fafaf5}
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Brand</div>
-        <div class="sidebar-item active" onclick="setBrandTab('overview')">
+        <div class="sidebar-item active" data-tab="overview" onclick="setBrandTab('overview')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Overview
         </div>
-        <div class="sidebar-item" onclick="setBrandTab('campaigns')">
+        <div class="sidebar-item" data-tab="campaigns" onclick="setBrandTab('campaigns')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           Campaigns
         </div>
-        <div class="sidebar-item" onclick="setBrandTab('applications')">
+        <div class="sidebar-item" data-tab="applications" onclick="setBrandTab('applications')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Applications
         </div>
-        <div class="sidebar-item" onclick="setBrandTab('creators')">
+        <div class="sidebar-item" data-tab="creators" onclick="setBrandTab('creators')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="21" r="1"/><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M16 11l2 2 4-4"/></svg>
           Find Creators
         </div>
-        <div class="sidebar-item" onclick="setBrandTab('messages')">
+        <div class="sidebar-item" onclick="showPage('marketplace')" style="color:var(--accent)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Marketplace
+        </div>
+        <div class="sidebar-item" data-tab="messages" onclick="setBrandTab('messages')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Messages <span id="brandUnreadBadge" style="display:none;background:#c8ff00;color:#0a0a0a;border-radius:100px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:4px">0</span>
         </div>
-        <div class="sidebar-item" onclick="setBrandTab('profile')">
+        <div class="sidebar-item" data-tab="profile" onclick="setBrandTab('profile')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
         </div>
@@ -393,27 +426,32 @@ tr:hover td{background:#fafaf5}
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Creator</div>
-        <div class="sidebar-item active" onclick="setCreatorTab('overview')">
+        <div class="sidebar-item active" data-tab="overview" onclick="setCreatorTab('overview')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Overview
         </div>
-        <div class="sidebar-item" onclick="setCreatorTab('browse')">
+        <div class="sidebar-item" data-tab="browse" onclick="setCreatorTab('browse')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Browse Campaigns
         </div>
-        <div class="sidebar-item" onclick="setCreatorTab('applications')">
+        <div class="sidebar-item" data-tab="applications" onclick="setCreatorTab('applications')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
           My Applications
         </div>
-        <div class="sidebar-item" onclick="setCreatorTab('portfolio')">
+        <div class="sidebar-item" data-tab="portfolio" onclick="setCreatorTab('portfolio')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
           Portfolio
         </div>
-        <div class="sidebar-item" onclick="setCreatorTab('messages')">
+        <div class="sidebar-item" data-tab="studio" onclick="setCreatorTab('studio')" style="position:relative">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg>
+          AI Studio
+          <span style="position:absolute;top:4px;right:4px;background:#c8ff00;color:#0a0a0a;font-size:9px;font-weight:800;padding:1px 5px;border-radius:100px;line-height:1.4">NEW</span>
+        </div>
+        <div class="sidebar-item" data-tab="messages" onclick="setCreatorTab('messages')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Messages
         </div>
-        <div class="sidebar-item" onclick="setCreatorTab('profile')">
+        <div class="sidebar-item" data-tab="profile" onclick="setCreatorTab('profile')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Profile
         </div>
@@ -463,7 +501,7 @@ tr:hover td{background:#fafaf5}
     </div>
     <div class="form-group">
       <label>Category</label>
-      <select id="campCategory" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none">
+      <select id="campCategory" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none;-webkit-appearance:none">
         <option value="">Select category...</option>
         <option>Beauty & Skincare</option><option>Fashion & Lifestyle</option>
         <option>Food & Beverage</option><option>Fitness & Health</option>
@@ -494,8 +532,8 @@ tr:hover td{background:#fafaf5}
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modalNewCampaign')">Cancel</button>
-      <button class="btn btn-dark" onclick="createCampaign()">🚀 Launch Campaign</button>
+      <button class="btn btn-outline" style="border-radius:14px" onclick="closeModal('modalNewCampaign')">Cancel</button>
+      <button class="btn btn-lime" style="border-radius:14px;font-weight:800" onclick="createCampaign()">🚀 Launch Campaign</button>
     </div>
   </div>
 </div>
@@ -505,7 +543,7 @@ tr:hover td{background:#fafaf5}
   <div class="modal">
     <h2>Apply to Campaign</h2>
     <input type="hidden" id="applyCampId">
-    <div id="applyBrandInfo" style="padding:12px;background:#f5f5ef;border-radius:8px;margin-bottom:16px;font-size:14px;color:var(--mid)"></div>
+    <div id="applyBrandInfo" style="padding:12px;background:var(--section-alt);border-radius:10px;margin-bottom:16px;font-size:14px;color:var(--mid)"></div>
     <div class="form-group">
       <label>Your Pitch</label>
       <textarea id="applyPitch" placeholder="Why are you the perfect fit? Describe your style, audience, past results..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);min-height:80px;resize:vertical;font-family:inherit;outline:none"></textarea>
@@ -524,7 +562,7 @@ tr:hover td{background:#fafaf5}
     </div>
     <div class="form-group">
       <label>Followers Count</label>
-      <select id="applyFollowers" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);color:var(--text);outline:none">
+      <select id="applyFollowers" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none">
         <option value="">Select range...</option>
         <option>1K - 5K</option><option>5K - 10K</option>
         <option>10K - 50K</option><option>50K - 100K</option><option>100K+</option>
@@ -535,13 +573,14 @@ tr:hover td{background:#fafaf5}
       <input type="number" id="applyRate" placeholder="150">
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modalApply')">Cancel</button>
-      <button class="btn btn-dark" onclick="submitApplication()">Submit Application</button>
+      <button class="btn btn-outline" style="border-radius:14px" onclick="closeModal('modalApply')">Cancel</button>
+      <button class="btn btn-lime" style="border-radius:14px;font-weight:800" onclick="submitApplication()">Submit Application</button>
     </div>
   </div>
 </div>
 
 <script>
+
 const SB_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoY3dzYmVxcGh5dG1kanJzZ3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MjgzODUsImV4cCI6MjA4NzQwNDM4NX0.i6y2f0ON6Gwsy9jSNKjwPA5S--odGznbC3R5ROwgkQI';
 const { createClient } = supabase;
@@ -581,33 +620,65 @@ async function loadMarketplace() {
 }
 
 function renderMktCampaigns(list) {
-  const grid = document.getElementById('mktCampaignsGrid');
-  if (!list.length) { grid.innerHTML='<div class="mkt-empty">No active campaigns yet</div>'; return; }
-  const bmap = window._brandMap || {};
-  grid.innerHTML = list.map(camp => {
-    const img = camp.cover_url ? `<img class="mkt-card-img" src="${camp.cover_url}" alt="">` : `<div class="mkt-card-img-placeholder">🎯</div>`;
-    const deadline = camp.deadline ? `<span style="font-size:12px;color:#888">Due ${new Date(camp.deadline).toLocaleDateString('en',{month:'short',day:'numeric'})}</span>` : '';
-    const brandName = bmap[camp.brand_id] || 'Brand';
-    const budget = camp.budget_max || camp.budget || '?';
-    return `<div class="mkt-card">
-      ${img}
-      <div class="mkt-card-body">
-        <div class="mkt-card-brand">${brandName}</div>
-        <div class="mkt-card-title">${camp.title||'Campaign'}</div>
-        <div class="mkt-card-desc">${camp.description||''}</div>
-        <div class="mkt-card-footer">
-          <div>
-            <div class="mkt-card-budget">$${budget}</div>
-            ${deadline}
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span class="mkt-card-category">${camp.category||'UGC'}</span>
-            <button class="mkt-card-apply" onclick="requireAuth()">Apply →</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  var grid = document.getElementById('mktCampaignsGrid');
+  if (!list || !list.length) { grid.innerHTML='<div class="mkt-empty">No active campaigns yet</div>'; return; }
+  var bmap = window._brandMap || {};
+
+  grid.innerHTML = list.map(function(camp) {
+    var brandName = bmap[camp.brand_id] || camp.brand_name || 'Brand';
+    var budget = camp.budget_max || camp.budget || '?';
+    var initial = brandName.charAt(0).toUpperCase();
+
+    // Badge: brand icon
+    var badgeInner = camp.brand_icon
+      ? '<img src="' + camp.brand_icon + '" onerror="this.parentNode.innerHTML=\'<span>' + initial + '</span>\'">'
+      : '<span>' + initial + '</span>';
+
+    // Media: video autoplay inline, poster shows instantly while video loads
+    var mediaInner = '';
+    if (camp.video_url) {
+      var poster = camp.cover_url ? ' poster="' + camp.cover_url + '"' : '';
+      mediaInner = '<video autoplay muted loop playsinline preload="auto"' + poster
+        + ' src="' + camp.video_url + '"'
+        + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px"></video>';
+    } else if (camp.cover_url) {
+      mediaInner = '<img src="' + camp.cover_url + '" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px">';
+    } else {
+      mediaInner = '<div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px">🎬</div>';
+    }
+
+    // Deliverables chips
+    var deliverables = camp.deliverables || camp.content_types || (function() {
+      var cat = (camp.category || '').toLowerCase();
+      if (cat.includes('beauty') || cat.includes('skin')) return ['photo','photo','video'];
+      if (cat.includes('fit') || cat.includes('sport') || cat.includes('health')) return ['video','photo','photo'];
+      if (cat.includes('fashion') || cat.includes('life')) return ['video','photo'];
+      return ['video','photo'];
+    })();
+    var chipsHtml = '<div class="mkt-chips">' + deliverables.map(function(d) {
+      return '<span class="mkt-chip">🖼 ' + d + '</span>';
+    }).join('') + '</div>';
+
+    return '<div class="mkt-card">'
+      + '<div class="mkt-card-thumb">'
+        + mediaInner
+        + '<div class="mkt-badge">' + badgeInner + '</div>'
+      + '</div>'
+      + '<div class="mkt-card-body">'
+        + '<div class="mkt-card-brand">' + brandName + '</div>'
+        + '<div class="mkt-card-title">' + (camp.title||'Campaign') + '</div>'
+        + '<div class="mkt-card-category">' + (camp.category||'') + '</div>'
+        + '<div class="mkt-card-desc">' + (camp.description||'') + '</div>'
+        + chipsHtml
+        + '<div class="mkt-card-footer">'
+          + '<div class="mkt-card-budget">$' + budget + '</div>'
+          + '<button class="mkt-card-apply" onclick="requireAuth()">\uD83D\uDE80 Apply Now</button>'
+        + '</div>'
+      + '</div>'
+    + '</div>';
   }).join('');
+
+  observeGridVideos(grid);
 }
 
 function renderMktCreators(list) {
@@ -644,6 +715,61 @@ function switchMktTab(tab, btn) {
   btn.classList.add('active');
   document.getElementById('mkt-campaigns-section').style.display = tab==='campaigns'?'':'none';
   document.getElementById('mkt-creators-section').style.display = tab==='creators'?'':'none';
+}
+
+// ========== SMART VIDEO LOADING ==========
+// IntersectionObserver: видео загружаются только когда видимы, с preload во время лоадера
+function observeGridVideos(container) {
+  if (!container) return;
+  const videos = container.querySelectorAll('video[autoplay]');
+  
+  // Убираем autoplay и src сразу — грузим лениво
+  videos.forEach(function(v) {
+    v.dataset.lazySrc = v.src || v.getAttribute('src');
+    v.removeAttribute('src');
+    v.removeAttribute('autoplay');
+    v.preload = 'none';
+    v.pause();
+  });
+
+  // IntersectionObserver — загружаем видео когда карточка в viewport
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      var video = entry.target;
+      if (entry.isIntersecting && video.dataset.lazySrc && !video.dataset.loaded) {
+        video.dataset.loaded = '1';
+        video.src = video.dataset.lazySrc;
+        video.preload = 'auto';
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.load(); // критично для iOS Safari
+        var playPromise = video.play();
+        if (playPromise) playPromise.catch(function(){});
+      } else if (!entry.isIntersecting && video.dataset.loaded) {
+        // Пауза для невидимых — экономия ресурсов
+        video.pause();
+      } else if (entry.isIntersecting && video.dataset.loaded && video.paused) {
+        var p2 = video.play();
+        if (p2) p2.catch(function(){});
+      }
+    });
+  }, { rootMargin: '200px 0px', threshold: 0.1 });
+
+  videos.forEach(function(v) { observer.observe(v); });
+  
+  // Preload первых 3 видео сразу (пока лоадер показывается)
+  var preloadCount = Math.min(3, videos.length);
+  for (var i = 0; i < preloadCount; i++) {
+    var v = videos[i];
+    if (v.dataset.lazySrc) {
+      var link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'video';
+      link.href = v.dataset.lazySrc;
+      document.head.appendChild(link);
+    }
+  }
 }
 
 function requireAuth() {
@@ -781,32 +907,43 @@ function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
 // BRAND DASHBOARD
 async function setBrandTab(tab) {
   brandTab = tab;
-  document.querySelectorAll('#page-brand .sidebar-item').forEach((el,i) => {
-    el.classList.toggle('active', ['overview','campaigns','applications','creators','messages','profile'][i] === tab);
+  document.querySelectorAll('#page-brand .sidebar-item[data-tab]').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tab);
   });
   const content = document.getElementById('brandContent');
   content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-  if (tab === 'overview') await renderBrandOverview(content);
-  else if (tab === 'campaigns') await renderBrandCampaigns(content);
-  else if (tab === 'applications') await renderBrandApplications(content);
-  else if (tab === 'creators') await renderBrandCreators(content);
-  else if (tab === 'messages') await renderMessagesReal(content, 'brand');
-  else if (tab === 'profile') renderProfile(content);
+  try {
+    if (tab === 'overview') await renderBrandOverview(content);
+    else if (tab === 'campaigns') await renderBrandCampaigns(content);
+    else if (tab === 'applications') await renderBrandApplications(content);
+    else if (tab === 'creators') await renderBrandCreators(content);
+    else if (tab === 'messages') await renderMessagesReal(content, 'brand');
+    else if (tab === 'profile') renderProfile(content);
+  } catch(e) {
+    content.innerHTML = `<div style="padding:32px;text-align:center;color:#cc0000"><div style="font-size:24px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Error loading ${tab}</div><div style="font-size:13px;margin-top:8px;color:var(--mid)">${e.message||e}</div><button class="btn btn-outline" style="margin-top:16px" onclick="setBrandTab('${tab}')">Retry</button></div>`;
+    console.error('setBrandTab error:', e);
+  }
 }
 
 async function setCreatorTab(tab) {
   creatorTab = tab;
-  document.querySelectorAll('#page-creator .sidebar-item').forEach((el,i) => {
-    el.classList.toggle('active', ['overview','browse','applications','portfolio','messages','profile'][i] === tab);
+  document.querySelectorAll('#page-creator .sidebar-item[data-tab]').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tab);
   });
   const content = document.getElementById('creatorContent');
   content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-  if (tab === 'overview') await renderCreatorOverview(content);
-  else if (tab === 'browse') await renderCreatorBrowse(content);
-  else if (tab === 'applications') await renderCreatorApplications(content);
-  else if (tab === 'portfolio') renderCreatorPortfolio(content);
-  else if (tab === 'messages') await renderMessagesReal(content, 'creator');
-  else if (tab === 'profile') renderProfile(content);
+  try {
+    if (tab === 'overview') await renderCreatorOverview(content);
+    else if (tab === 'browse') await renderCreatorBrowse(content);
+    else if (tab === 'applications') await renderCreatorApplications(content);
+    else if (tab === 'portfolio') renderCreatorPortfolio(content);
+    else if (tab === 'studio') renderCreatorStudio(content);
+    else if (tab === 'messages') await renderMessagesReal(content, 'creator');
+    else if (tab === 'profile') renderProfile(content);
+  } catch(e) {
+    content.innerHTML = `<div style="padding:32px;text-align:center;color:#cc0000"><div style="font-size:24px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Error loading ${tab}</div><div style="font-size:13px;margin-top:8px;color:var(--mid)">${e.message||e}</div><button class="btn btn-outline" style="margin-top:16px" onclick="setCreatorTab('${tab}')">Retry</button></div>`;
+    console.error('setCreatorTab error:', e);
+  }
 }
 
 async function renderCreatorOverview(el) {
@@ -842,7 +979,7 @@ async function renderCreatorOverview(el) {
         </div>
       </div>
       <!-- gradient fade over photos -->
-      <div style="position:absolute;right:0;top:0;bottom:0;width:200px;background:linear-gradient(to right,#0a0a0a 30%,transparent)"></div>
+      <div style="position:absolute;right:0;top:0;bottom:0;width:300px;background:linear-gradient(to right,#0a0a0a 25%,transparent 80%)"></div>
       <!-- text content -->
       <div style="position:relative;z-index:2;max-width:55%">
         <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:8px">Creator Space</div>
@@ -854,16 +991,16 @@ async function renderCreatorOverview(el) {
 
     <!-- COMPACT STATS -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px">
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
-        <div style="font-size:28px;font-weight:900;letter-spacing:-1px">${(apps||[]).length}</div>
+      <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--text)">${(apps||[]).length}</div>
         <div style="font-size:11px;color:var(--mid);font-weight:600;margin-top:2px">Applied</div>
       </div>
-      <div style="background:var(--lime);border-radius:14px;padding:16px;text-align:center">
+      <div style="background:#c8ff00;border-radius:14px;padding:16px;text-align:center">
         <div style="font-size:28px;font-weight:900;letter-spacing:-1px;color:#0a0a0a">${active.length}</div>
         <div style="font-size:11px;color:#0a0a0a;font-weight:600;margin-top:2px">Active</div>
       </div>
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
-        <div style="font-size:28px;font-weight:900;letter-spacing:-1px">${pending.length}</div>
+      <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px;color:var(--text)">${pending.length}</div>
         <div style="font-size:11px;color:var(--mid);font-weight:600;margin-top:2px">Pending</div>
       </div>
     </div>
@@ -880,9 +1017,9 @@ async function renderCreatorOverview(el) {
         <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:12px">Recent Activity</div>
         <div style="display:flex;flex-direction:column;gap:8px">
           ${(apps||[]).slice(0,4).map(a=>`
-            <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
               <div>
-                <div style="font-weight:700;font-size:14px">${a.campaigns?.title||'Campaign'}</div>
+                <div style="font-weight:700;font-size:14px;color:var(--text)">${a.campaigns?.title||'Campaign'}</div>
                 <div style="font-size:12px;color:var(--mid);margin-top:2px">${a.campaigns?.category||''} · $${a.campaigns?.budget||'?'}</div>
               </div>
               <span class="tag tag-${a.status==='accepted'?'active':a.status==='pending'?'draft':'pending'}" style="font-size:11px">${a.status}</span>
@@ -905,13 +1042,40 @@ async function renderCreatorBrowse(el) {
 }
 
 async function renderCreatorApplications(el) {
-  const { data: apps } = await sb.from('applications').select('*, campaigns(title,budget,category)').eq('creator_id', currentUser.id).order('created_at',{ascending:false});
+  const { data: apps, error } = await sb.from('applications').select('*, campaigns(title,budget,category,status,cover_url,brand_id)').eq('creator_id', currentUser.id).order('created_at',{ascending:false});
+  if (error) throw error;
+
+  const statusBadge = s => {
+    const map = {pending:'background:#fff8e0;color:#aa7700', accepted:'background:#e6ffe0;color:#007700', rejected:'background:#ffe0e0;color:#cc0000', completed:'background:#e0f0ff;color:#0066cc'};
+    return `<span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;${map[s]||''}">${s}</span>`;
+  };
+
   el.innerHTML = `
-    <div class="dash-header"><div class="eyebrow">Applications</div><h1>My Applications</h1></div>
-    ${(apps||[]).length === 0 ? '<div class="empty"><h3>No applications yet</h3><p>Browse campaigns and apply</p></div>' :
-    `<table><thead><tr><th>Campaign</th><th>Category</th><th>Budget</th><th>Status</th></tr></thead><tbody>
-    ${(apps||[]).map(a=>`<tr><td>${a.campaigns?.title||'—'}</td><td>${a.campaigns?.category||'—'}</td><td>$${a.campaigns?.budget||'?'}</td><td><span class="status-${a.status}">${a.status}</span></td></tr>`).join('')}
-    </tbody></table>`}`;
+    <div class="dash-header"><div class="eyebrow">My Applications</div><h1>${(apps||[]).length} Application${(apps||[]).length!==1?'s':''}</h1></div>
+    ${(apps||[]).length === 0 ? `
+      <div style="border:1.5px dashed var(--border);border-radius:16px;padding:48px;text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <h3 style="font-weight:900;margin-bottom:8px">No applications yet</h3>
+        <p style="color:var(--mid);font-size:14px;margin-bottom:20px">Find campaigns that match your style and apply</p>
+        <button class="btn btn-dark" onclick="setCreatorTab('browse')">Browse Campaigns →</button>
+      </div>` :
+    `<div style="display:flex;flex-direction:column;gap:12px">
+      ${(apps||[]).map(a=>`
+        <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+          <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#f0f0ea">
+            ${a.campaigns?.cover_url ? `<img src="${a.campaigns.cover_url}" style="width:100%;height:100%;object-fit:cover">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px">📦</div>`}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:800;font-size:15px;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.campaigns?.title||'Campaign'}</div>
+            <div style="font-size:12px;color:var(--mid);margin-bottom:8px">${a.campaigns?.category||'UGC'} · <strong style="color:var(--text)">$${a.campaigns?.budget||'?'}</strong></div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              ${statusBadge(a.status)}
+              <span style="font-size:11px;color:var(--mid)">${new Date(a.created_at).toLocaleDateString('en',{month:'short',day:'numeric'})}</span>
+            </div>
+            ${a.pitch ? `<div style="margin-top:10px;font-size:12px;color:var(--mid);background:var(--section-alt);border-radius:8px;padding:8px 10px;line-height:1.5">"${a.pitch.slice(0,120)}${a.pitch.length>120?'…':''}"</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`}`;
 }
 
 function renderCreatorPortfolio(el) {
@@ -938,16 +1102,16 @@ async function renderBrandOverview(el) {
       </div>
       <!-- STATS ROW -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px">
-        <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px">
-          <div style="font-size:36px;font-weight:900;letter-spacing:-2px">${(camps||[]).length}</div>
+        <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:20px">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--text)">${(camps||[]).length}</div>
           <div style="font-size:13px;color:var(--mid);font-weight:600;margin-top:4px">Total Campaigns</div>
         </div>
         <div style="background:var(--lime);border-radius:16px;padding:20px">
           <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:#0a0a0a">${activeCamps.length}</div>
           <div style="font-size:13px;color:#0a0a0a;font-weight:600;margin-top:4px">Active Now</div>
         </div>
-        <div style="background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:20px">
-          <div style="font-size:36px;font-weight:900;letter-spacing:-2px">${(apps||[]).length}</div>
+        <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:20px">
+          <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--text)">${(apps||[]).length}</div>
           <div style="font-size:13px;color:var(--mid);font-weight:600;margin-top:4px">Applications</div>
         </div>
         <div style="background:#0a0a0a;border-radius:16px;padding:20px;position:relative;overflow:hidden">
@@ -1140,7 +1304,7 @@ function renderPortfolio(el) {
         </div>
       `).join('')}
     </div>
-    <div style="margin-top:32px;padding:20px;background:#fff;border:1px solid var(--border);border-radius:var(--radius)">
+    <div style="margin-top:32px;padding:20px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius)">
       <h3 style="font-weight:800;margin-bottom:12px">📊 Your Stats</h3>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
         <div style="text-align:center"><div style="font-size:28px;font-weight:900">0</div><div style="font-size:12px;color:var(--mid)">Content Pieces</div></div>
@@ -1200,15 +1364,25 @@ let msgSubscription = null;
 async function renderMessagesReal(el, role) {
   const field = role === 'brand' ? 'brand_id' : 'creator_id';
   const otherField = role === 'brand' ? 'creator_id' : 'brand_id';
-  const { data: convs } = await sb.from('conversations').select(`*, user_profiles!conversations_${otherField}_fkey(id,full_name,avatar_url)`).eq(field, currentUser.id).order('last_message_at', {ascending:false});
+  // Fetch conversations first, then resolve other-side profiles manually
+  const { data: convs, error: convErr } = await sb.from('conversations').select('*').eq(field, currentUser.id).order('last_message_at', {ascending:false, nullsFirst:false});
+  if (convErr) throw convErr;
+  // Fetch other-side profiles
+  const otherIds = [...new Set((convs||[]).map(c => c[otherField]).filter(Boolean))];
+  let profileMap = {};
+  if (otherIds.length > 0) {
+    const { data: profiles } = await sb.from('user_profiles').select('id,full_name,avatar_url').in('id', otherIds);
+    (profiles||[]).forEach(p => { profileMap[p.id] = p; });
+  }
+  const convsList = (convs||[]).map(c => ({...c, _other: profileMap[c[otherField]] || null}));
   
   el.innerHTML = `
     <div class="dash-header"><div class="eyebrow">Messages</div><h1>Messages</h1></div>
     <div style="display:grid;grid-template-columns:280px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:calc(100vh - 240px);min-height:500px">
       <div style="border-right:1px solid var(--border);overflow-y:auto;background:var(--bg)">
-        ${(convs||[]).length === 0 ? `<div style="padding:32px 16px;text-align:center;color:var(--mid);font-size:14px">${role==='brand'?'No conversations yet.<br><br>Find creators and start chatting!':'No messages yet.<br><br>Brands will reach out when they like your profile.'}</div>` :
-        (convs||[]).map(c => {
-          const other = c[`user_profiles`];
+        ${convsList.length === 0 ? `<div style="padding:32px 16px;text-align:center;color:var(--mid);font-size:14px">${role==='brand'?'No conversations yet.<br><br>Find creators and start chatting!':'No messages yet.<br><br>Brands will reach out when they like your profile.'}</div>` :
+        convsList.map(c => {
+          const other = c._other;
           const name = other?.full_name || 'User';
           const avatar = other?.avatar_url;
           const t = c.last_message_at ? new Date(c.last_message_at).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) : '';
@@ -1331,7 +1505,7 @@ async function renderBrandCreators(el) {
           <div style="font-weight:800;font-size:15px;margin-bottom:4px">${c.full_name}</div>
           ${handle?`<div style="font-size:12px;color:var(--mid);margin-bottom:12px">${handle}</div>`:''}
           ${c.bio?`<div style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.4">${c.bio.slice(0,80)}</div>`:''}
-          <button class="btn btn-dark" style="width:100%;font-size:13px;padding:9px" onclick="startConversation('${c.id}','${(c.full_name||'').replace(/'/g,'')}','${c.avatar_url||''}',null)">💬 Message</button>
+          <button class="btn btn-dark" style="width:100%;font-size:13px;padding:9px;border-radius:14px" onclick="startConversation('${c.id}','${(c.full_name||'').replace(/'/g,'')}','${c.avatar_url||''}',null)">💬 Message</button>
         </div>`;
       }).join('') || '<div class="empty"><h3>No creators yet</h3></div>'}
     </div>`;
@@ -1374,27 +1548,25 @@ function campCard(c, showApply) {
 }
 
 function creatorCampCard(c, alreadyApplied=false) {
-  const cover = c.cover_url ? `<img src="${c.cover_url}" style="width:calc(100% + 2px);height:140px;object-fit:cover;display:block;margin:-1px -1px 0;border-radius:var(--radius) var(--radius) 0 0" onerror="this.remove()">` : '';
-  const deadline = c.deadline ? `<span style="font-size:12px;color:var(--mid)">📅 ${new Date(c.deadline).toLocaleDateString()}</span>` : '';
+  const coverBg = c.cover_url
+    ? `<img src="${c.cover_url}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<div style=\\'font-size:32px;display:flex;align-items:center;justify-content:center;height:100%;background:#1a1a1a\\'>🎯</div>'">`
+    : `<div style="font-size:32px;display:flex;align-items:center;justify-content:center;height:100%;background:#1a1a1a">🎯</div>`;
   return `
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
-      ${cover}
-      <div style="padding:16px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
-          <div style="font-weight:800;font-size:15px">${c.title}</div>
-          <span class="tag tag-active" style="flex-shrink:0">Open</span>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:row;align-items:stretch">
+      <div style="width:120px;min-width:120px;flex-shrink:0;overflow:hidden">${coverBg}</div>
+      <div style="padding:14px 14px 14px 16px;display:flex;flex-direction:column;justify-content:space-between;flex:1;min-width:0">
+        <div>
+          <div style="font-weight:900;font-size:14px;line-height:1.35;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${c.title}</div>
+          ${c.category ? `<div style="font-size:10px;font-weight:700;color:#b0ff00;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">${c.category}</div>` : ''}
+          ${c.description ? `<p style="font-size:12px;color:var(--mid);margin:0 0 10px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${c.description}</p>` : ''}
         </div>
-        ${c.category ? `<div style="font-size:12px;color:var(--mid);margin-bottom:8px">${c.category}</div>` : ''}
-        ${c.description ? `<p style="font-size:13px;color:var(--mid);margin-bottom:10px;line-height:1.4">${c.description.slice(0,100)}${c.description.length>100?'...':''}</p>` : ''}
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-weight:800;font-size:20px">$${c.budget||0}</div>
-          ${deadline}
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="font-weight:900;font-size:20px;letter-spacing:-.5px">$${c.budget||0}</div>
+          <button class="btn ${alreadyApplied?'btn-outline':'btn-lime'}" style="font-size:12px;padding:10px 14px;border-radius:30px;font-weight:800;white-space:nowrap;flex-shrink:0;width:auto;display:inline-flex;align-items:center;gap:5px" 
+            ${alreadyApplied ? 'disabled' : `onclick="openApplyModal('${c.id}','${(c.title||'').replace(/'/g,'')}')"` }>
+            ${alreadyApplied ? '✓ Applied' : '🚀 Apply Now'}
+          </button>
         </div>
-        ${c.requirements ? `<div style="font-size:12px;color:var(--mid);margin-bottom:12px">📋 ${c.requirements}</div>` : ''}
-        <button class="btn ${alreadyApplied?'btn-outline':'btn-dark'}" style="width:100%;font-size:14px;padding:10px" 
-          ${alreadyApplied ? 'disabled' : `onclick="openApplyModal('${c.id}','${(c.title||'').replace(/'/g,'')}')"` }>
-          ${alreadyApplied ? '✓ Applied' : '🚀 Apply Now'}
-        </button>
       </div>
     </div>
   `;
@@ -1548,6 +1720,214 @@ async function submitApplication() {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
+function renderCreatorStudio(el) {
+  var isDark = (document.body.getAttribute('data-theme') || 'light') === 'dark';
+  el.innerHTML = `<div class="studio-wrap" style="margin:-20px -16px 0;padding:24px 16px 40px;box-sizing:border-box;min-height:calc(100vh - 120px)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+      <div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">AI STUDIO</div>
+        <h2 style="font-size:26px;font-weight:900;letter-spacing:-1px;color:var(--text);margin:0">Create with AI</h2>
+      </div>
+      <div style="background:var(--section-alt);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:11px;font-weight:700;color:var(--mid)">BETA</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px">
+      <div id="smode-photo" onclick="studioTab('photo')" class="smode-card smode-active" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--accent);background:var(--section-alt)">
+        <div style="font-size:26px;margin-bottom:8px">📸</div>
+        <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:4px">PHOTO</div>
+        <div class="smode-badge" style="font-size:9px;color:var(--accent);font-weight:700;border-radius:100px;padding:2px 8px;display:inline-block;background:var(--acBg, rgba(200,255,0,.1))">Gemini 3.1 Flash</div>
+      </div>
+      <div id="smode-video" onclick="studioTab('video')" class="smode-card" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:var(--card-bg)">
+        <div style="font-size:26px;margin-bottom:8px">🎬</div>
+        <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:4px">VIDEO</div>
+        <div class="smode-badge" style="font-size:9px;color:var(--mid);font-weight:700;background:var(--section-alt);border-radius:100px;padding:2px 8px;display:inline-block">Kling v3 Pro</div>
+      </div>
+      <div id="smode-script" onclick="studioTab('script')" class="smode-card" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:var(--card-bg)">
+        <div style="font-size:26px;margin-bottom:8px">✍️</div>
+        <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:4px">SCRIPT</div>
+        <div class="smode-badge" style="font-size:9px;color:var(--mid);font-weight:700;background:var(--section-alt);border-radius:100px;padding:2px 8px;display:inline-block">Gemini Flash</div>
+      </div>
+    </div>
+    <div id="studio-panel"></div>
+  </div>`;
+  studioTab('photo');
+}
+
+function studioTab(tab) {
+  ['photo','video','script'].forEach(function(t) {
+    var card = document.getElementById('smode-'+t);
+    if (!card) return;
+    var badge = card.querySelector('.smode-badge');
+    if (t === tab) {
+      card.style.borderColor = 'var(--accent)'; card.style.background = 'var(--section-alt)';
+      if (badge) { badge.style.color = 'var(--accent)'; badge.style.background = 'var(--input-bg)'; }
+    } else {
+      card.style.borderColor = 'var(--border)'; card.style.background = 'var(--card-bg)';
+      if (badge) { badge.style.color = 'var(--mid)'; badge.style.background = 'var(--section-alt)'; }
+    }
+  });
+  var p = document.getElementById('studio-panel');
+  if (!p) return;
+  var exPhoto = ['Woman unboxing skincare, morning light','Guy trying on sneakers, NYC street','Coffee aesthetic, laptop, cozy cafe','Runner in the park at sunrise'];
+  var exVideo = ['Woman opens delivery, reacts with joy — 9:16','Barista makes latte art — café background','Fitness influencer quick workout — gym'];
+  var chip = 'font-size:11px;color:var(--mid);border:1px solid var(--border);background:var(--section-alt);border-radius:100px;padding:5px 12px;cursor:pointer;white-space:nowrap;display:inline-block';
+  var box = 'background:var(--card-bg);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px';
+  var lbl = 'font-size:10px;font-weight:700;letter-spacing:2px;color:var(--mid);text-transform:uppercase;margin-bottom:10px';
+  var inp = 'width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;color:var(--text);resize:none;line-height:1.6;box-sizing:border-box';
+  var sub = 'background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:12px';
+  var btn = 'width:100%;background:var(--inv-bg);color:var(--inv-text);border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:.5px';
+  var sel = 'width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-weight:700;font-family:inherit';
+  var div = 'border-top:1px solid var(--border)';
+
+  if (tab === 'photo') {
+    p.innerHTML = `
+      <div style="${box}">
+        <div style="${lbl}">Prompt</div>
+        <textarea id="photo-prompt" placeholder="Describe your UGC photo…" style="${inp};min-height:90px" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;padding-top:14px;${div}">
+          ${exPhoto.map(e => `<div onclick="document.getElementById('photo-prompt').value='${e}'" style="${chip}">${e}</div>`).join('')}
+        </div>
+      </div>
+      <button onclick="genPhoto()" style="${btn}">⚡ Generate Photo</button>
+      <div id="photo-result" style="margin-top:20px"></div>`;
+  } else if (tab === 'video') {
+    p.innerHTML = `
+      <div style="${box}">
+        <div style="${lbl}">Prompt</div>
+        <textarea id="video-prompt" placeholder="Describe your UGC video scene…" style="${inp};min-height:90px" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;padding-top:14px;${div}">
+          ${exVideo.map(e => `<div onclick="document.getElementById('video-prompt').value='${e}'" style="${chip}">${e}</div>`).join('')}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="${sub}"><div style="${lbl}">Duration</div><select id="video-dur" style="${sel}"><option value="5">5 sec</option><option value="10">10 sec</option></select></div>
+        <div style="${sub}"><div style="${lbl}">Aspect</div><div style="color:var(--text);font-size:14px;font-weight:700">9:16 Vertical</div></div>
+      </div>
+      <button onclick="genVideo()" style="${btn}">⚡ Generate Video <span style="font-size:12px;opacity:.6">~2 min</span></button>
+      <div id="video-result" style="margin-top:20px"></div>`;
+  } else if (tab === 'script') {
+    p.innerHTML = `
+      <div style="${box}">
+        <div style="${lbl}">Brief</div>
+        <input id="script-brand" placeholder="Brand name (e.g. Nike)" style="width:100%;background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-family:inherit;font-size:15px;color:var(--text);padding:0 0 14px;margin-bottom:14px;box-sizing:border-box">
+        <textarea id="script-brief" placeholder="Product description, key message, vibe…" style="${inp};min-height:80px"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="${sub}"><div style="${lbl}">Platform</div><select id="script-platform" style="${sel}"><option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option></select></div>
+        <div style="${sub}"><div style="${lbl}">Length</div><select id="script-dur" style="${sel}"><option>15 sec</option><option>30 sec</option><option>60 sec</option></select></div>
+      </div>
+      <button onclick="genScript()" style="${btn}">⚡ Write Script</button>
+      <div id="script-result" style="margin-top:20px"></div>`;
+  }
+}
+
+async function genPhoto() {
+  var prompt = document.getElementById('photo-prompt').value.trim();
+  if (!prompt) return;
+  var el = document.getElementById('photo-result');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">⏳</div>Generating photo...</div>';
+  try {
+    var OR_KEY = 'USE_SERVER_PROXY';
+    var r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+OR_KEY,'Content-Type':'application/json','HTTP-Referer':'https://ugcgo.ai'},
+      body: JSON.stringify({model:'google/gemini-3.1-flash-image-preview',messages:[{role:'user',content:'Generate a UGC photo: '+prompt+'. Candid, natural, authentic style. No staged/studio look.'}]})
+    });
+    var d = await r.json();
+    var imgs = (d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.images)||[];
+    if (imgs.length) {
+      var url = imgs[0].image_url ? imgs[0].image_url.url : imgs[0].url;
+      el.innerHTML = '<img src="'+url+'" style="width:100%;border-radius:12px;margin-bottom:12px" alt="Generated">' +
+        '<button class="btn btn-dark" style="width:100%;font-weight:700" onclick="saveToPortfolio(\''+url+'\')">Save to Portfolio →</button>';
+    } else {
+      el.innerHTML = '<div style="color:#ff4444;padding:12px;background:#fff0f0;border-radius:8px;font-size:13px">Failed to generate. Try again.</div>';
+    }
+  } catch(e) {
+    el.innerHTML = '<div style="color:#ff4444;padding:12px;background:#fff0f0;border-radius:8px;font-size:13px">Error: '+e.message+'</div>';
+  }
+}
+
+async function genVideo() {
+  var prompt = document.getElementById('video-prompt').value.trim();
+  var dur = document.getElementById('video-dur').value;
+  if (!prompt) return;
+  var el = document.getElementById('video-result');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">🎬</div>Submitting to Kling v1.6...<br><small>Takes ~2-3 min</small></div>';
+  try {
+    var FAL_KEY = 'USE_SERVER_PROXY';
+    var submitR = await fetch('https://queue.fal.run/fal-ai/kling-video/v3/pro/text-to-video', {
+      method:'POST',
+      headers:{'Authorization':'Key '+FAL_KEY,'Content-Type':'application/json'},
+      body: JSON.stringify({prompt: prompt+', no slow motion, real time speed, vertical 9:16', duration: dur})
+    });
+    var sub = await submitR.json();
+    var rid = sub.request_id;
+    if (!rid) { el.innerHTML='<div style="color:#ff4444;padding:12px">Submit failed: '+(sub.detail||JSON.stringify(sub).slice(0,80))+'</div>'; return; }
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">⚙️</div>Processing... Request ID: '+rid.slice(0,8)+'...<br><small>Polling every 10s</small></div>';
+    var tries = 0;
+    while (tries < 30) {
+      await new Promise(function(r){setTimeout(r,10000)});
+      tries++;
+      var pollR = await fetch('https://queue.fal.run/fal-ai/kling-video/requests/'+rid+'/status', {headers:{'Authorization':'Key '+FAL_KEY}});
+      var poll = await pollR.json();
+      if (poll.status === 'COMPLETED') {
+        var resR = await fetch('https://queue.fal.run/fal-ai/kling-video/requests/'+rid, {headers:{'Authorization':'Key '+FAL_KEY}});
+        var res = await resR.json();
+        var vurl = res.video && res.video.url;
+        if (vurl) {
+          el.innerHTML = '<video src="'+vurl+'" controls playsinline style="width:100%;border-radius:12px;max-height:400px;background:#000"></video>' +
+            '<a href="'+vurl+'" download class="btn btn-dark" style="display:block;width:100%;text-align:center;margin-top:10px;font-weight:700;text-decoration:none">⬇ Download Video</a>';
+        } else { el.innerHTML='<div style="color:#ff4444;padding:12px">No video URL in response</div>'; }
+        return;
+      } else if (poll.status === 'FAILED') {
+        el.innerHTML='<div style="color:#ff4444;padding:12px">Generation failed.</div>'; return;
+      } else {
+        el.innerHTML='<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">⚙️</div>Status: '+poll.status+' ('+tries+'/30)...<br><small>~'+(tries*10)+'s elapsed</small></div>';
+      }
+    }
+    el.innerHTML='<div style="color:#ff4444;padding:12px">Timeout. Check back later — request ID: '+rid+'</div>';
+  } catch(e) {
+    el.innerHTML='<div style="color:#ff4444;padding:12px">Error: '+e.message+'</div>';
+  }
+}
+
+async function genScript() {
+  var brand = document.getElementById('script-brand').value.trim();
+  var brief = document.getElementById('script-brief').value.trim();
+  var platform = document.getElementById('script-platform').value;
+  var dur = document.getElementById('script-dur').value;
+  if (!brief) return;
+  var el = document.getElementById('script-result');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">✍️</div>Writing script...</div>';
+  try {
+    var OR_KEY = 'USE_SERVER_PROXY';
+    var sysPrompt = 'You are a top UGC script writer. Write a '+dur+' '+platform+' script for '+(brand||'the brand')+'. Brief: '+brief+'. Format: [Hook] [Main content] [CTA]. Keep it natural, authentic, not salesy. Include timing cues.';
+    var r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+OR_KEY,'Content-Type':'application/json','HTTP-Referer':'https://ugcgo.ai'},
+      body: JSON.stringify({model:'google/gemini-3-flash-preview',messages:[{role:'user',content:sysPrompt}],max_tokens:600})
+    });
+    var d = await r.json();
+    var text = d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content||'';
+    if (text) {
+      el.innerHTML = '<div style="background:var(--section-alt);border-radius:12px;padding:16px">' +
+        '<div style="font-weight:800;margin-bottom:8px;font-size:13px">Generated Script:</div>' +
+        '<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;color:var(--text)">'+text+'</pre>' +
+        '<button class="btn btn-dark" style="width:100%;margin-top:12px;font-weight:700" onclick="navigator.clipboard.writeText(document.querySelector(\'#script-result pre\').textContent).then(function(){alert(\'Copied!\')})">Copy Script 📋</button>' +
+      '</div>';
+    } else { el.innerHTML='<div style="color:#ff4444;padding:12px">Failed to generate script.</div>'; }
+  } catch(e) {
+    el.innerHTML='<div style="color:#ff4444;padding:12px">Error: '+e.message+'</div>';
+  }
+}
+
+async function saveToPortfolio(url) {
+  var sess = window._currentSession;
+  if (!sess) { alert('Please log in to save to portfolio'); return; }
+  alert('Photo saved to portfolio! (DB integration coming soon)');
+}
+
+
+
 // Expose critical functions to window for inline onclick handlers
 window.showPage = showPage;
 window.requireAuth = requireAuth;
@@ -1561,6 +1941,37 @@ window.openApplyModal = openApplyModal;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.loadMarketplace = loadMarketplace;
+window.renderCreatorStudio = renderCreatorStudio;
+window.studioTab = studioTab;
+window.setTheme = setTheme;
+window.genPhoto = genPhoto;
+window.genVideo = genVideo;
+window.genScript = genScript;
+window.saveToPortfolio = saveToPortfolio;
+
+function setTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  localStorage.setItem('ugcgo-theme', t);
+  document.querySelectorAll('#platform-theme-switcher button').forEach(function(btn) {
+    btn.style.boxShadow = btn.getAttribute('data-t') === t ? '0 0 0 2px var(--accent)' : 'none';
+  });
+  // Re-render studio if currently open
+  if (creatorTab === 'studio') {
+    var content = document.getElementById('creatorContent');
+    if (content) renderCreatorStudio(content);
+  }
+}
+
+// Load saved theme
+(function() {
+  var saved = localStorage.getItem('ugcgo-theme') || 'light';
+  document.body.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#platform-theme-switcher button').forEach(function(btn) {
+      btn.style.boxShadow = btn.getAttribute('data-t') === saved ? '0 0 0 2px #c8ff00' : 'none';
+    });
+  });
+})();
 
 init();
 
@@ -1573,6 +1984,7 @@ window.addEventListener('load', function() {
     }
   }, 1500);
 });
+
 </script>
 </body>
 </html>
