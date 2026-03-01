@@ -18,6 +18,7 @@ body{--bg:var(--light);--text:var(--dark);--accent:var(--lime);--accent-text:var
 /* THEME VARIABLES */
 body[data-theme="light"]{--bg:#f8f8f2;--text:#0a0a0a;--mid:#4a4a4a;--border:#e0e0d8;--accent:#c8ff00;--accent-text:#0a0a0a;--nav-bg:rgba(248,248,242,.95);--card-bg:#fff;--section-alt:#f0f0ea;--inv-bg:#0a0a0a;--inv-text:#fff;--section-dark-bg:#0a0a0a;--section-dark-text:#fff}
 body[data-theme="dark"]{--bg:#0a0a0a;--text:#f0f0f0;--mid:#aaa;--border:#2a2a2a;--accent:#c8ff00;--accent-text:#0a0a0a;--nav-bg:rgba(10,10,10,.96);--card-bg:#161616;--section-alt:#111;--inv-bg:#c8ff00;--inv-text:#0a0a0a;--section-dark-bg:#111;--section-dark-text:#f0f0f0}
+body[data-theme="dark"] h1 .inv{color:var(--accent-text)}
 /* Oakley = warm nude filter — Swiss White через красно-amber линзы */
 body[data-theme="oakley"]{--bg:#fdf4ec;--text:#1c0f00;--mid:#6b4c30;--border:#e8d0b8;--accent:#d4a017;--accent-text:#1c0f00;--nav-bg:rgba(253,244,236,.96);--card-bg:#fff8f0;--section-alt:#f5ead8;--inv-bg:#1c0f00;--inv-text:#fdf4ec;--section-dark-bg:#1c0f00;--section-dark-text:#fdf4ec}
 body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .3s,color .3s}
@@ -49,7 +50,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;justify-content:
 .eyebrow-dot{width:7px;height:7px;background:var(--lime);border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
 h1{font-size:clamp(48px,7vw,100px);font-weight:900;letter-spacing:-4px;line-height:.9;margin-bottom:24px;color:var(--text)}
-h1 .inv{background:var(--inv-bg);color:var(--inv-text);padding:0 8px;display:inline-block;transform:rotate(-1deg);border-radius:4px}
+h1 .inv{background:var(--inv-bg);color:var(--accent);padding:0 8px;display:inline-block;transform:rotate(-1deg);border-radius:4px}
 .hero-desc{font-size:17px;color:var(--mid);line-height:1.7;max-width:440px;margin-bottom:36px}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px}
 .btn-primary{background:var(--inv-bg);color:var(--inv-text);font-weight:700;font-size:15px;padding:13px 36px;border:none;cursor:pointer;border-radius:8px;transition:.15s;position:relative;overflow:hidden}
