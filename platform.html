@@ -651,15 +651,14 @@ function renderMktCampaigns(list) {
       ? '<img src="' + camp.brand_icon + '" onerror="this.parentNode.innerHTML=\'<span>' + initial + '</span>\'">'
       : '<span>' + initial + '</span>';
 
-    // Media: shimmer → streaming video (первый кадр через ~1с)
+    // Media: видео с autoplay muted playsinline — iOS Safari совместимо
     var mediaInner = '';
     if (camp.video_url) {
       var isFirst4 = list.indexOf(camp) < 4;
-      mediaInner = '<div class="video-shimmer"></div>'
-        + '<video muted loop playsinline webkit-playsinline'
+      mediaInner = '<video autoplay muted loop playsinline webkit-playsinline'
         + ' preload="' + (isFirst4 ? 'auto' : 'none') + '"'
-        + (isFirst4 ? ' src="' + camp.video_url + '#t=0.001"' : ' data-src="' + camp.video_url + '#t=0.001"')
-        + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;z-index:2;opacity:0;transition:opacity .3s"></video>';
+        + (isFirst4 ? ' src="' + camp.video_url + '#t=0.001"' : ' data-src="' + camp.video_url + '"')
+        + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;background:var(--border)"></video>';
     } else if (camp.cover_url) {
       mediaInner = '<img src="' + camp.cover_url + '" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px">';
     } else {
@@ -756,44 +755,49 @@ function dismissLoader() {
 setTimeout(dismissLoader, 5000);
 
 function onVideoReady(video) {
-  // Fade-in видео
-  video.style.opacity = '1';
-  // Убираем shimmer
-  var parent = video.parentElement;
-  if (parent) {
-    var shimmer = parent.querySelector('.video-shimmer');
-    if (shimmer) shimmer.style.display = 'none';
-  }
-  // Autoplay
+  // Принудительный play (iOS Safari может заблокировать autoplay)
   video.muted = true;
+  video.playsInline = true;
   var p = video.play();
-  if (p) p.catch(function(){});
-  // Считаем готовые → скрыть loader
+  if (p) p.catch(function(e) {
+    // iOS fallback: повторная попытка через 500ms
+    setTimeout(function() { video.muted = true; video.play().catch(function(){}); }, 500);
+  });
   _videosReady++;
-  if (_videosReady >= 3) dismissLoader();
+  if (_videosReady >= 2) dismissLoader();
 }
 
 function activateVideo(video) {
   if (video.dataset.activated) return;
   video.dataset.activated = '1';
   
-  // Если src уже есть (первые 4 с preload=auto)
+  // Если src уже есть (первые 4)
   if (video.src && video.src.indexOf('fal.media') !== -1) {
     video.load(); // iOS Safari обязательно
-    video.addEventListener('loadeddata', function() { onVideoReady(video); }, { once: true });
-    // Fallback если loadeddata не сработает за 8с
-    setTimeout(function() { if (video.style.opacity !== '1') onVideoReady(video); }, 8000);
+    // Слушаем canplay (надёжнее чем loadeddata на iOS)
+    video.addEventListener('canplay', function() { onVideoReady(video); }, { once: true });
+    // Также пробуем сразу play
+    setTimeout(function() { 
+      video.muted = true;
+      var p = video.play(); 
+      if (p) p.catch(function(){}); 
+    }, 100);
+    // Fallback
+    setTimeout(function() { if (!video.dataset.played) { video.dataset.played='1'; onVideoReady(video); } }, 4000);
     return;
   }
   
-  // Для lazy видео — ставим src из data-src
+  // Lazy видео — ставим src
   var src = video.dataset.src;
   if (!src) return;
   video.src = src;
   video.preload = 'auto';
+  video.muted = true;
+  video.autoplay = true;
   video.load(); // iOS Safari
-  video.addEventListener('loadeddata', function() { onVideoReady(video); }, { once: true });
-  setTimeout(function() { if (video.style.opacity !== '1') onVideoReady(video); }, 8000);
+  video.addEventListener('canplay', function() { onVideoReady(video); }, { once: true });
+  setTimeout(function() { video.muted = true; video.play().catch(function(){}); }, 100);
+  setTimeout(function() { if (!video.dataset.played) { video.dataset.played='1'; onVideoReady(video); } }, 4000);
 }
 
 function observeGridVideos(container) {
