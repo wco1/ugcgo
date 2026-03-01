@@ -228,11 +228,15 @@ tr:hover td{background:#fafaf5}
 .mkt-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.15)}
 /* Квадратное фото слева */
 .mkt-card-thumb{width:140px;min-width:140px;height:140px;position:relative;overflow:hidden;flex-shrink:0;border-radius:16px;margin:10px 0 10px 10px}
-/* Скрыть дефолтные iOS Safari play controls на autoplay видео */
+/* Скрыть ВСЕ iOS Safari video controls — CSS + overlay */
 .mkt-card-thumb video::-webkit-media-controls-panel,
 .mkt-card-thumb video::-webkit-media-controls-play-button,
-.mkt-card-thumb video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
-.mkt-card-thumb video{pointer-events:none}
+.mkt-card-thumb video::-webkit-media-controls-start-playback-button,
+.mkt-card-thumb video::-webkit-media-controls,
+.mkt-card-thumb video::-webkit-media-controls-overlay-play-button{display:none!important;-webkit-appearance:none;opacity:0!important}
+.mkt-card-thumb video{pointer-events:none;-webkit-tap-highlight-color:transparent}
+/* Невидимый overlay поверх видео — блокирует любые iOS native controls */
+.mkt-card-thumb::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;border-radius:12px}
 .mkt-card-thumb img,.mkt-card-thumb video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
 /* Brand badge top-left на фото */
 .mkt-badge{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:2;border:1px solid rgba(255,255,255,.15)}
@@ -272,9 +276,9 @@ tr:hover td{background:#fafaf5}
 .mkt-fullscreen-loader.hidden{opacity:0;pointer-events:none}
 .mkt-loader-logo{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:16px}
 .mkt-loader-logo span{background:var(--accent);color:var(--accent-text);padding:2px 8px;border-radius:8px}
-.mkt-loader-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.mkt-loader-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-right-color:var(--accent);border-radius:50%;animation:spin .7s cubic-bezier(.4,.15,.6,.85) infinite;margin-top:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.mkt-loader-hint{margin-top:12px;font-size:13px;color:var(--mid)}
+.mkt-loader-hint{display:none}
 @media(max-width:768px){.mkt-grid{grid-template-columns:1fr}.creator-grid{grid-template-columns:1fr 1fr}.mkt-hero{padding:40px 5% 28px}}
   body[data-theme="dark"] .studio-wrap { background: #0a0a0a !important; }
   body[data-theme="light"] .studio-wrap, body .studio-wrap { background: var(--bg); }
@@ -286,11 +290,10 @@ tr:hover td{background:#fafaf5}
 </head>
 <body>
 
-<!-- Fullscreen branded loader — скрывает всё пока видео не готовы -->
+<!-- Fullscreen branded loader -->
 <div class="mkt-fullscreen-loader" id="mktFullLoader">
   <div class="mkt-loader-logo">ugc<span>go</span></div>
   <div class="mkt-loader-spinner"></div>
-  <div class="mkt-loader-hint">Loading marketplace...</div>
 </div>
 
 <div class="mkt-loader-bar-wrap"><div class="mkt-loader-bar" id="mktLoaderBar"></div></div>
