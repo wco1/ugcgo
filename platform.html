@@ -259,10 +259,17 @@ tr:hover td{background:#fafaf5}
 .creator-stats strong{color:var(--text);font-weight:800}
 .mkt-empty{text-align:center;padding:60px;color:var(--mid)}
 .mkt-badge-new{background:#c8ff00;color:#0a0a0a;font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px}
-/* Shimmer пока видео грузится — вместо чёрного квадрата */
-.video-shimmer{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;background:linear-gradient(110deg,#1a1a1a 30%,#2a2a2a 50%,#1a1a1a 70%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;z-index:0}
+/* Shimmer — theme-aware */
+.video-shimmer{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;background:linear-gradient(110deg,var(--border) 30%,var(--section-alt) 50%,var(--border) 70%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;z-index:0}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.video-poster-fallback{transition:opacity .4s}
+/* Fullscreen loader overlay */
+.mkt-fullscreen-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
+.mkt-fullscreen-loader.hidden{opacity:0;pointer-events:none}
+.mkt-loader-logo{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:16px}
+.mkt-loader-logo span{background:var(--accent);color:var(--accent-text);padding:2px 8px;border-radius:8px}
+.mkt-loader-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mkt-loader-hint{margin-top:12px;font-size:13px;color:var(--mid)}
 @media(max-width:768px){.mkt-grid{grid-template-columns:1fr}.creator-grid{grid-template-columns:1fr 1fr}.mkt-hero{padding:40px 5% 28px}}
   body[data-theme="dark"] .studio-wrap { background: #0a0a0a !important; }
   body[data-theme="light"] .studio-wrap, body .studio-wrap { background: var(--bg); }
@@ -274,8 +281,14 @@ tr:hover td{background:#fafaf5}
 </head>
 <body>
 
+<!-- Fullscreen branded loader — скрывает всё пока видео не готовы -->
+<div class="mkt-fullscreen-loader" id="mktFullLoader">
+  <div class="mkt-loader-logo">ugc<span>go</span></div>
+  <div class="mkt-loader-spinner"></div>
+  <div class="mkt-loader-hint">Loading marketplace...</div>
+</div>
+
 <div class="mkt-loader-bar-wrap"><div class="mkt-loader-bar" id="mktLoaderBar"></div></div>
-<div class="mkt-loader-text" id="mktLoaderText" style="display:none"></div>
 
 
 <!-- NAV -->
@@ -638,12 +651,14 @@ function renderMktCampaigns(list) {
       ? '<img src="' + camp.brand_icon + '" onerror="this.parentNode.innerHTML=\'<span>' + initial + '</span>\'">'
       : '<span>' + initial + '</span>';
 
-    // Media: shimmer → видео (без poster, сразу видео)
+    // Media: shimmer → streaming video (первый кадр через ~1с)
     var mediaInner = '';
     if (camp.video_url) {
+      var isFirst4 = list.indexOf(camp) < 4;
       mediaInner = '<div class="video-shimmer"></div>'
-        + '<video autoplay muted loop playsinline preload="auto"'
-        + ' data-src="' + camp.video_url + '"'
+        + '<video muted loop playsinline webkit-playsinline'
+        + ' preload="' + (isFirst4 ? 'auto' : 'none') + '"'
+        + (isFirst4 ? ' src="' + camp.video_url + '#t=0.001"' : ' data-src="' + camp.video_url + '#t=0.001"')
         + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;z-index:2;opacity:0;transition:opacity .3s"></video>';
     } else if (camp.cover_url) {
       mediaInner = '<img src="' + camp.cover_url + '" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px">';
@@ -721,92 +736,111 @@ function switchMktTab(tab, btn) {
   document.getElementById('mkt-creators-section').style.display = tab==='creators'?'':'none';
 }
 
-// ========== SMART VIDEO LOADING (Heepsy-style) ==========
-// Стратегия: poster мгновенно → preload видео в фоне → fade-in когда готово → пауза за viewport
+// ========== SMART VIDEO LOADING v3 (Streaming + Fullscreen Loader) ==========
+// Стратегия: streaming видео (первый кадр ~1с) → fade-in → loader скрывается когда 3 видео готовы
 
-// Кэш blob URL для уже загруженных видео
-var _videoBlobCache = {};
+var _videosReady = 0;
+var _loaderDismissed = false;
 
-function preloadVideoBlob(url) {
-  if (_videoBlobCache[url]) return _videoBlobCache[url];
-  _videoBlobCache[url] = fetch(url)
-    .then(function(r) { return r.blob(); })
-    .then(function(blob) {
-      var blobUrl = URL.createObjectURL(blob);
-      _videoBlobCache[url] = Promise.resolve(blobUrl);
-      return blobUrl;
-    })
-    .catch(function() { return url; }); // fallback на оригинал
-  return _videoBlobCache[url];
+function dismissLoader() {
+  if (_loaderDismissed) return;
+  _loaderDismissed = true;
+  var loader = document.getElementById('mktFullLoader');
+  if (loader) {
+    loader.classList.add('hidden');
+    setTimeout(function() { loader.style.display = 'none'; }, 500);
+  }
+}
+
+// Fallback: скрыть loader через 5с максимум (медленная сеть)
+setTimeout(dismissLoader, 5000);
+
+function onVideoReady(video) {
+  // Fade-in видео
+  video.style.opacity = '1';
+  // Убираем shimmer
+  var parent = video.parentElement;
+  if (parent) {
+    var shimmer = parent.querySelector('.video-shimmer');
+    if (shimmer) shimmer.style.display = 'none';
+  }
+  // Autoplay
+  video.muted = true;
+  var p = video.play();
+  if (p) p.catch(function(){});
+  // Считаем готовые → скрыть loader
+  _videosReady++;
+  if (_videosReady >= 3) dismissLoader();
 }
 
 function activateVideo(video) {
   if (video.dataset.activated) return;
   video.dataset.activated = '1';
+  
+  // Если src уже есть (первые 4 с preload=auto)
+  if (video.src && video.src.indexOf('fal.media') !== -1) {
+    video.load(); // iOS Safari обязательно
+    video.addEventListener('loadeddata', function() { onVideoReady(video); }, { once: true });
+    // Fallback если loadeddata не сработает за 8с
+    setTimeout(function() { if (video.style.opacity !== '1') onVideoReady(video); }, 8000);
+    return;
+  }
+  
+  // Для lazy видео — ставим src из data-src
   var src = video.dataset.src;
   if (!src) return;
-  
-  preloadVideoBlob(src).then(function(blobUrl) {
-    video.src = blobUrl;
-    video.preload = 'auto';
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.load(); // критично для iOS Safari
-    
-    // Когда видео готово — плавный fade-in, скрыть poster и shimmer
-    video.addEventListener('canplay', function onCanPlay() {
-      video.removeEventListener('canplay', onCanPlay);
-      video.style.opacity = '1';
-      // Убираем shimmer
-      var parent = video.parentElement;
-      if (parent) {
-        var shimmer = parent.querySelector('.video-shimmer');
-        if (shimmer) shimmer.style.display = 'none';
-      }
-    }, { once: true });
-    
-    var p = video.play();
-    if (p) p.catch(function(){});
-  });
+  video.src = src;
+  video.preload = 'auto';
+  video.load(); // iOS Safari
+  video.addEventListener('loadeddata', function() { onVideoReady(video); }, { once: true });
+  setTimeout(function() { if (video.style.opacity !== '1') onVideoReady(video); }, 8000);
 }
 
 function observeGridVideos(container) {
   if (!container) return;
-  var videos = container.querySelectorAll('video[data-src]');
-  if (!videos.length) return;
+  var allVideos = container.querySelectorAll('video');
+  if (!allVideos.length) { dismissLoader(); return; }
   
-  // Фаза 1: Сразу начинаем preload первых 4 видео (пока юзер ещё на экране)
-  var immediateCount = Math.min(4, videos.length);
+  // Фаза 1: Первые 4 уже имеют src → активируем сразу
+  var immediateCount = Math.min(4, allVideos.length);
   for (var i = 0; i < immediateCount; i++) {
-    var v = videos[i];
-    if (v.dataset.src) preloadVideoBlob(v.dataset.src);
-  }
-  // Активируем первые 4 сразу (не ждём IntersectionObserver)
-  for (var j = 0; j < immediateCount; j++) {
-    activateVideo(videos[j]);
+    activateVideo(allVideos[i]);
   }
 
-  // Фаза 2: IntersectionObserver для остальных с большим rootMargin
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      var video = entry.target;
-      if (entry.isIntersecting) {
-        activateVideo(video);
-        if (video.dataset.activated && video.paused && video.readyState >= 2) {
-          var p = video.play();
-          if (p) p.catch(function(){});
+  // Фаза 2: IntersectionObserver для остальных (rootMargin 600px)
+  if (allVideos.length > immediateCount) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        var video = entry.target;
+        if (entry.isIntersecting) {
+          activateVideo(video);
+          if (video.dataset.activated && video.paused && video.readyState >= 2) {
+            var p = video.play();
+            if (p) p.catch(function(){});
+          }
+        } else if (video.dataset.activated && !video.paused) {
+          video.pause();
         }
-      } else if (video.dataset.activated && !video.paused) {
-        video.pause(); // экономия ресурсов за viewport
-      }
-    });
-  }, { rootMargin: '600px 0px', threshold: 0.01 });
-
-  // Observer только для видео после первых 4
-  for (var k = 0; k < videos.length; k++) {
-    if (k >= immediateCount) observer.observe(videos[k]);
+      });
+    }, { rootMargin: '600px 0px', threshold: 0.01 });
+    
+    for (var k = immediateCount; k < allVideos.length; k++) {
+      observer.observe(allVideos[k]);
+    }
   }
+  
+  // Фаза 3: Prefetch следующих видео в фоне через 2с
+  setTimeout(function() {
+    for (var m = immediateCount; m < Math.min(immediateCount + 3, allVideos.length); m++) {
+      var v = allVideos[m];
+      if (v.dataset.src && !v.dataset.activated) {
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = v.dataset.src;
+        document.head.appendChild(link);
+      }
+    }
+  }, 2000);
 }
 
 function requireAuth() {
