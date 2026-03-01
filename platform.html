@@ -259,6 +259,10 @@ tr:hover td{background:#fafaf5}
 .creator-stats strong{color:var(--text);font-weight:800}
 .mkt-empty{text-align:center;padding:60px;color:var(--mid)}
 .mkt-badge-new{background:#c8ff00;color:#0a0a0a;font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;vertical-align:middle;margin-left:6px}
+/* Shimmer пока видео грузится — вместо чёрного квадрата */
+.video-shimmer{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;background:linear-gradient(110deg,#1a1a1a 30%,#2a2a2a 50%,#1a1a1a 70%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;z-index:0}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.video-poster-fallback{transition:opacity .4s}
 @media(max-width:768px){.mkt-grid{grid-template-columns:1fr}.creator-grid{grid-template-columns:1fr 1fr}.mkt-hero{padding:40px 5% 28px}}
   body[data-theme="dark"] .studio-wrap { background: #0a0a0a !important; }
   body[data-theme="light"] .studio-wrap, body .studio-wrap { background: var(--bg); }
@@ -634,13 +638,16 @@ function renderMktCampaigns(list) {
       ? '<img src="' + camp.brand_icon + '" onerror="this.parentNode.innerHTML=\'<span>' + initial + '</span>\'">'
       : '<span>' + initial + '</span>';
 
-    // Media: video autoplay inline, poster shows instantly while video loads
+    // Media: video с poster (мгновенно видно) + shimmer пока видео грузится
     var mediaInner = '';
     if (camp.video_url) {
-      var poster = camp.cover_url ? ' poster="' + camp.cover_url + '"' : '';
-      mediaInner = '<video autoplay muted loop playsinline preload="auto"' + poster
-        + ' src="' + camp.video_url + '"'
-        + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px"></video>';
+      var poster = camp.cover_url || '';
+      mediaInner = '<div class="video-shimmer"></div>'
+        + (poster ? '<img src="' + poster + '" class="video-poster-fallback" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:12px;z-index:1">' : '')
+        + '<video autoplay muted loop playsinline preload="auto"'
+        + (poster ? ' poster="' + poster + '"' : '')
+        + ' data-src="' + camp.video_url + '"'
+        + ' style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;z-index:2;opacity:0;transition:opacity .3s"></video>';
     } else if (camp.cover_url) {
       mediaInner = '<img src="' + camp.cover_url + '" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px">';
     } else {
@@ -717,58 +724,93 @@ function switchMktTab(tab, btn) {
   document.getElementById('mkt-creators-section').style.display = tab==='creators'?'':'none';
 }
 
-// ========== SMART VIDEO LOADING ==========
-// IntersectionObserver: видео загружаются только когда видимы, с preload во время лоадера
+// ========== SMART VIDEO LOADING (Heepsy-style) ==========
+// Стратегия: poster мгновенно → preload видео в фоне → fade-in когда готово → пауза за viewport
+
+// Кэш blob URL для уже загруженных видео
+var _videoBlobCache = {};
+
+function preloadVideoBlob(url) {
+  if (_videoBlobCache[url]) return _videoBlobCache[url];
+  _videoBlobCache[url] = fetch(url)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var blobUrl = URL.createObjectURL(blob);
+      _videoBlobCache[url] = Promise.resolve(blobUrl);
+      return blobUrl;
+    })
+    .catch(function() { return url; }); // fallback на оригинал
+  return _videoBlobCache[url];
+}
+
+function activateVideo(video) {
+  if (video.dataset.activated) return;
+  video.dataset.activated = '1';
+  var src = video.dataset.src;
+  if (!src) return;
+  
+  preloadVideoBlob(src).then(function(blobUrl) {
+    video.src = blobUrl;
+    video.preload = 'auto';
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.load(); // критично для iOS Safari
+    
+    // Когда видео готово — плавный fade-in, скрыть poster и shimmer
+    video.addEventListener('canplay', function onCanPlay() {
+      video.removeEventListener('canplay', onCanPlay);
+      video.style.opacity = '1';
+      // Убираем poster-fallback и shimmer
+      var parent = video.parentElement;
+      if (parent) {
+        var posterImg = parent.querySelector('.video-poster-fallback');
+        if (posterImg) posterImg.style.opacity = '0';
+        var shimmer = parent.querySelector('.video-shimmer');
+        if (shimmer) shimmer.style.display = 'none';
+      }
+    }, { once: true });
+    
+    var p = video.play();
+    if (p) p.catch(function(){});
+  });
+}
+
 function observeGridVideos(container) {
   if (!container) return;
-  const videos = container.querySelectorAll('video[autoplay]');
+  var videos = container.querySelectorAll('video[data-src]');
+  if (!videos.length) return;
   
-  // Убираем autoplay и src сразу — грузим лениво
-  videos.forEach(function(v) {
-    v.dataset.lazySrc = v.src || v.getAttribute('src');
-    v.removeAttribute('src');
-    v.removeAttribute('autoplay');
-    v.preload = 'none';
-    v.pause();
-  });
+  // Фаза 1: Сразу начинаем preload первых 4 видео (пока юзер ещё на экране)
+  var immediateCount = Math.min(4, videos.length);
+  for (var i = 0; i < immediateCount; i++) {
+    var v = videos[i];
+    if (v.dataset.src) preloadVideoBlob(v.dataset.src);
+  }
+  // Активируем первые 4 сразу (не ждём IntersectionObserver)
+  for (var j = 0; j < immediateCount; j++) {
+    activateVideo(videos[j]);
+  }
 
-  // IntersectionObserver — загружаем видео когда карточка в viewport
+  // Фаза 2: IntersectionObserver для остальных с большим rootMargin
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       var video = entry.target;
-      if (entry.isIntersecting && video.dataset.lazySrc && !video.dataset.loaded) {
-        video.dataset.loaded = '1';
-        video.src = video.dataset.lazySrc;
-        video.preload = 'auto';
-        video.muted = true;
-        video.loop = true;
-        video.playsInline = true;
-        video.load(); // критично для iOS Safari
-        var playPromise = video.play();
-        if (playPromise) playPromise.catch(function(){});
-      } else if (!entry.isIntersecting && video.dataset.loaded) {
-        // Пауза для невидимых — экономия ресурсов
-        video.pause();
-      } else if (entry.isIntersecting && video.dataset.loaded && video.paused) {
-        var p2 = video.play();
-        if (p2) p2.catch(function(){});
+      if (entry.isIntersecting) {
+        activateVideo(video);
+        if (video.dataset.activated && video.paused && video.readyState >= 2) {
+          var p = video.play();
+          if (p) p.catch(function(){});
+        }
+      } else if (video.dataset.activated && !video.paused) {
+        video.pause(); // экономия ресурсов за viewport
       }
     });
-  }, { rootMargin: '200px 0px', threshold: 0.1 });
+  }, { rootMargin: '600px 0px', threshold: 0.01 });
 
-  videos.forEach(function(v) { observer.observe(v); });
-  
-  // Preload первых 3 видео сразу (пока лоадер показывается)
-  var preloadCount = Math.min(3, videos.length);
-  for (var i = 0; i < preloadCount; i++) {
-    var v = videos[i];
-    if (v.dataset.lazySrc) {
-      var link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'video';
-      link.href = v.dataset.lazySrc;
-      document.head.appendChild(link);
-    }
+  // Observer только для видео после первых 4
+  for (var k = 0; k < videos.length; k++) {
+    if (k >= immediateCount) observer.observe(videos[k]);
   }
 }
 
