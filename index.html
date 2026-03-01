@@ -19,6 +19,7 @@ body{--bg:var(--light);--text:var(--dark);--accent:var(--lime);--accent-text:var
 body[data-theme="light"]{--bg:#f8f8f2;--text:#0a0a0a;--mid:#4a4a4a;--border:#e0e0d8;--accent:#c8ff00;--accent-text:#0a0a0a;--nav-bg:rgba(248,248,242,.95);--card-bg:#fff;--section-alt:#f0f0ea;--inv-bg:#0a0a0a;--inv-text:#fff;--section-dark-bg:#0a0a0a;--section-dark-text:#fff}
 body[data-theme="dark"]{--bg:#0a0a0a;--text:#f0f0f0;--mid:#aaa;--border:#2a2a2a;--accent:#c8ff00;--accent-text:#0a0a0a;--nav-bg:rgba(10,10,10,.96);--card-bg:#161616;--section-alt:#111;--inv-bg:#c8ff00;--inv-text:#0a0a0a;--section-dark-bg:#111;--section-dark-text:#f0f0f0}
 body[data-theme="dark"] h1 .inv{color:var(--accent-text)}
+body[data-theme="dark"] .features-top h2 span{color:var(--accent-text)}
 /* Oakley = warm nude filter — Swiss White через красно-amber линзы */
 body[data-theme="oakley"]{--bg:#fdf4ec;--text:#1c0f00;--mid:#6b4c30;--border:#e8d0b8;--accent:#d4a017;--accent-text:#1c0f00;--nav-bg:rgba(253,244,236,.96);--card-bg:#fff8f0;--section-alt:#f5ead8;--inv-bg:#1c0f00;--inv-text:#fdf4ec;--section-dark-bg:#1c0f00;--section-dark-text:#fdf4ec}
 body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .3s,color .3s}
@@ -88,7 +89,7 @@ h1 .inv{background:var(--inv-bg);color:var(--accent);padding:0 8px;display:inlin
 section.features{padding:80px 5%;background:var(--section-alt)}
 .features-top{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:60px}
 .features-top h2{font-size:clamp(36px,5vw,64px);font-weight:900;letter-spacing:-2.5px;line-height:.95;color:var(--text)}
-.features-top h2 span{color:var(--inv-text);background:var(--inv-bg);padding:2px 8px;border-radius:4px}
+.features-top h2 span{color:var(--accent);background:var(--inv-bg);padding:2px 8px;border-radius:4px}
 .features-top p{font-size:16px;color:var(--mid);line-height:1.7}
 .feat-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:2px solid var(--text)}
 .feat-li{background:var(--bg);padding:32px;transition:.2s}
