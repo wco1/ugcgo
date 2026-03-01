@@ -179,14 +179,14 @@ footer{padding:40px 5%;background:var(--section-dark-bg);border-top:1px solid rg
 <body>
 <nav>
   <div class="logo">ugcgo<span>.ai</span></div>
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-t="light" title="Light" onclick="setTheme('light')"></button>
+    <button class="theme-btn" data-t="dark" title="Dark" onclick="setTheme('dark')"></button>
+    <button class="theme-btn" data-t="oakley" title="Oakley" onclick="setTheme('oakley')"></button>
+  </div>
   <div class="nav-links">
     <a href="#">For Brands</a><a href="#">Creators</a><a href="#">AI Studio</a><a href="#">Pricing</a>
     <a href="platform.html" class="nav-marketplace">Marketplace →</a>
-    <div class="theme-switcher">
-      <button class="theme-btn active" data-t="light" title="Light" onclick="setTheme('light')"></button>
-      <button class="theme-btn" data-t="dark" title="Dark" onclick="setTheme('dark')"></button>
-      <button class="theme-btn" data-t="oakley" title="Oakley" onclick="setTheme('oakley')"></button>
-    </div>
   </div>
   <button class="btn-dark" onclick="location.href='platform.html?auth=1'">Start Free →</button>
 </nav>
