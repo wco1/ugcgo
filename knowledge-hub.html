@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ugcgo.ai — База знаний</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#e5e5e7;min-height:100vh}
+a{color:inherit;text-decoration:none}
+header{background:#0d0d15;border-bottom:1px solid #1e1e2e;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-size:20px;font-weight:700;color:#fff}.logo span{color:#6366f1}
+.status-bar{display:flex;gap:12px;font-size:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px}
+.nav{display:flex;gap:4px;padding:16px 24px;background:#0d0d15;border-bottom:1px solid #1a1a2e;overflow-x:auto}
+.tab{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;color:#888;white-space:nowrap;transition:all .2s}
+.tab:hover{color:#e5e5e7;background:#1a1a2e}
+.tab.active{background:#6366f1;color:#fff}
+.content{max-width:1200px;margin:0 auto;padding:24px}
+.section{display:none}.section.active{display:block}
+h2{font-size:22px;font-weight:700;margin-bottom:20px;color:#fff}
+h3{font-size:15px;font-weight:600;margin-bottom:12px;color:#a0a0b0;text-transform:uppercase;letter-spacing:.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:28px}
+.grid-2{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+.card{background:#111118;border:1px solid #1e1e2e;border-radius:12px;padding:20px;transition:border-color .2s}
+.card:hover{border-color:#6366f1}
+.card-title{font-size:15px;font-weight:600;margin-bottom:6px;color:#fff}
+.card-desc{font-size:13px;color:#888;line-height:1.5}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-top:10px}
+.badge-done{background:#14532d;color:#4ade80}
+.badge-wip{background:#422006;color:#fb923c}
+.badge-plan{background:#1e1e2e;color:#888}
+.badge-p1{background:#1e1b4b;color:#818cf8}
+.badge-p2{background:#0f172a;color:#60a5fa}
+.badge-p3{background:#111118;color:#6b7280}
+.agent-card{display:flex;align-items:center;gap:14px;background:#111118;border:1px solid #1e1e2e;border-radius:12px;padding:16px}
+.agent-icon{width:44px;height:44px;border-radius:50%;background:#1e1e2e;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.agent-name{font-size:15px;font-weight:600;color:#fff}
+.agent-role{font-size:12px;color:#888;margin-top:2px}
+.agent-model{font-size:11px;color:#6366f1;margin-top:4px}
+.online{color:#22c55e;font-size:11px}
+.doc-card{background:#111118;border:1px solid #1e1e2e;border-radius:10px;padding:16px;display:flex;gap:12px;align-items:flex-start}
+.doc-icon{font-size:24px;flex-shrink:0}
+.doc-title{font-size:14px;font-weight:600;color:#fff}
+.doc-date{font-size:11px;color:#555;margin-top:2px}
+.doc-desc{font-size:12px;color:#777;margin-top:6px;line-height:1.4}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #111118;font-size:14px}
+.checklist li:last-child{border-bottom:none}
+.check-icon{flex-shrink:0;margin-top:1px}
+.report-item{background:#111118;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:10px}
+.report-header{display:flex;justify-content:space-between;margin-bottom:6px}
+.report-agent{font-size:13px;font-weight:600;color:#6366f1}
+.report-date{font-size:11px;color:#555}
+.report-text{font-size:13px;color:#aaa}
+.priority-section{margin-bottom:28px}
+.priority-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding:4px 0;border-bottom:1px solid #1e1e2e}
+.p1-label{color:#818cf8}
+.p2-label{color:#60a5fa}
+.p3-label{color:#6b7280}
+.tg-info{background:#111118;border:1px solid #1e1e2e;border-radius:12px;padding:20px;margin-bottom:20px}
+.tg-title{font-size:16px;font-weight:700;margin-bottom:12px;color:#fff}
+.tg-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #111118;font-size:13px}
+.tg-item:last-child{border-bottom:none}
+.tg-thread{color:#6366f1;font-weight:600;min-width:60px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.status-bar{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ugcgo<span>.ai</span> 🦄 База знаний</div>
+  <div class="status-bar">
+    <span><span class="dot"></span>11 агентов онлайн</span>
+    <span><span class="dot"></span>Supabase</span>
+    <span><span class="dot"></span>Vercel</span>
+    <span style="color:#555">Обновлено: 03.03.2026</span>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="tab active" onclick="show('roadmap',this)">🗺️ Роадмап</div>
+  <div class="tab" onclick="show('features',this)">🚀 Фичи</div>
+  <div class="tab" onclick="show('docs',this)">📁 Документы</div>
+  <div class="tab" onclick="show('team',this)">🤖 Команда</div>
+  <div class="tab" onclick="show('reports',this)">📊 Отчёты</div>
+  <div class="tab" onclick="show('tg',this)">💬 TG Группа</div>
+</nav>
+
+<!-- TAB 1: ROADMAP -->
+<div id="roadmap" class="content section active">
+  <h2>🗺️ Роадмап ugcgo.ai</h2>
+
+  <div style="background:#111118;border:1px solid #1e1e2e;border-radius:12px;padding:20px;margin-bottom:28px">
+    <div style="font-size:13px;color:#888;margin-bottom:14px">Прогресс запуска</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div><span style="font-size:24px;font-weight:700;color:#4ade80">7</span><div style="font-size:11px;color:#888;margin-top:2px">✅ Готово</div></div>
+      <div><span style="font-size:24px;font-weight:700;color:#fb923c">2</span><div style="font-size:11px;color:#888;margin-top:2px">🔄 В процессе</div></div>
+      <div><span style="font-size:24px;font-weight:700;color:#6b7280">31</span><div style="font-size:11px;color:#888;margin-top:2px">⚪ Запланировано</div></div>
+    </div>
+  </div>
+
+  <h3>Техническая готовность</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Production Supabase</div>
+      <div class="card-desc">RLS политики, connection pooling, автобэкапы, rate limiting</div>
+      <span class="badge badge-wip">🔄 В процессе</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Stripe Connect</div>
+      <div class="card-desc">Двусторонние платежи brand → escrow → creator. Flat fee 15-20% + бонусы</div>
+      <span class="badge badge-wip">🔄 Mr. Say подключает</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Auth flow (signup/login)</div>
+      <div class="card-desc">Email confirm → redirect → dashboard. Работает на Vercel.</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Demo система</div>
+      <div class="card-desc">"Try as Brand" и "Try as Creator" без регистрации</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Waitlist инфраструктура</div>
+      <div class="card-desc">Сбор emails, welcome series, countdown, referral mechanics</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Analytics Stack</div>
+      <div class="card-desc">PostHog или Mixpanel: funnel tracking, cohort retention</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+  </div>
+
+  <h3>Продукт</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Landing Page</div>
+      <div class="card-desc">ugcgo-app.vercel.app — hero, features, social proof, waitlist</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Brand Dashboard</div>
+      <div class="card-desc">Создание кампаний, просмотр заявок, мессенджер</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Creator Dashboard</div>
+      <div class="card-desc">Просмотр кампаний, portfolio, заявки, мессенджер</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">AI Studio</div>
+      <div class="card-desc">Kling video gen, HeyGen avatars, OpenRouter image gen</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Real-time Messaging</div>
+      <div class="card-desc">Supabase conversations + messages, SSE стрим</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Marketplace</div>
+      <div class="card-desc">Список кампаний, фильтры, creator cards с видео</div>
+      <span class="badge badge-done">✅ Готово</span>
+    </div>
+  </div>
+
+  <h3>Product Hunt подготовка</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Gallery Assets (5 скриншотов + GIF)</div>
+      <div class="card-desc">1440×900 PNG, 30-сек демо, Logo 1024×1024, OG Image</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Founder Story + First Comment</div>
+      <div class="card-desc">600 слов, подготовлен заранее</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">50+ upvotes в первый час</div>
+      <div class="card-desc">Hunt club, community support line-up</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Seed Data (20 creators + 5 brands)</div>
+      <div class="card-desc">Реальные профили, verified badges, onboarding call</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+  </div>
+
+  <h3>Marketplace Liquidity</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Seed Creators (минимум 20)</div>
+      <div class="card-desc">Вручную приглашённые криаторы с портфолио, verified badges, onboarding call 15 мин</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Seed Brands (минимум 5 pilot)</div>
+      <div class="card-desc">2-3 собственных проекта Mr. Say + 2-3 beta-тестеры из нетворка</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+  </div>
+
+  <h3>Legal & Compliance</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Terms of Service</div>
+      <div class="card-desc">Платформа + creator agreement + brand agreement</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Privacy Policy (GDPR)</div>
+      <div class="card-desc">Data handling for AI features, GDPR compliant</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Content License Agreement</div>
+      <div class="card-desc">Кто владеет UGC, права на использование</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Payment Dispute Policy</div>
+      <div class="card-desc">Escrow release conditions, arbitраж</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">AI Disclosure</div>
+      <div class="card-desc">Transparency об использовании AI в matching и generation</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+  </div>
+
+  <h3>Content Marketing</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Blog (5+ статей до запуска)</div>
+      <div class="card-desc">"State of UGC 2025", "AI in Creator Economy", "10 Tips for UGC Campaign", Creator Spotlight, Case Study</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Video Content</div>
+      <div class="card-desc">Product demo 2 мин, Tutorial "First Campaign", Tutorial "Apply as Creator"</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Social Media Setup</div>
+      <div class="card-desc">LinkedIn company page, Instagram, Twitter/X, YouTube</div>
+      <span class="badge badge-plan">⚪ Запланировано</span>
+    </div>
+  </div>
+
+  <h3>🆕 Новые фичи — 03.03.2026 (из анализа Ogilvy 2026 Trends)</h3>
+  <ul class="checklist">
+    <li><span class="check-icon">⬜</span><div><strong>Creator Referral Program</strong> — rev-share за приглашение новых создателей (% от первой сделки) <span class="badge badge-p1">P1</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Performance Bonus</strong> — базовая ставка + бонус за просмотры/продажи (автоматический расчёт) <span class="badge badge-p1">P1</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Ongoing Campaign тип</strong> — подписка на создателя (4 видео/мес за $X/мес) <span class="badge badge-p1">P1</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Analytics Dashboard</strong> — UTM, конверсии, ROAS для брендов <span class="badge badge-p2">P2</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Brand Ambassador Feature</strong> — rev-share/амбассадорство прямо в интерфейсе <span class="badge badge-p2">P2</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Whitelisting / Spark Ads</strong> — реклама от имени создателя (premium) <span class="badge badge-p2">P2</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Brand Safety Score</strong> — проверка создателя перед выбором (боты, скандалы) <span class="badge badge-p2">P2</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>AI Creator Matching Score</strong> — AI подбор по нише + аудитории + результатам <span class="badge badge-p3">P3</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>Creator Portfolio + Case Studies</strong> — результаты прошлых кампаний <span class="badge badge-p3">P3</span></div></li>
+    <li><span class="check-icon">⬜</span><div><strong>AI Studio как отдельный продукт</strong> — монетизация AI генерации отдельно от маркетплейса <span class="badge badge-p3">P3</span></div></li>
+  </ul>
+</div>
+
+<!-- TAB 2: FEATURES -->
+<div id="features" class="content section">
+  <h2>🚀 Фичи продукта</h2>
+  <p style="color:#888;margin-bottom:24px;font-size:14px">Источник: анализ Ogilvy 2026 Influencer Trends + стратегические решения команды</p>
+
+  <div class="priority-section">
+    <div class="priority-label p1-label">⚡ Приоритет 1 — Быстро (1-2 недели)</div>
+    <div class="grid">
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🔗</div>
+        <div class="card-title">Creator Referral Program</div>
+        <div class="card-desc">Rev-share за приглашение новых создателей. Создатель приводит друга → получает % от его первой сделки.</div>
+        <span class="badge badge-p1">Приоритет 1</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🏆</div>
+        <div class="card-title">Performance Bonus</div>
+        <div class="card-desc">Базовая ставка + бонус за просмотры/продажи. $200 за видео + $50 за каждые 100к просмотров. Автоматический расчёт.</div>
+        <span class="badge badge-p1">Приоритет 1</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">📅</div>
+        <div class="card-title">Ongoing Campaign (Подписка)</div>
+        <div class="card-desc">Бренд подписывается на 3/6 мес. Escrow заморозка → пропорциональная оплата по сданным видео → бренд может отменить.</div>
+        <span class="badge badge-p1">Приоритет 1</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="priority-section">
+    <div class="priority-label p2-label">🔵 Приоритет 2 — Средний (3-6 недель)</div>
+    <div class="grid">
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">📊</div>
+        <div class="card-title">UTM Analytics</div>
+        <div class="card-desc">Уникальные ссылки для каждого создателя. Трекаем клики без сложных интеграций. V2: Shopify пиксель в 1 строку кода.</div>
+        <span class="badge badge-p2">Приоритет 2</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">📢</div>
+        <div class="card-title">Whitelisting / Spark Ads</div>
+        <div class="card-desc">Бренд запускает рекламу ОТ ИМЕНИ создателя. Конверсия 2-3x выше обычной рекламы. Premium опция.</div>
+        <span class="badge badge-p2">Приоритет 2</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🤝</div>
+        <div class="card-title">Brand Ambassador Feature</div>
+        <div class="card-desc">Бренды предлагают создателям rev-share/амбассадорство прямо в интерфейсе кампании. Уникальная фишка vs конкурентов.</div>
+        <span class="badge badge-p2">Приоритет 2</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🛡️</div>
+        <div class="card-title">Brand Safety Score</div>
+        <div class="card-desc">Проверка создателя перед выбором: нет ботов, нет скандалов, история кампаний. Снимает главный страх брендов.</div>
+        <span class="badge badge-p2">Приоритет 2</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="priority-section">
+    <div class="priority-label p3-label">⚫ Приоритет 3 — Стратегический (3+ мес)</div>
+    <div class="grid">
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🤖</div>
+        <div class="card-title">AI Creator Matching Score</div>
+        <div class="card-desc">AI подбирает создателей: ниша + аудитория + исторические результаты → "Match Score 94%"</div>
+        <span class="badge badge-p3">Приоритет 3</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">💼</div>
+        <div class="card-title">Creator Portfolio + Case Studies</div>
+        <div class="card-desc">Создатель показывает результаты прошлых кампаний: просмотры, переходы, продажи. Бренды платят больше за доказанные результаты.</div>
+        <span class="badge badge-p3">Приоритет 3</span>
+      </div>
+      <div class="card">
+        <div style="font-size:24px;margin-bottom:10px">🎬</div>
+        <div class="card-title">AI Studio — отдельный продукт</div>
+        <div class="card-desc">Монетизировать AI генерацию отдельно от маркетплейса. Kling, HeyGen, OpenRouter — как standalone SaaS.</div>
+        <span class="badge badge-p3">Приоритет 3</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:16px;font-size:13px;color:#555">
+    ❌ Удалено: Private Community — риск угона базы создателей конкурентами (решение Mr. Say, 03.03.2026)
+  </div>
+</div>
+
+<!-- TAB 3: DOCS -->
+<div id="docs" class="content section">
+  <h2>📁 Документы</h2>
+
+  <h3>Стратегия</h3>
+  <div class="grid">
+    <div class="doc-card">
+      <div class="doc-icon">🗺️</div>
+      <div>
+        <div class="doc-title">Launch Roadmap 2026</div>
+        <div class="doc-date">28.02.2026 · brain/business/ugcgo/launch-roadmap-2026.md</div>
+        <div class="doc-desc">Полный чеклист запуска: техника, Product Hunt, маркетинг, seed data. 4500+ слов.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">👑</div>
+      <div>
+        <div class="doc-title">Apex Strategic Review</div>
+        <div class="doc-date">02.03.2026 · brain/business/ugcgo/apex-strategic-review-2026-03-02.md</div>
+        <div class="doc-desc">Стратегический обзор от Apex: 9 агентов, цель $1.5M ARR, приоритеты.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">🎯</div>
+      <div>
+        <div class="doc-title">ICP Research Final</div>
+        <div class="doc-date">01.03.2026 · brain/business/ugcgo/icp-research-final.md</div>
+        <div class="doc-desc">Идеальный профиль клиента: ниши, размер компании, должности, болевые точки.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">💡</div>
+      <div>
+        <div class="doc-title">Ideas & Concepts</div>
+        <div class="doc-date">brain/business/ugcgo/ideas.md</div>
+        <div class="doc-desc">Накопленные идеи по продукту, маркетингу, монетизации.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Аналитика и исследования</h3>
+  <div class="grid">
+    <div class="doc-card">
+      <div class="doc-icon">📈</div>
+      <div>
+        <div class="doc-title">Ogilvy 2026 Influencer Trends</div>
+        <div class="doc-date">03.03.2026 · Внешний PDF</div>
+        <div class="doc-desc">6 главных трендов инфлюенсер-маркетинга. Creator Commerce, UGC машины, ROI, Equity. Анализ для ugcgo.ai сделан Way.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">🔍</div>
+      <div>
+        <div class="doc-title">Creator Referral Research</div>
+        <div class="doc-date">03.03.2026 · research/creator-referral-research-2026-03-03.md · 2.8KB</div>
+        <div class="doc-desc">Сравнительная таблица: Billo ($50/client affiliate), Insense ($150/client), Trend.io (нет), AspireIQ (brand referrals), Grin (brand referrals). Rev-share у всех отсутствует.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">📊</div>
+      <div>
+        <div class="doc-title">TOP 10 Ниш 2026</div>
+        <div class="doc-date">research/TOP_10_NICHES_2026.md</div>
+        <div class="doc-desc">Самые горячие ниши для UGC кампаний в 2026 году.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">🛠️</div>
+      <div>
+        <div class="doc-title">Creator Tools Research</div>
+        <div class="doc-date">brain/business/ugcgo/creator-tools-research.md</div>
+        <div class="doc-desc">Анализ AI инструментов для создателей: Kling, HeyGen, RunwayML, Pika.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Outreach</h3>
+  <div class="grid">
+    <div class="doc-card">
+      <div class="doc-icon">🎯</div>
+      <div>
+        <div class="doc-title">Leads 2026-03-03</div>
+        <div class="doc-date">03.03.2026 · outreach/leads-2026-03-03.md · 9KB</div>
+        <div class="doc-desc">🔍 Lead Hunt — 15 qualified DTC brands. Criteria: USA, 10–200 employees, beauty/supplements/pets/home/apparel, TikTok/IG active, Shopify</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">💌</div>
+      <div>
+        <div class="doc-title">LinkedIn DMs Batch 1</div>
+        <div class="doc-date">28.02.2026 · outreach/linkedin_dms_batch1.md · 13KB</div>
+        <div class="doc-desc">ICP: DTC e-commerce K-M оборот, K+/мес на Meta/TikTok Ads. Persona: Head of Growth / Performance Marketing Manager. USP: AI-генерация, 48ч от брифа до видео.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">📧</div>
+      <div>
+        <div class="doc-title">Cold Emails Batch 1</div>
+        <div class="doc-date">28.02.2026 · outreach/cold_emails_batch1.md</div>
+        <div class="doc-desc">50 cold email шаблонов с уникальными углами. 62KB.</div>
+      </div>
+    </div>
+    <div class="doc-card">
+      <div class="doc-icon">📝</div>
+      <div>
+        <div class="doc-title">Outreach Scripts v2</div>
+        <div class="doc-date">outreach/outreach-scripts-v2.md</div>
+        <div class="doc-desc">Финальные скрипты outreach для разных ICP сегментов.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: TEAM -->
+<div id="team" class="content section">
+  <h2>🤖 Команда агентов</h2>
+  <p style="color:#888;margin-bottom:24px;font-size:14px">11 агентов работают 24/7 параллельно</p>
+  <div class="grid">
+    <div class="agent-card">
+      <div class="agent-icon">🦄</div>
+      <div>
+        <div class="agent-name">Way</div>
+        <div class="agent-role">COO — координирует, делегирует, отчитывается</div>
+        <div class="agent-model">Claude Sonnet 4.6 · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">🔧</div>
+      <div>
+        <div class="agent-name">Tim</div>
+        <div class="agent-role">Код, бэкенд, деплой · @Tt_immbot</div>
+        <div class="agent-model">Claude Opus 4.6 · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">🔍</div>
+      <div>
+        <div class="agent-name">May</div>
+        <div class="agent-role">Lead hunt, ресёрч брендов · @Search_May_bot</div>
+        <div class="agent-model">Gemini 2.5 Flash · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">🎨</div>
+      <div>
+        <div class="agent-name">Pixel</div>
+        <div class="agent-role">UI/UX дизайн, визуальные ассеты</div>
+        <div class="agent-model">Gemini 3 Pro · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">👑</div>
+      <div>
+        <div class="agent-name">Apex</div>
+        <div class="agent-role">Стратегия, KPI, еженедельный план · Apex Bot</div>
+        <div class="agent-model">Claude Sonnet 4.6 · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">📚</div>
+      <div>
+        <div class="agent-name">Research Agent</div>
+        <div class="agent-role">Глубокий ресёрч, анализ рынка</div>
+        <div class="agent-model">Kimi K2.5 · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">✍️</div>
+      <div>
+        <div class="agent-name">Content Agent</div>
+        <div class="agent-role">Тексты, DM скрипты, контент</div>
+        <div class="agent-model">Kimi K2.5 · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">✅</div>
+      <div>
+        <div class="agent-name">QA Agent</div>
+        <div class="agent-role">Тестирование продукта и кода</div>
+        <div class="agent-model">Gemini 2.5 Flash · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">⚡</div>
+      <div>
+        <div class="agent-name">Gen Agent</div>
+        <div class="agent-role">Генерация контента и ассетов</div>
+        <div class="agent-model">Gemini 2.5 Flash · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">🧠</div>
+      <div>
+        <div class="agent-name">Prompt Agent</div>
+        <div class="agent-role">Разработка и оптимизация промптов</div>
+        <div class="agent-model">Gemini 2.5 Flash · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon">🔎</div>
+      <div>
+        <div class="agent-name">Monitor Agent</div>
+        <div class="agent-role">Мониторинг системы и здоровья</div>
+        <div class="agent-model">Gemini 2.5 Flash · <span class="online">● Онлайн</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: REPORTS -->
+<div id="reports" class="content section">
+  <h2>📊 Отчёты агентов</h2>
+  <p style="color:#888;margin-bottom:24px;font-size:14px">Агенты публикуют отчёты в <a href="#" onclick="show('tg',document.querySelectorAll('.tab')[5])" style="color:#6366f1">TG группу ugcgo.ai🦄</a> после каждой задачи</p>
+
+  <h3>03.03.2026 — Сегодня</h3>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">🔧 Tim</span><span class="report-date">03.03.2026 16:00</span></div>
+    <div class="report-text">Knowledge Hub обновлён реальными данными: роадмап-чеклист (40 пунктов, вкл. Новые Фичи из Ogilvy), превью документов из файлов, отчёты дня.</div>
+  </div>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">🦄 Way</span><span class="report-date">03.03.2026 15:35</span></div>
+    <div class="report-text">Knowledge Hub создан и задеплоен. TG группа ugcgo.ai🦄 — карта топиков восстановлена (threads 18-22). Дубликаты удалены. Roadmap обновлён (11 новых фич из анализа Ogilvy).</div>
+  </div>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">🔍 May</span><span class="report-date">03.03.2026 12:01</span></div>
+    <div class="report-text">Daily Lead Hunt завершён. 15 qualified DTC brands (USA, Shopify): beauty (Auda.B, и др.), supplements, pets, home, apparel. Criteria: 10-200 employees, TikTok/IG active. Файл: leads-2026-03-03.md (9KB)</div>
+  </div>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">📚 Research</span><span class="report-date">03.03.2026</span></div>
+    <div class="report-text">Creator Referral Research: сравнение 6 конкурентов (Billo, Insense, Arcads, Trend.io, AspireIQ, Grin). Вывод: ни у кого нет creator→creator rev-share — наша возможность для дифференциации.</div>
+  </div>
+
+  <h3>Ранее</h3>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">👑 Apex</span><span class="report-date">02.03.2026</span></div>
+    <div class="report-text">Стратегический обзор: 9 агентов активны, цель $1.5M ARR в 2026. Приоритет недели: production-ready ugcgo.ai + outreach machine.</div>
+  </div>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">🔧 Tim</span><span class="report-date">01.03.2026</span></div>
+    <div class="report-text">Видео оптимизированы: ffmpeg faststart, 20.5MB → 4.8MB. Marketplace видео перезалиты на Supabase Storage. API параллельные через Promise.all.</div>
+  </div>
+  <div class="report-item">
+    <div class="report-header"><span class="report-agent">✍️ Content Agent</span><span class="report-date">04.03.2026 10:00 (план)</span></div>
+    <div class="report-text">DM Scripts batch (вторник автозапуск) — 5 новых LinkedIn шаблонов: pain points, ROI, social proof, trend/urgency</div>
+  </div>
+</div>
+
+<!-- TAB 6: TG GROUP -->
+<div id="tg" class="content section">
+  <h2>💬 Telegram Группа</h2>
+  <p style="color:#888;margin-bottom:20px;font-size:14px">ugcgo.ai🦄 — супергруппа с форумом. Все агенты публикуют отчёты в свои ветки.</p>
+
+  <div class="tg-info">
+    <div class="tg-title">📍 Карта топиков</div>
+    <div class="tg-item"><span class="tg-thread">#18</span><span>🔧 Tim — Разработка</span></div>
+    <div class="tg-item"><span class="tg-thread">#19</span><span>🔍 May — Ресёрч</span></div>
+    <div class="tg-item"><span class="tg-thread">#20</span><span>🦅 Apex — Стратегия</span></div>
+    <div class="tg-item"><span class="tg-thread">#21</span><span>🚀 ugcgo.ai — Задачи</span></div>
+    <div class="tg-item"><span class="tg-thread">#22</span><span>💬 Общий чат</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">🤖 Way</div>
+      <div class="card-desc">Пишет в #22 Общий чат после каждой выполненной задачи. Финальный отчёт Mr. Say только от Way.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔧 Tim (@Tt_immbot)</div>
+      <div class="card-desc">Пишет в #18 после каждого деплоя: что изменил, ссылка на Vercel, статус.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔍 May (@Search_May_bot)</div>
+      <div class="card-desc">Пишет в #19 после каждого lead hunt: сколько нашла, топ-3 горячих, ссылка на файл.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">👑 Apex (Apex Strategy Bot)</div>
+      <div class="card-desc">Пишет в #20 каждый понедельник: 3-5 задач на неделю, прогресс к $1.5M.</div>
+    </div>
+  </div>
+
+  <div style="background:#111118;border:1px solid #1e1e2e;border-radius:12px;padding:20px;margin-top:8px">
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:#fff">⚙️ Техническая информация</div>
+    <div style="font-size:13px;color:#888;line-height:1.8">
+      Group ID: <code style="color:#6366f1">-1003731719421</code><br>
+      Тип: supergroup + forum (топики включены)<br>
+      Боты: Way(default) · UGCgo Bot · May · Apex — все admin<br>
+      can_manage_topics: ✅ True
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:32px;color:#333;font-size:12px">
+  ugcgo.ai Team · Way 🦄 · 2026
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
