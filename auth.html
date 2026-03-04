@@ -172,7 +172,7 @@ async function doRegister() {
   if (error) { showErr(errEl, error.message === 'User already registered' ? 'Этот email уже зарегистрирован' : error.message); return; }
   // Save to user_profiles (ignore errors if table doesn't exist yet)
   if (data.user) {
-    await sb.from('user_profiles').upsert({ id: data.user.id, email, name, role: selectedRole }).catch(() => {});
+    await sb.from('user_profiles').upsert({ id: data.user.id, full_name: name, role: selectedRole }).catch(() => {});
     redirectByRole(data.user, true);
   }
 }
