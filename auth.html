@@ -179,9 +179,7 @@ async function doRegister() {
 
 function redirectByRole(user, isNew) {
   const role = user.user_metadata?.role || selectedRole || 'creator';
-  const base = 'https://trend-give-concept-utilize.trycloudflare.com';
-  if (role === 'brand') window.location.href = base + '/ugcgo-brand.html';
-  else window.location.href = base + '/ugcgo-creator.html';
+  window.location.href = '/platform?role=' + role;
 }
 
 function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }

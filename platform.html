@@ -1868,13 +1868,13 @@ async function genPhoto() {
   var el = document.getElementById('photo-result');
   el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">⏳</div>Generating photo...</div>';
   try {
-    var OR_KEY = 'USE_SERVER_PROXY';
-    var r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    var r = await fetch('/api/generate-image', {
       method:'POST',
-      headers:{'Authorization':'Bearer '+OR_KEY,'Content-Type':'application/json','HTTP-Referer':'https://ugcgo.ai'},
-      body: JSON.stringify({model:'google/gemini-3.1-flash-image-preview',messages:[{role:'user',content:'Generate a UGC photo: '+prompt+'. Candid, natural, authentic style. No staged/studio look.'}]})
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt:'Generate a UGC photo: '+prompt+'. Candid, natural, authentic style. No staged/studio look.', model:'google/gemini-2.0-flash-exp:free'})
     });
     var d = await r.json();
+    if (d.error) throw new Error(d.error.message || d.error);
     var imgs = (d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.images)||[];
     if (imgs.length) {
       var url = imgs[0].image_url ? imgs[0].image_url.url : imgs[0].url;
@@ -1893,13 +1893,13 @@ async function genVideo() {
   var dur = document.getElementById('video-dur').value;
   if (!prompt) return;
   var el = document.getElementById('video-result');
-  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">🎬</div>Submitting to Kling v1.6...<br><small>Takes ~2-3 min</small></div>';
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">🎬</div>Submitting to Kling...<br><small>Takes ~2-3 min</small></div>';
   try {
-    var FAL_KEY = 'USE_SERVER_PROXY';
-    var submitR = await fetch('https://queue.fal.run/fal-ai/kling-video/v3/pro/text-to-video', {
+    var falEndpoint = 'fal-ai/kling-video/v1.6/standard/text-to-video';
+    var submitR = await fetch('/api/generate-video', {
       method:'POST',
-      headers:{'Authorization':'Key '+FAL_KEY,'Content-Type':'application/json'},
-      body: JSON.stringify({prompt: prompt+', no slow motion, real time speed, vertical 9:16', duration: dur})
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'submit', endpoint:falEndpoint, prompt: prompt+', no slow motion, real time speed, vertical 9:16', duration: dur})
     });
     var sub = await submitR.json();
     var rid = sub.request_id;
@@ -1909,10 +1909,10 @@ async function genVideo() {
     while (tries < 30) {
       await new Promise(function(r){setTimeout(r,10000)});
       tries++;
-      var pollR = await fetch('https://queue.fal.run/fal-ai/kling-video/requests/'+rid+'/status', {headers:{'Authorization':'Key '+FAL_KEY}});
+      var pollR = await fetch('/api/generate-video', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'status',endpoint:falEndpoint,request_id:rid})});
       var poll = await pollR.json();
       if (poll.status === 'COMPLETED') {
-        var resR = await fetch('https://queue.fal.run/fal-ai/kling-video/requests/'+rid, {headers:{'Authorization':'Key '+FAL_KEY}});
+        var resR = await fetch('/api/generate-video', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'result',endpoint:falEndpoint,request_id:rid})});
         var res = await resR.json();
         var vurl = res.video && res.video.url;
         if (vurl) {
@@ -1941,12 +1941,10 @@ async function genScript() {
   var el = document.getElementById('script-result');
   el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">✍️</div>Writing script...</div>';
   try {
-    var OR_KEY = 'USE_SERVER_PROXY';
-    var sysPrompt = 'You are a top UGC script writer. Write a '+dur+' '+platform+' script for '+(brand||'the brand')+'. Brief: '+brief+'. Format: [Hook] [Main content] [CTA]. Keep it natural, authentic, not salesy. Include timing cues.';
-    var r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    var r = await fetch('/api/generate-script', {
       method:'POST',
-      headers:{'Authorization':'Bearer '+OR_KEY,'Content-Type':'application/json','HTTP-Referer':'https://ugcgo.ai'},
-      body: JSON.stringify({model:'google/gemini-3-flash-preview',messages:[{role:'user',content:sysPrompt}],max_tokens:600})
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({brand: brand, brief: brief, platform: platform, duration: dur})
     });
     var d = await r.json();
     var text = d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content||'';

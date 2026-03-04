@@ -486,14 +486,14 @@ nav {
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="ugcgo.html" class="logo">ugcgo<span>.</span>ai<span class="nav-badge">AI Studio</span></a>
+      <a href="/" class="logo">ugcgo<span>.</span>ai<span class="nav-badge">AI Studio</span></a>
       <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
       </button>
       <div class="nav-links">
-        <a href="ugcgo.html" class="nav-link">Home</a>
-        <a href="ugcgo-studio.html" class="nav-link">AI Studio</a>
-        <a href="ugcgo-auth.html" class="btn-primary">Dashboard →</a>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/studio" class="nav-link">AI Studio</a>
+        <a href="/platform" class="btn-primary">Dashboard →</a>
       </div>
     </div>
   </div>
@@ -734,10 +734,6 @@ nav {
 </main>
 
 <script>
-// API Keys
-const FAL_KEY = 'a0f005f0-623d-4ce2-8de8-a9c30705fe32:c9ef5158b5e84780ec0f85e3d759b631';
-const OPENROUTER_KEY = 'YOUR_OPENROUTER_KEY_HERE';
-
 // History storage
 let generationHistory = JSON.parse(localStorage.getItem('studioHistory') || '[]');
 
@@ -751,38 +747,32 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// FAL API helpers
-async function falRun(endpoint, body) {
-  const res = await fetch(`https://fal.run/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Authorization': `Key ${FAL_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
-}
-
+// Server proxy helpers (API keys are safe on server side)
 async function falQueue(endpoint, body, onProgress) {
-  const submit = await fetch(`https://queue.fal.run/${endpoint}`, {
+  const submit = await fetch('/api/generate-video', {
     method: 'POST',
-    headers: { 'Authorization': `Key ${FAL_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'submit', endpoint, ...body })
   });
   if (!submit.ok) throw new Error(`Submit error: ${submit.status}`);
   const { request_id } = await submit.json();
-  
+
   while (true) {
     await new Promise(r => setTimeout(r, 3000));
-    const status = await fetch(`https://queue.fal.run/${endpoint}/requests/${request_id}/status`, {
-      headers: { 'Authorization': `Key ${FAL_KEY}` }
+    const statusRes = await fetch('/api/generate-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'status', endpoint, request_id })
     });
-    const data = await status.json();
+    const data = await statusRes.json();
     if (onProgress) onProgress(data.status);
     if (data.status === 'COMPLETED') {
-      const result = await fetch(`https://queue.fal.run/${endpoint}/requests/${request_id}`, {
-        headers: { 'Authorization': `Key ${FAL_KEY}` }
+      const resultRes = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'result', endpoint, request_id })
       });
-      return result.json();
+      return resultRes.json();
     }
     if (data.status === 'FAILED') throw new Error('Generation failed');
   }
@@ -805,19 +795,14 @@ async function generateImage() {
                           style === 'social' ? `Social media style: ${prompt}` :
                           style === 'artistic' ? `Artistic interpretation: ${prompt}` : prompt;
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('/api/generate-image', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-image',
-        messages: [{ role: 'user', content: enhancedPrompt }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: enhancedPrompt, model: 'google/gemini-2.0-flash-exp:free' })
     });
-    
+
     const data = await response.json();
+    if (data.error) throw new Error(data.error.message || data.error);
     const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
     
     if (!imageUrl) {
@@ -845,22 +830,19 @@ async function generateScript() {
   output.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><p class="progress-text">Writing script...</p></div>';
   
   try {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const res = await fetch('/api/generate-script', {
       method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${OPENROUTER_KEY}`,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'anthropic/claude-haiku-3',
-        messages: [{
-          role: 'user',
-          content: `Write a ${duration}-second UGC video script for ${brand}. Product: ${product}. Target: ${audience || 'general audience'}. Tone: ${tone}. Format: Hook (3s) | Problem (5s) | Solution (10s) | CTA (5s). Keep it natural and conversational.`
-        }]
+        brand,
+        brief: `Product: ${product}. Target: ${audience || 'general audience'}. Tone: ${tone}.`,
+        platform: 'TikTok',
+        duration: duration + 's'
       })
     });
-    
+
     const data = await res.json();
+    if (data.error) throw new Error(data.error.message || data.error);
     const script = data.choices?.[0]?.message?.content || 'No script generated';
     
     output.innerHTML = `<div class="result-script"><pre>${script}</pre></div><button class="download-btn" onclick="copyScript(this)">Copy to Clipboard</button>`;
@@ -877,18 +859,26 @@ function copyScript(btn) {
   setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
 }
 
-// Video Generation - Async Queue with Polling
-async function pollVideoStatus(statusUrl, responseUrl, onProgress) {
+// Video Generation - Async Queue with Polling (via server proxy)
+async function pollVideoStatus(endpoint, request_id, onProgress) {
   while (true) {
-    const statusRes = await fetch(statusUrl, { headers: { 'Authorization': `Key ${FAL_KEY}` } });
+    const statusRes = await fetch('/api/generate-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'status', endpoint, request_id })
+    });
     const status = await statusRes.json();
     onProgress(status.status);
     if (status.status === 'COMPLETED') {
-      const resultRes = await fetch(responseUrl, { headers: { 'Authorization': `Key ${FAL_KEY}` } });
+      const resultRes = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'result', endpoint, request_id })
+      });
       return await resultRes.json();
     }
     if (status.status === 'FAILED') throw new Error('Video generation failed');
-    await new Promise(r => setTimeout(r, 5000)); // wait 5 seconds
+    await new Promise(r => setTimeout(r, 5000));
   }
 }
 
@@ -910,27 +900,28 @@ async function generateVideo() {
   output.innerHTML = '<div class="result-placeholder"><p>🎬 Starting video generation...</p><p style="font-size:12px;opacity:0.5;margin-top:8px;">Video generation takes 60-120 seconds. Please wait.</p></div>';
   
   try {
-    // Step 1: Submit to queue
-    const submitRes = await fetch('https://queue.fal.run/fal-ai/kling-video/v1.6/standard/text-to-video', {
+    const falEndpoint = 'fal-ai/kling-video/v1.6/standard/text-to-video';
+    const submitRes = await fetch('/api/generate-video', {
       method: 'POST',
-      headers: { 'Authorization': `Key ${FAL_KEY}`, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        action: 'submit',
+        endpoint: falEndpoint,
         prompt: prompt,
         duration: document.getElementById('duration').value,
         aspect_ratio: document.getElementById('aspect').value
       })
     });
-    
+
     if (!submitRes.ok) throw new Error(`Submit failed: ${submitRes.status}`);
     const queueData = await submitRes.json();
-    
+
     progressFill.style.width = '20%';
     progressText.textContent = 'In queue...';
-    
-    // Step 2: Poll for completion
+
     const result = await pollVideoStatus(
-      queueData.status_url,
-      queueData.response_url,
+      falEndpoint,
+      queueData.request_id,
       (status) => {
         if (status === 'IN_QUEUE') {
           progressFill.style.width = '30%';
