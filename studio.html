@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0a'/><text x='4' y='24' font-family='system-ui' font-weight='900' font-size='20' fill='%23c8ff00'>U</text></svg>">
 <title>AI Studio — ugcgo.ai</title>
+<meta name="description" content="AI Studio by ugcgo.ai — generate images with Nano Banana 2, videos with Kling 3.0 Pro, scripts with Gemini 3 Flash, voiceovers, and image-to-video remixes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,14 +15,14 @@
   --bg: #000; 
   --card: #141414; 
   --card-elevated: #1c1c1c;
-  --accent: #e8ff59; 
-  --accent-dim: rgba(232,255,89,0.12);
+  --accent: #c8ff00; 
+  --accent-dim: rgba(200,255,0,0.12);
   --text: #fff; 
   --text-2: rgba(255,255,255,0.6);
   --text-secondary: rgba(255,255,255,0.65);
   --border: rgba(255,255,255,0.1);
   --border-hover: rgba(255,255,255,0.2);
-  --glow: rgba(232,255,89,0.4);
+  --glow: rgba(200,255,0,0.4);
 }
 html { scroll-behavior: smooth; }
 body { 
@@ -83,7 +85,7 @@ nav {
 }
 .btn-accent:hover { 
   transform: translateY(-2px); 
-  box-shadow: 0 8px 30px rgba(232,255,89,0.3);
+  box-shadow: 0 8px 30px rgba(200,255,0,0.3);
 }
 .btn-outline { 
   background: transparent; 
@@ -272,7 +274,7 @@ nav {
 }
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(232,255,89,0.4);
+  box-shadow: 0 8px 30px rgba(200,255,0,0.4);
 }
 .generate-btn:disabled {
   opacity: 0.5;
@@ -757,7 +759,7 @@ async function falQueue(endpoint, body, onProgress) {
   if (!submit.ok) throw new Error(`Submit error: ${submit.status}`);
   const { request_id } = await submit.json();
 
-  while (true) {
+  for (let i = 0; i < 60; i++) {
     await new Promise(r => setTimeout(r, 3000));
     const statusRes = await fetch('/api/generate-video', {
       method: 'POST',
@@ -776,6 +778,7 @@ async function falQueue(endpoint, body, onProgress) {
     }
     if (data.status === 'FAILED') throw new Error('Generation failed');
   }
+  throw new Error('Timeout: generation took too long');
 }
 
 // Image Generation
@@ -787,18 +790,18 @@ async function generateImage() {
   }
   
   const output = document.getElementById('img-output');
-  output.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><p class="progress-text">Generating image with Gemini 3 Pro...</p></div>';
-  
+  output.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><p class="progress-text">Generating image with Nano Banana 2...</p></div>';
+
   try {
     const style = document.getElementById('img-style').value;
-    const enhancedPrompt = style === 'product' ? `Product photography: ${prompt}` : 
+    const enhancedPrompt = style === 'product' ? `Product photography: ${prompt}` :
                           style === 'social' ? `Social media style: ${prompt}` :
                           style === 'artistic' ? `Artistic interpretation: ${prompt}` : prompt;
-    
+
     const response = await fetch('/api/generate-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: enhancedPrompt, model: 'google/gemini-2.0-flash-exp:free' })
+      body: JSON.stringify({ prompt: enhancedPrompt })
     });
 
     const data = await response.json();
@@ -861,7 +864,7 @@ function copyScript(btn) {
 
 // Video Generation - Async Queue with Polling (via server proxy)
 async function pollVideoStatus(endpoint, request_id, onProgress) {
-  while (true) {
+  for (let i = 0; i < 40; i++) {
     const statusRes = await fetch('/api/generate-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -880,6 +883,7 @@ async function pollVideoStatus(endpoint, request_id, onProgress) {
     if (status.status === 'FAILED') throw new Error('Video generation failed');
     await new Promise(r => setTimeout(r, 5000));
   }
+  throw new Error('Timeout: video generation took too long');
 }
 
 async function generateVideo() {
@@ -900,7 +904,7 @@ async function generateVideo() {
   output.innerHTML = '<div class="result-placeholder"><p>🎬 Starting video generation...</p><p style="font-size:12px;opacity:0.5;margin-top:8px;">Video generation takes 60-120 seconds. Please wait.</p></div>';
   
   try {
-    const falEndpoint = 'fal-ai/kling-video/v1.6/standard/text-to-video';
+    const falEndpoint = 'fal-ai/kling-video/v3/pro/text-to-video';
     const submitRes = await fetch('/api/generate-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -952,10 +956,7 @@ async function generateVideo() {
   }
 }
 
-// Voice Generation (Web Speech API)
-let mediaRecorder = null;
-let audioChunks = [];
-
+// Voice Generation (Web Speech API — browser TTS, no screen sharing)
 async function generateVoice() {
   const text = document.getElementById('voice-text').value;
   if (!text) return alert('Please enter text to narrate');
@@ -963,67 +964,65 @@ async function generateVoice() {
   const output = document.getElementById('voice-output');
   const voiceType = document.getElementById('voice-type').value;
   
-  // Use Web Speech API
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.rate = 1.1;
   utterance.pitch = voiceType === 'female' ? 1.2 : voiceType === 'male' ? 0.9 : 1;
   
-  // Try to get a voice matching the preference
   const voices = window.speechSynthesis.getVoices();
   const preferredVoice = voices.find(v => {
-    if (voiceType === 'female') return v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria');
-    if (voiceType === 'male') return v.name.includes('Male') || v.name.includes('Daniel') || v.name.includes('Fred');
-    return v.name.includes('Default');
+    if (voiceType === 'female') return v.name.includes('Samantha') || v.name.includes('Victoria') || v.name.includes('Karen') || v.lang.startsWith('en');
+    if (voiceType === 'male') return v.name.includes('Daniel') || v.name.includes('Alex') || v.name.includes('Fred');
+    return v.lang.startsWith('en');
   });
   if (preferredVoice) utterance.voice = preferredVoice;
   
-  output.innerHTML = '<div class="result-placeholder"><p>Playing voice...</p></div>';
+  output.innerHTML = '<div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><p class="progress-text">Playing voice...</p></div>';
   
-  // Record audio if possible
-  try {
-    const stream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-    
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      output.innerHTML = `<audio src="${audioUrl}" controls class="audio-player"></audio><br><a href="${audioUrl}" download="voice.webm" class="download-btn">Download Audio</a>`;
-    };
-    
-    mediaRecorder.start();
-    window.speechSynthesis.speak(utterance);
-    
-    utterance.onend = () => {
-      setTimeout(() => mediaRecorder?.stop(), 500);
-    };
-  } catch(e) {
-    // Fallback: just speak without recording
-    window.speechSynthesis.speak(utterance);
-    output.innerHTML = '<div class="result-placeholder"><p>Voice playing (recording not available)</p></div>';
-  }
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+  
+  utterance.onend = () => {
+    output.innerHTML = `
+      <div class="result-placeholder">
+        <p style="font-size:16px;margin-bottom:12px">Voice playback complete</p>
+        <p style="font-size:13px;color:var(--text-2)">Text-to-speech played via browser. For production-quality voiceovers, we'll integrate ElevenLabs soon.</p>
+        <button class="download-btn" onclick="generateVoice()" style="margin-top:16px">Play Again</button>
+      </div>`;
+  };
+  
+  utterance.onerror = (e) => {
+    output.innerHTML = `<div class="error-message">Voice error: ${e.error}</div>`;
+  };
 }
 
 // Remix (Image to Video)
-let remixImageUrl = null;
+let remixImageFile = null;
 
 function handleRemixFile(e) {
   const file = e.target.files[0];
   if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    remixImageUrl = e.target.result;
-    document.querySelector('.file-upload-text').textContent = file.name;
-  };
-  reader.readAsDataURL(file);
+  remixImageFile = file;
+  document.querySelector('.file-upload-text').textContent = file.name;
 }
 
 async function generateRemix() {
-  const url = document.getElementById('remix-url').value || remixImageUrl;
-  const prompt = document.getElementById('remix-prompt').value;
+  let url = document.getElementById('remix-url').value;
   
+  if (!url && remixImageFile) {
+    const SB_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co';
+    const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoY3dzYmVxcGh5dG1kanJzZ3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MjgzODUsImV4cCI6MjA4NzQwNDM4NX0.i6y2f0ON6Gwsy9jSNKjwPA5S--odGznbC3R5ROwgkQI';
+    const ext = remixImageFile.name.split('.').pop();
+    const path = `remix/${Date.now()}.${ext}`;
+    const uploadRes = await fetch(`${SB_URL}/storage/v1/object/ugc-media/${path}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${SB_ANON}`, 'Content-Type': remixImageFile.type },
+      body: remixImageFile
+    });
+    if (!uploadRes.ok) throw new Error('Image upload failed');
+    url = `${SB_URL}/storage/v1/object/public/ugc-media/${path}`;
+  }
+  
+  const prompt = document.getElementById('remix-prompt').value;
   if (!url) return alert('Please upload an image or enter a URL');
   
   const progress = document.getElementById('remix-progress');
@@ -1038,11 +1037,11 @@ async function generateRemix() {
   
   try {
     const result = await falQueue(
-      'fal-ai/stable-video',
+      'fal-ai/kling-video/v3/pro/image-to-video',
       {
         image_url: url,
-        motion_bucket_id: 127,
-        cond_aug: 0.02
+        prompt: prompt || 'Smooth natural motion',
+        duration: '5'
       },
       (status) => {
         progressFill.style.width = status === 'IN_PROGRESS' ? '60%' : '90%';

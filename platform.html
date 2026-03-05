@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0a'/><text x='4' y='24' font-family='system-ui' font-weight='900' font-size='20' fill='%23c8ff00'>U</text></svg>">
 <title>ugcgo.ai — Platform</title>
+<meta name="description" content="ugcgo.ai Marketplace — browse UGC campaigns, find creators, manage your brand's content pipeline with AI tools.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -599,6 +601,65 @@ tr:hover td{background:#fafaf5}
   </div>
 </div>
 
+<!-- ONBOARDING PAGE (new brands) -->
+<div class="page" id="page-onboarding">
+  <div class="auth-wrap" style="min-height:calc(100vh - 65px);display:flex;align-items:center;justify-content:center;padding:40px 20px">
+    <div class="auth-card" style="background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:48px;width:100%;max-width:520px">
+      <div style="display:flex;gap:4px;margin-bottom:32px">
+        <div id="onbProg1" style="flex:1;height:4px;border-radius:2px;background:var(--accent);transition:opacity .2s"></div>
+        <div id="onbProg2" style="flex:1;height:4px;border-radius:2px;background:var(--border);transition:all .2s"></div>
+        <div id="onbProg3" style="flex:1;height:4px;border-radius:2px;background:var(--border);transition:all .2s"></div>
+      </div>
+      <div id="onbStep1" style="display:block">
+        <h1 style="font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px">Welcome to ugcgo.ai!</h1>
+        <p style="color:var(--mid);font-size:15px;margin-bottom:32px">Let's set up your brand profile</p>
+        <div class="form-group">
+          <label style="display:block;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px">Company Name</label>
+          <input type="text" id="onbCompany" placeholder="Acme Inc." style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none">
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px">Website URL</label>
+          <input type="url" id="onbWebsite" placeholder="https://yourbrand.com" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none">
+        </div>
+        <div class="form-group">
+          <label style="display:block;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px">Logo</label>
+          <div class="upload-zone" onclick="document.getElementById('onbLogoInput').click()" style="padding:24px;cursor:pointer">
+            <input type="file" id="onbLogoInput" accept="image/*" style="display:none" onchange="onbPreviewLogo(this)">
+            <div id="onbLogoPlaceholder" style="font-size:32px;margin-bottom:8px">🖼️</div>
+            <div style="font-weight:600;font-size:14px;color:var(--text)">Click to upload logo</div>
+            <div id="onbLogoPreview" style="display:none;margin-top:12px"><img id="onbLogoImg" style="width:80px;height:80px;border-radius:100px;object-fit:cover;border:2px solid var(--border)" src="" alt=""></div>
+          </div>
+        </div>
+        <button class="btn btn-lime" style="width:100%;padding:14px;border-radius:100px;font-size:15px;font-weight:700;margin-top:8px" onclick="onbNextStep(2)">Continue →</button>
+      </div>
+      <div id="onbStep2" style="display:none">
+        <h1 style="font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px">What content do you need?</h1>
+        <p style="color:var(--mid);font-size:15px;margin-bottom:24px">Select categories (you can change later)</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px">
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Beauty"> Beauty</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Fashion"> Fashion</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Tech"> Tech</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Food"> Food</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Fitness"> Fitness</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Lifestyle"> Lifestyle</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Gaming"> Gaming</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px solid var(--border);border-radius:100px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:var(--bg)"><input type="checkbox" class="onb-cat" value="Other"> Other</label>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline" style="flex:1" onclick="onbNextStep(1)">← Back</button>
+          <button class="btn btn-lime" style="flex:1" onclick="onbNextStep(3)">Continue →</button>
+        </div>
+      </div>
+      <div id="onbStep3" style="display:none">
+        <h1 style="font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px">Create your first campaign</h1>
+        <p style="color:var(--mid);font-size:15px;margin-bottom:32px">You're all set! Start by creating a campaign or skip for now.</p>
+        <button class="btn btn-lime" style="width:100%;padding:14px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:12px" onclick="onbFinishAndCreateCampaign()">Create Campaign</button>
+        <button class="btn btn-outline" style="width:100%;padding:14px;border-radius:100px;font-size:15px" onclick="onbSkipToDashboard()">Skip for now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 
 const SB_URL = 'https://vhcwsbeqphytmdjrsgvb.supabase.co';
@@ -611,6 +672,16 @@ let currentProfile = null;
 let currentRole = 'brand';
 let brandTab = 'overview';
 let creatorTab = 'overview';
+
+function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function showToast(msg, isError) {
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;background:'+(isError?'#ff4444':'#0a0a0a')+';color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2)';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3000);
+}
 
 // MARKETPLACE
 let mktAllCampaigns = [];
@@ -638,8 +709,8 @@ function renderMktCampaigns(list) {
   var bmap = window._brandMap || {};
 
   grid.innerHTML = list.map(function(camp) {
-    var brandName = bmap[camp.brand_id] || camp.brand_name || 'Brand';
-    var budget = camp.budget_max || camp.budget || '?';
+    var brandName = esc(bmap[camp.brand_id] || camp.brand_name || 'Brand');
+    var budget = esc(String(camp.budget_max || camp.budget || '?'));
     var initial = brandName.charAt(0).toUpperCase();
 
     // Badge: brand icon
@@ -676,9 +747,9 @@ function renderMktCampaigns(list) {
       + '</div>'
       + '<div class="mkt-card-body">'
         + '<div class="mkt-card-brand">' + brandName + '</div>'
-        + '<div class="mkt-card-title">' + (camp.title||'Campaign') + '</div>'
-        + '<div class="mkt-card-category">' + (camp.category||'') + '</div>'
-        + '<div class="mkt-card-desc">' + (camp.description||'') + '</div>'
+        + '<div class="mkt-card-title">' + esc(camp.title||'Campaign') + '</div>'
+        + '<div class="mkt-card-category">' + esc(camp.category||'') + '</div>'
+        + '<div class="mkt-card-desc">' + esc(camp.description||'') + '</div>'
         + chipsHtml
         + '<div class="mkt-card-footer">'
           + '<div class="mkt-card-budget">$' + budget + '</div>'
@@ -856,6 +927,12 @@ function goHome() {
 
 function goToDashboard() {
   if (!currentProfile) { showPage('login'); return; }
+  if (currentProfile.role === 'brand' && !currentProfile.company_name) {
+    showPage('onboarding');
+    onbResetSteps();
+    document.getElementById('navActions').innerHTML = '<span class="brand-badge">Brand</span><button class="btn btn-outline" onclick="doLogout()">Logout</button>';
+    return;
+  }
   if (currentProfile.role === 'brand') {
     showPage('brand');
     setBrandTab('overview');
@@ -916,7 +993,7 @@ async function doRegister() {
   const err = document.getElementById('regError');
   err.style.display = 'none';
   if (!name || !email || !pass) { showErr(err, 'Please fill all fields'); return; }
-  if (pass.length < 8) { showErr(err, 'Password must be at least 8 characters'); return; }
+  if (pass.length < 6) { showErr(err, 'Password must be at least 6 characters'); return; }
   const btn = document.querySelector('#page-register .auth-submit');
   btn.textContent = 'Creating account...'; btn.disabled = true;
   const { data, error } = await sb.auth.signUp({
@@ -945,6 +1022,72 @@ async function doLogout() {
 }
 
 function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+// ========== ONBOARDING ==========
+let onbLogoFile = null;
+function onbResetSteps() {
+  document.getElementById('onbStep1').style.display = 'block';
+  document.getElementById('onbStep2').style.display = 'none';
+  document.getElementById('onbStep3').style.display = 'none';
+  document.getElementById('onbProg1').style.background = 'var(--accent)';
+  document.getElementById('onbProg2').style.background = 'var(--border)';
+  document.getElementById('onbProg3').style.background = 'var(--border)';
+  onbLogoFile = null;
+  document.getElementById('onbLogoPlaceholder').style.display = 'block';
+  document.getElementById('onbLogoPreview').style.display = 'none';
+  document.getElementById('onbLogoInput').value = '';
+}
+function onbPreviewLogo(input) {
+  var file = input.files[0];
+  if (!file) return;
+  onbLogoFile = file;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('onbLogoImg').src = e.target.result;
+    document.getElementById('onbLogoPlaceholder').style.display = 'none';
+    document.getElementById('onbLogoPlaceholder').nextElementSibling.style.display = 'none';
+    document.getElementById('onbLogoPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function onbNextStep(step) {
+  document.getElementById('onbStep1').style.display = step === 1 ? 'block' : 'none';
+  document.getElementById('onbStep2').style.display = step === 2 ? 'block' : 'none';
+  document.getElementById('onbStep3').style.display = step === 3 ? 'block' : 'none';
+  for (var i = 1; i <= 3; i++) {
+    document.getElementById('onbProg' + i).style.background = i <= step ? 'var(--accent)' : 'var(--border)';
+  }
+}
+async function onbFinishAndCreateCampaign() {
+  await onbSaveProfile();
+  showPage('brand');
+  setBrandTab('overview');
+  document.getElementById('navActions').innerHTML = '<span class="brand-badge">Brand</span><button class="btn btn-outline" onclick="doLogout()">Logout</button>';
+  openModal('modalNewCampaign');
+}
+async function onbSkipToDashboard() {
+  await onbSaveProfile();
+  goToDashboard();
+}
+async function onbSaveProfile() {
+  var companyName = document.getElementById('onbCompany').value.trim();
+  var websiteUrl = document.getElementById('onbWebsite').value.trim();
+  var cats = Array.from(document.querySelectorAll('.onb-cat:checked')).map(function(c) { return c.value; });
+  var updateData = {
+    company_name: companyName || currentProfile?.company_name || currentProfile?.full_name || 'My Brand',
+    website: websiteUrl || null,
+    bio: cats.length ? cats.join(', ') : (currentProfile?.bio || null)
+  };
+  if (onbLogoFile) {
+    try {
+      var path = 'avatars/' + currentUser.id + '_' + Date.now() + '.' + onbLogoFile.name.split('.').pop();
+      updateData.avatar_url = await uploadFile('avatars', onbLogoFile, path);
+    } catch (e) { console.warn('Logo upload failed', e); }
+  }
+  await sb.from('user_profiles').update(updateData).eq('id', currentUser.id);
+  var { data } = await sb.from('user_profiles').select('*').eq('id', currentUser.id).single();
+  if (data) currentProfile = data;
+}
 
 // BRAND DASHBOARD
 async function setBrandTab(tab) {
@@ -1555,6 +1698,13 @@ async function renderBrandCreators(el) {
 
 // ========== ENHANCED CAMPAIGN CARD ==========
 
+async function updateApp(appId, newStatus) {
+  const { error } = await sb.from('applications').update({ status: newStatus }).eq('id', appId);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  showToast(newStatus === 'accepted' ? '✅ Application accepted!' : '❌ Application declined');
+  await setBrandTab('applications');
+}
+
 async function toggleStatus(id, currentStatus) {
   const newStatus = currentStatus === 'draft' ? 'active' : currentStatus === 'active' ? 'paused' : 'active';
   const { error } = await sb.from('campaigns').update({status: newStatus}).eq('id', id);
@@ -1776,7 +1926,7 @@ function renderCreatorStudio(el) {
       <div id="smode-photo" onclick="studioTab('photo')" class="smode-card smode-active" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--accent);background:var(--section-alt)">
         <div style="font-size:26px;margin-bottom:8px">📸</div>
         <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:4px">PHOTO</div>
-        <div class="smode-badge" style="font-size:9px;color:var(--accent);font-weight:700;border-radius:100px;padding:2px 8px;display:inline-block;background:var(--acBg, rgba(200,255,0,.1))">Gemini 3.1 Flash</div>
+        <div class="smode-badge" style="font-size:9px;color:var(--accent);font-weight:700;border-radius:100px;padding:2px 8px;display:inline-block;background:var(--acBg, rgba(200,255,0,.1))">Nano Banana 2</div>
       </div>
       <div id="smode-video" onclick="studioTab('video')" class="smode-card" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:var(--card-bg)">
         <div style="font-size:26px;margin-bottom:8px">🎬</div>
@@ -1786,7 +1936,7 @@ function renderCreatorStudio(el) {
       <div id="smode-script" onclick="studioTab('script')" class="smode-card" style="border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:var(--card-bg)">
         <div style="font-size:26px;margin-bottom:8px">✍️</div>
         <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:4px">SCRIPT</div>
-        <div class="smode-badge" style="font-size:9px;color:var(--mid);font-weight:700;background:var(--section-alt);border-radius:100px;padding:2px 8px;display:inline-block">Gemini Flash</div>
+        <div class="smode-badge" style="font-size:9px;color:var(--mid);font-weight:700;background:var(--section-alt);border-radius:100px;padding:2px 8px;display:inline-block">Gemini 3 Flash</div>
       </div>
     </div>
     <div id="studio-panel"></div>
@@ -1862,6 +2012,15 @@ function studioTab(tab) {
   }
 }
 
+async function apiHeaders() {
+  var h = {'Content-Type':'application/json'};
+  try {
+    var sess = (await sb.auth.getSession()).data.session;
+    if (sess) h['Authorization'] = 'Bearer ' + sess.access_token;
+  } catch(e) {}
+  return h;
+}
+
 async function genPhoto() {
   var prompt = document.getElementById('photo-prompt').value.trim();
   if (!prompt) return;
@@ -1870,8 +2029,8 @@ async function genPhoto() {
   try {
     var r = await fetch('/api/generate-image', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt:'Generate a UGC photo: '+prompt+'. Candid, natural, authentic style. No staged/studio look.', model:'google/gemini-2.0-flash-exp:free'})
+      headers: await apiHeaders(),
+      body: JSON.stringify({prompt:'Generate a UGC photo: '+prompt+'. Candid, natural, authentic style. No staged/studio look.'})
     });
     var d = await r.json();
     if (d.error) throw new Error(d.error.message || d.error);
@@ -1893,12 +2052,13 @@ async function genVideo() {
   var dur = document.getElementById('video-dur').value;
   if (!prompt) return;
   var el = document.getElementById('video-result');
-  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">🎬</div>Submitting to Kling...<br><small>Takes ~2-3 min</small></div>';
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--mid)"><div style="font-size:24px;margin-bottom:8px">🎬</div>Submitting to Kling 3.0 Pro...<br><small>Takes ~2-3 min</small></div>';
   try {
-    var falEndpoint = 'fal-ai/kling-video/v1.6/standard/text-to-video';
+    var falEndpoint = 'fal-ai/kling-video/v3/pro/text-to-video';
+    var hdrs = await apiHeaders();
     var submitR = await fetch('/api/generate-video', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers: hdrs,
       body: JSON.stringify({action:'submit', endpoint:falEndpoint, prompt: prompt+', no slow motion, real time speed, vertical 9:16', duration: dur})
     });
     var sub = await submitR.json();
@@ -1909,10 +2069,10 @@ async function genVideo() {
     while (tries < 30) {
       await new Promise(function(r){setTimeout(r,10000)});
       tries++;
-      var pollR = await fetch('/api/generate-video', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'status',endpoint:falEndpoint,request_id:rid})});
+      var pollR = await fetch('/api/generate-video', {method:'POST',headers:hdrs,body:JSON.stringify({action:'status',endpoint:falEndpoint,request_id:rid})});
       var poll = await pollR.json();
       if (poll.status === 'COMPLETED') {
-        var resR = await fetch('/api/generate-video', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'result',endpoint:falEndpoint,request_id:rid})});
+        var resR = await fetch('/api/generate-video', {method:'POST',headers:hdrs,body:JSON.stringify({action:'result',endpoint:falEndpoint,request_id:rid})});
         var res = await resR.json();
         var vurl = res.video && res.video.url;
         if (vurl) {
@@ -1943,7 +2103,7 @@ async function genScript() {
   try {
     var r = await fetch('/api/generate-script', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers: await apiHeaders(),
       body: JSON.stringify({brand: brand, brief: brief, platform: platform, duration: dur})
     });
     var d = await r.json();
@@ -1961,15 +2121,28 @@ async function genScript() {
 }
 
 async function saveToPortfolio(url) {
-  var sess = window._currentSession;
-  if (!sess) { alert('Please log in to save to portfolio'); return; }
-  alert('Photo saved to portfolio! (DB integration coming soon)');
+  if (!currentUser) { alert('Please log in to save to portfolio'); return; }
+  try {
+    var resp = await fetch(url);
+    var blob = await resp.blob();
+    var ext = blob.type.includes('png') ? 'png' : 'jpg';
+    var path = 'portfolios/' + currentUser.id + '/' + Date.now() + '.' + ext;
+    var publicUrl = await uploadFile('portfolios', blob, path);
+    showToast('Photo saved to portfolio!');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, true);
+  }
 }
 
 
 
 // Expose critical functions to window for inline onclick handlers
 window.showPage = showPage;
+window.onbNextStep = onbNextStep;
+window.onbFinishAndCreateCampaign = onbFinishAndCreateCampaign;
+window.onbSkipToDashboard = onbSkipToDashboard;
+window.onbPreviewLogo = onbPreviewLogo;
+window.onbResetSteps = onbResetSteps;
 window.requireAuth = requireAuth;
 window.filterMkt = filterMkt;
 window.switchMktTab = switchMktTab;
@@ -1988,6 +2161,7 @@ window.genPhoto = genPhoto;
 window.genVideo = genVideo;
 window.genScript = genScript;
 window.saveToPortfolio = saveToPortfolio;
+window.updateApp = updateApp;
 
 function setTheme(t) {
   document.body.setAttribute('data-theme', t);
