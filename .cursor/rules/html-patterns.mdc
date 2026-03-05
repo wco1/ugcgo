@@ -1,0 +1,26 @@
+---
+description: Паттерны работы с HTML файлами проекта
+globs: "*.html"
+alwaysApply: false
+---
+
+# HTML-паттерны ugcgo.ai
+
+## Темы
+- 3 темы: light, dark, oakley
+- `body[data-theme="..."]` + CSS-переменные
+- Сохранение: `localStorage('ugcgo-theme')`
+
+## platform.html — SPA-навигация
+- Переключение страниц: `showPage(id)` — добавляет/убирает класс `.page.active`
+- Не создавай новые HTML-файлы для подстраниц — добавляй `.page` секции в platform.html
+
+## Auth
+- Supabase Auth: signInWithPassword, signUp, getSession, onAuthStateChange
+- Роли: brand / creator → user_metadata.role + user_profiles.role
+- После входа → Brand/Creator Dashboard
+
+## Видео (iOS Safari)
+- Создавай `<video>` через `document.createElement` для autoplay
+- Используй `#t=0.001` трик для iOS
+- IntersectionObserver для ленивой загрузки

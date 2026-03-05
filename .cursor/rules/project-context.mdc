@@ -1,0 +1,33 @@
+---
+description: Общий контекст проекта ugcgo.ai — платформа для UGC-контента с AI-генерацией
+alwaysApply: true
+---
+
+# ugcgo.ai — Контекст проекта
+
+## Что это
+UGC-платформа, соединяющая бренды и креаторов с AI-генерацией контента.
+
+## Стек
+- Frontend: статический HTML/CSS/JS (без фреймворков)
+- Backend: Vercel Serverless (api/*.js)
+- Auth + DB + Storage: Supabase (supabase-js v2)
+- AI: OpenRouter (Gemini), fal.ai (Kling Video, Stable Video)
+
+## Ключевые файлы
+- `index.html` — лендинг
+- `auth.html` — авторизация
+- `platform.html` — SPA-маркетплейс и дашборды (showPage() навигация)
+- `studio.html` — AI Studio
+- `api/generate-image.js`, `api/generate-video.js`, `api/generate-script.js` — серверные прокси
+
+## Supabase
+- Ref: vhcwsbeqphytmdjrsgvb
+- Таблицы: user_profiles, campaigns, applications, conversations, messages, kanban_tasks
+- Storage: avatars, ugc-media, portfolios
+
+## Правила разработки
+- Пиши код максимально понятный и простой
+- Сохраняй существующий функционал при добавлении нового
+- Не запускай сервисы — они уже запущены
+- Memory Bank: `.cursor/memory-bank/` — обновляй после значительных изменений
